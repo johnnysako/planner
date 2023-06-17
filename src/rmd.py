@@ -6,3 +6,4 @@ class Rmd:
         for entry in self.config:
             if entry.get("age") == age:
                 return entry.get("rate")
+        return 0

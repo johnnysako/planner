@@ -38,3 +38,14 @@ def test_works_with_an_array():
     rmd = Rmd(config)
     assert rmd.getRate(4) == 5
     assert rmd.getRate(6) == 7
+
+
+def test_returns_zero_when_no_entry():
+    config = [
+        {"rate": 5,
+         "age": 4},
+        {"rate": 7,
+         "age": 6}
+    ]
+    rmd = Rmd(config)
+    assert rmd.getRate(30) == 0
