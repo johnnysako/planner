@@ -1,6 +1,5 @@
 from src.rmd import Rmd
 
-
 def test_can_initialize_rmd():
     config = [{
         "rate": 5,

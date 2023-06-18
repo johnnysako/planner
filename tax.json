@@ -1,0 +1,39 @@
+{
+    "tax": [
+        {
+            "max_tax_previous": 0,
+            "rate": 10,
+            "cutoff": 22000
+        },
+        {
+            "max_tax_previous": 2200,
+            "rate": 12,
+            "cutoff": 89450
+        },
+        {
+            "max_tax_previous": 10294,
+            "rate": 22,
+            "cutoff": 190750
+        },
+        {
+            "max_tax_previous": 32580,
+            "rate": 24,
+            "cutoff": 364200
+        },
+        {
+            "max_tax_previous": 74208,
+            "rate": 32,
+            "cutoff": 462500
+        },
+        {
+            "max_tax_previous": 105664,
+            "rate": 35,
+            "cutoff": 693750
+        },
+        {
+            "max_tax_previous": 186601.50,
+            "rate": 37,
+            "cutoff": null
+        }
+    ]
+}
