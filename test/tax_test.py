@@ -13,6 +13,7 @@ def test_can_initialize_tax():
     tax = Tax(config)
     assert tax.calculate(1000) == 100
 
+
 def test_can_calculate_with_different_rate():
     config = [
         {
@@ -24,6 +25,7 @@ def test_can_calculate_with_different_rate():
 
     tax = Tax(config)
     assert tax.calculate(1000) == 50
+
 
 def test_no_cutoff():
     config = [
@@ -37,6 +39,7 @@ def test_no_cutoff():
     tax = Tax(config)
     assert tax.calculate(1000) == 120
 
+
 def test_adds_previous():
     config = [
         {
@@ -48,6 +51,7 @@ def test_adds_previous():
 
     tax = Tax(config)
     assert tax.calculate(100000) == 17000
+
 
 def test_works_with_two_tiers():
     config = [
@@ -66,6 +70,7 @@ def test_works_with_two_tiers():
     tax = Tax(config)
     assert tax.calculate(7000) == 700
     assert tax.calculate(11000) == 1120
+
 
 def test_works_with_three_tiers():
     config = [
