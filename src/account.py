@@ -27,4 +27,4 @@ class Account:
         
     def process_growth(self, rate):
         new_balance = self.config["balance"] * (1 + rate/100) + self.config["annual_additions"]
-        self.config.update({"balance": new_balance})
+        self.config["balance"] = new_balance
