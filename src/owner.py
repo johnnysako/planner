@@ -3,16 +3,16 @@ class Owner:
         self.config = config
 
     def get_name(self):
-        return self.config.get("name")
+        return self.config["name"]
 
     def get_age(self):
-        return self.config.get("age")
+        return self.config["age"]
 
     def get_retirement_age(self):
-        return self.config.get("retirement_age")
+        return self.config["retirement_age"]
 
     def get_social_security(self):
-        return self.config.get("social_security")
+        return self.config["social_security"]
 
     def trial_social_security(self):
-        return self.config.get("trial_social_security")
+        return self.config["trial_social_security"]

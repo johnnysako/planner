@@ -4,6 +4,6 @@ class Rmd:
 
     def getRate(self, age):
         for entry in self.config:
-            if entry.get("age") == age:
-                return entry.get("rate")
+            if entry["age"] == age:
+                return entry["rate"]
         return 0

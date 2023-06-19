@@ -3,4 +3,4 @@ class Plan:
         self.config = config
 
     def get_growth(self):
-        return self.config.get("average_growth")
+        return self.config["average_growth"]

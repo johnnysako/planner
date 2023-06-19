@@ -3,22 +3,22 @@ class Account:
         self.config = config
 
     def get_name(self):
-        return self.config.get("name")
+        return self.config["name"]
 
     def get_owner(self):
-        return self.config.get("owner")
+        return self.config["owner"]
 
     def get_type(self):
-        return self.config.get("type")
+        return self.config["type"]
 
     def get_withdrawl_priority(self):
-        return self.config.get("withdrawl_priority")
+        return self.config["withdrawl_priority"]
 
     def get_balance(self):
-        return self.config.get("balance")
+        return self.config["balance"]
 
     def withdrawl(self, amount):
-        new_balance = self.config.get("balance") - amount
+        new_balance = self.config["balance"] - amount
         if new_balance >= 0:
             self.config.update({"balance": new_balance})
             return True
@@ -26,5 +26,5 @@ class Account:
             return False
         
     def process_growth(self, rate):
-        new_balance = self.config.get("balance") * (1 + rate/100) + self.config.get("annual_additions")
+        new_balance = self.config["balance"] * (1 + rate/100) + self.config["annual_additions"]
         self.config.update({"balance": new_balance})
