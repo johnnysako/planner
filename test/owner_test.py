@@ -37,6 +37,15 @@ def test_can_get_social_security_benefit():
     assert owner.get_social_security() == 1234
 
 
+def test_can_get_different_social_security_benefit():
+    config = {
+        "social_security": 5678
+    }
+
+    owner = Owner(config)
+    assert owner.get_social_security() == 5678
+
+
 def test_should_trial_social_security():
     config = {
         "trial_social_security": True
