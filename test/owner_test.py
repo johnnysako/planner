@@ -12,11 +12,11 @@ def test_can_initialize_owner():
 
 def test_can_get_age():
     config = {
-        "age": 42
+        "birth_year": 1977
     }
 
     owner = Owner(config)
-    assert owner.get_age() == 42
+    assert owner.get_age(2023) == 46
 
 
 def test_can_get_retirement_age():
@@ -60,3 +60,33 @@ def test_should_trial_social_security():
 
     other_owner = Owner(config_other)
     assert other_owner.trial_social_security() == False
+
+def test_get_income():
+    config = {
+        "birth_year": 1977,
+        "income": 56789,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }
+
+    owner = Owner(config)
+    assert owner.get_income(True, 2010) == 56789
+    assert owner.get_income(True, 2042) == 0    
+    assert owner.get_income(True, 2046) == 0    
+    assert owner.get_income(True, 2047) == 5678
+
+def test_get_income_no_social_security():
+    config = {
+        "birth_year": 1977,
+        "income": 56789,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }
+
+    owner = Owner(config)
+    assert owner.get_income(False, 2010) == 56789
+    assert owner.get_income(False, 2042) == 0    
+    assert owner.get_income(False, 2046) == 0    
+    assert owner.get_income(False, 2047) == 0
