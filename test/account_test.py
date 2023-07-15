@@ -148,3 +148,13 @@ def test_investment_is_valid():
     }
 
     account = Account(config)
+
+def test_withdrawl_negative_adds():
+    config = {
+        "type": "Roth",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    account.withdrawl(-1000)
+    assert account.get_balance() == 6000
