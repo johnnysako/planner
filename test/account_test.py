@@ -42,6 +42,18 @@ def test_different_values():
     account.process_growth(7)
     assert account.get_balance() == 5000*1.07 + 3000
 
+def test_can_only_increase_by_interest():
+    config = {
+        "name": "John's Roth",
+        "balance": 5000,
+        "annual_additions": 3000,
+    }
+
+    account = Account(config)
+    assert account.get_name() == "John's Roth"
+    account.process_growth(7, True)
+    assert account.get_balance() == 5000*1.07
+
 
 def test_can_get_owner():
     config = {

@@ -25,6 +25,9 @@ class Account:
         else:
             return False
         
-    def process_growth(self, rate):
-        new_balance = self.config["balance"] * (1 + rate/100) + self.config["annual_additions"]
+    def process_growth(self, rate, interest_only=False):
+        if interest_only:
+            new_balance = self.config["balance"] * (1 + rate/100)
+        else:
+            new_balance = self.config["balance"] * (1 + rate/100) + self.config["annual_additions"]
         self.config["balance"] = new_balance
