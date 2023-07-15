@@ -4,6 +4,7 @@ from src.account import Account
 def test_can_initialize_Account():
     config = {
         "name": "Blah",
+        "type": "Roth",
     }
 
     account = Account(config)
@@ -12,6 +13,7 @@ def test_can_initialize_Account():
 
 def test_can_get_balance():
     config = {
+        "type": "Roth",
         "balance": 4000,
     }
 
@@ -21,6 +23,7 @@ def test_can_get_balance():
 
 def test_apply_growth():
     config = {
+        "type": "Roth",
         "balance": 4000,
         "annual_additions": 2000,
     }
@@ -33,6 +36,7 @@ def test_apply_growth():
 def test_different_values():
     config = {
         "name": "John's Roth",
+        "type": "Roth",
         "balance": 5000,
         "annual_additions": 3000,
     }
@@ -45,6 +49,7 @@ def test_different_values():
 def test_can_only_increase_by_interest():
     config = {
         "name": "John's Roth",
+        "type": "Roth",
         "balance": 5000,
         "annual_additions": 3000,
     }
@@ -58,6 +63,7 @@ def test_can_only_increase_by_interest():
 def test_can_get_owner():
     config = {
         "owner": "John",
+        "type": "Roth",
     }
 
     account = Account(config)
@@ -75,6 +81,7 @@ def test_can_get_type():
 
 def test_can_get_priority():
     config = {
+        "type": "Roth",
         "withdrawl_priority": 1,
     }
 
@@ -84,6 +91,7 @@ def test_can_get_priority():
 
 def test_can_pull_funds():
     config = {
+        "type": "Roth",
         "balance": 5000,
     }
 
@@ -94,9 +102,49 @@ def test_can_pull_funds():
 
 def test_balance_does_not_change_when_withrawl_fails():
     config = {
+        "type": "Roth",
         "balance": 5000,
     }
 
     account = Account(config)
     assert account.withdrawl(6000) == False
     assert account.get_balance() == 5000
+
+def test_bob_is_invalid():
+    try:
+        config = {
+            "type": "bob",
+        }
+
+        account = Account(config)
+        assert False
+    except TypeError:
+        assert True
+
+def test_roth_is_valid():
+    config = {
+        "type": "Roth",
+    }
+
+    account = Account(config)
+
+def test_401K_is_valid():
+    config = {
+        "type": "401K",
+    }
+
+    account = Account(config)
+
+def test_IRA_is_valid():
+    config = {
+        "type": "IRA",
+    }
+
+    account = Account(config)
+
+def test_investment_is_valid():
+    config = {
+        "type": "Investment",
+    }
+
+    account = Account(config)

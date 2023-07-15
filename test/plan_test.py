@@ -45,7 +45,6 @@ owners.append(Owner({
     "start_social_security": 70
 }))
 
-
 def test_can_initialize_plan():
     plan = Plan(config, owners, accounts)
     assert plan.get_growth() == 6

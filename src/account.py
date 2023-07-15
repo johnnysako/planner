@@ -1,6 +1,11 @@
 class Account:
     def __init__(self, config):
-        self.config = config
+        valid_types = ["401K", "Roth", "IRA", "Investment"]
+        for type in valid_types:
+            if type == config["type"]:
+                self.config = config
+                return
+        raise TypeError
 
     def get_name(self):
         return self.config["name"]

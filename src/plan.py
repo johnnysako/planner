@@ -20,7 +20,6 @@ class Plan:
             name = account.get_owner()
             if owner_is_not_known(name, self.owners): return False
         return True
-            
 
     def get_header(self):
         header_string = ""
