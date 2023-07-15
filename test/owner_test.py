@@ -90,3 +90,19 @@ def test_get_income_no_social_security():
     assert owner.get_income(False, 2042) == 0    
     assert owner.get_income(False, 2046) == 0    
     assert owner.get_income(False, 2047) == 0
+
+def test_get_life():
+    config = {
+        "life": 110
+    }
+
+    owner = Owner(config)
+    assert owner.get_life() == 110
+
+def test_get_different_life():
+    config = {
+        "life": 115
+    }
+
+    owner = Owner(config)
+    assert owner.get_life() == 115

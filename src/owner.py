@@ -17,6 +17,9 @@ class Owner:
     def trial_social_security(self):
         return self.config["trial_social_security"]
 
+    def get_life(self):
+        return self.config["life"]
+
     def get_income(self, include_social_security, year):
         if self.get_age(year) < self.get_retirement_age():
             return self.config["income"]
