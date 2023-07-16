@@ -30,16 +30,17 @@ def append_rmd(data, year, self):
         owner = get_account_owner(account, self)
         rmd += account.withdrawl_rmd(self.rmd.get_rate(owner.get_age(year)))
     data.append(rmd)
+    return rmd
 
 def append_expenses(data, year, expenses):
     data.append(expenses.get_expenses(year))        
 
-def append_tax(data, self):
+def append_tax(data, self, rmd):
     taxable = 0
     for account in self.accounts:
         if account.is_taxable():
             taxable += round(account.get_balance() * self.config["average_growth"]/100, 2)
-    data.append(self.tax.calculate(taxable))
+    data.append(self.tax.calculate(taxable+rmd))
 
 def append_accounts(data, year, self, growth):
     for account in self.accounts:
@@ -81,9 +82,9 @@ class Plan:
             balances[i].append(start_year+i)
 
             append_income(balances[i], start_year+i, self.owners)
-            append_rmd(balances[i], start_year+i, self)
+            rmd = append_rmd(balances[i], start_year+i, self)
             append_expenses(balances[i], start_year+i, self.expenses)
             append_accounts(balances[i], start_year+i, self, i!=0)
-            append_tax(balances[i], self)
+            append_tax(balances[i], self, rmd)
 
         return balances

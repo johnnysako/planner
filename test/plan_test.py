@@ -543,3 +543,83 @@ def test_can_include_tax_on_account_growth():
 
     plan = Plan(config, owners, accounts, expenses, rmd, tax)
     assert plan.process_growth(2022, 1) == [[2022, 1000, 0, 0, 4000, 10000, 60.0], [2023, 1000, 0, 0, 6240.0, 15600.0, 93.6]]
+
+def test_calculates_tax_including_rmds():
+    accounts = []
+    accounts.append(Account({
+        "name": "Jerry's Roth",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Roth",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jerry's IRA",
+        "balance": 8000,
+        "annual_additions":2000,
+        "type": "IRA",
+        "withdrawl priority": 4,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jill's Investment",
+        "balance": 10000,
+        "annual_additions": 5000,
+        "type": "Investment",
+        "withdrawl priority": 2,
+        "owner": "Jill",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jill's 401k",
+        "balance": 20000,
+        "annual_additions": 5000,
+        "type": "401K",
+        "withdrawl priority": 3,
+        "owner": "Jill",
+        "trail_with_rmd": False
+    }))
+    config = {
+        "average_growth": 6
+    }
+    owners = []
+    owners.append(Owner({
+        "name": "Jill",
+        "birth_year": 1950,
+        "income": 2000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+    owners.append(Owner({
+        "name": "Jerry",
+        "birth_year": 1949,
+        "income": 1000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+
+    rmd_table = [
+        {"rate": 10,
+         "age": 65},
+        {"rate": 12,
+         "age": 66}
+    ]
+    rmd = Rmd(rmd_table)
+
+    tax_table = [
+        {
+            "max_tax_previous": 0,
+            "rate": 10,
+            "cutoff": 100000
+        }
+    ]
+    tax = Tax(tax_table)
+    empty_expense_table = []
+    empty_expenses = Expenses(empty_expense_table)
+    plan = Plan(config, owners, accounts, empty_expenses, rmd, tax)
+    assert plan.process_growth(2014, 1) == [[2014, 3000, 800.0, 0, 4000, 7200.0, 10000, 20000.0, 140.0], [2015, 2000, 2864.0, 0, 4240.0, 6716.16, 15600, 24080.0, 380.0]]
