@@ -412,3 +412,4 @@ def test_calculates_rmds_of_accounts():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(config, owners, accounts, empty_expenses, rmd)
     assert plan.process_growth(2015, 0) == [[2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
+    assert plan.process_growth(2014, 0) == [[2014, 3000, 0, 0, 4000, 7040.0, 10000, 18000], [2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
