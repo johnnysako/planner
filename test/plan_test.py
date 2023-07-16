@@ -34,6 +34,15 @@ def test_can_get_header():
     rmd_table = []
     rmd = Rmd(rmd_table)
     accounts = []
+    accounts.append(Account({
+        "name": "Jerry's Roth",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Investment",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
     config = {
         "average_growth": 6
     }
@@ -42,7 +51,7 @@ def test_can_get_header():
     expenses = Expenses(expense_table)
 
     plan = Plan(config, owners, accounts, expenses, rmd, no_tax)
-    assert plan.get_header() == ["Year", "Income", "Rmd", "Expenses", "Taxes"]
+    assert plan.get_header() == ["Year", "Income", "Rmd", "Expenses", "Jerry's Roth", "Taxes"]
 
 def test_can_fill_table_for_one_year():
     rmd_table = []
