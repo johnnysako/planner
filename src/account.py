@@ -32,7 +32,7 @@ class Account:
     def withdrawl_rmd(self, rate):
         rmd = 0
         if rmd_applies(self.get_type()):
-            rmd = self.config["balance"] * rate/100
+            rmd = round(self.config["balance"] * rate/100, 2)
         self.config["balance"] = self.config["balance"] - rmd
         return rmd 
         
@@ -46,7 +46,7 @@ class Account:
         
     def process_growth(self, rate, interest_only=False):
         if interest_only:
-            new_balance = self.config["balance"] * (1 + rate/100)
+            new_balance = round(self.config["balance"] * (1 + rate/100), 2)
         else:
-            new_balance = self.config["balance"] * (1 + rate/100) + self.config["annual_additions"]
+            new_balance = round(self.config["balance"] * (1 + rate/100) + self.config["annual_additions"], 2)
         self.config["balance"] = new_balance
