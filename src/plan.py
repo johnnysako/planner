@@ -1,5 +1,6 @@
 from src.account import Account
 from src.owner import Owner
+from src.expenses import Expenses
 
 def owner_is_not_known(name, owners):
     for owner in owners:
@@ -18,11 +19,15 @@ def process_accounts(data, year, self, growth):
             account.process_growth(self.config["average_growth"])
         data.append(account.get_balance())
 
+def append_expenses(data, year, expenses):
+    data.append(expenses.get_expenses(year))        
+
 class Plan:
-    def __init__(self, config, owners, accounts):
+    def __init__(self, config, owners, accounts, expenses):
         self.config = config
         self.accounts = accounts
         self.owners = owners
+        self.expenses = expenses
 
     def get_growth(self):
         return self.config["average_growth"]
@@ -34,7 +39,7 @@ class Plan:
         return True
 
     def get_header(self):
-        header = ["Year", "Income"]
+        header = ["Year", "Income", "Expenses"]
         for account in self.accounts:
             header.append(account.get_name())
         
@@ -48,6 +53,7 @@ class Plan:
             balances[i].append(start_year+i)
 
             append_income(balances[i], start_year+i, self.owners)
+            append_expenses(balances[i], start_year+i, self.expenses)
             process_accounts(balances[i], start_year+i, self, i!=0)
 
         return balances
