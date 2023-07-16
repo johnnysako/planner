@@ -31,7 +31,7 @@ owners = []
 owners.append(Owner({
     "name": "Jill",
     "birth_year": 1977,
-    "income": 56789,
+    "income": 2000,
     "retirement_age": 65,
     "social_security": 5678,
     "start_social_security": 70
@@ -39,7 +39,7 @@ owners.append(Owner({
 owners.append(Owner({
     "name": "Jerry",
     "birth_year": 1977,
-    "income": 56789,
+    "income": 1000,
     "retirement_age": 65,
     "social_security": 5678,
     "start_social_security": 70
@@ -51,15 +51,15 @@ def test_can_initialize_plan():
 
 def test_can_get_header():
     plan = Plan(config, owners, accounts)
-    assert plan.get_header() == "Jerry's Roth,Jill's Investment"
+    assert plan.get_header() == ["Year", "Income", "Jerry's Roth", "Jill's Investment"]
 
 def test_can_fill_table_for_one_year():
     plan = Plan(config, owners, accounts)
-    assert plan.process_growth(0) == [[4000, 10000]]
+    assert plan.process_growth(2023, 0) == [[2023, 3000, 4000, 10000]]
 
 def test_can_fill_table_for_two_years():
     plan = Plan(config, owners, accounts)
-    assert plan.process_growth(1) == [[4000, 10000], [6240.0, 15600.0]]
+    assert plan.process_growth(2023, 1) == [[2023, 3000, 4000, 10000], [2024, 3000, 6240.0, 15600.0]]
 
 def test_owners_do_not_match_accounts():
     bad_owners = []

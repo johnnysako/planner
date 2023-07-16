@@ -6,6 +6,18 @@ def owner_is_not_known(name, owners):
         if owner.get_name() == name: return False
     return True
 
+def append_income(data, year, owners):
+    income = 0
+    for owner in owners:
+        income+=owner.get_income(True, year)
+    data.append(income)
+
+def process_accounts(data, year, self, growth):
+    for account in self.accounts:
+        if growth:
+            account.process_growth(self.config["average_growth"])
+        data.append(account.get_balance())
+
 class Plan:
     def __init__(self, config, owners, accounts):
         self.config = config
@@ -22,21 +34,20 @@ class Plan:
         return True
 
     def get_header(self):
-        header_string = ""
+        header = ["Year", "Income"]
         for account in self.accounts:
-            header_string += account.get_name() + ","
+            header.append(account.get_name())
         
-        header_string = header_string.rstrip(',')
-        return header_string
+        return header
 
-    def process_growth(self, years):
+    def process_growth(self, start_year, years):
         balances = []
 
         for i in range(years+1):
             balances.append([])
-            for account in self.accounts:
-                if i>=1:
-                    account.process_growth(self.config["average_growth"])
-                balances[i].append(account.get_balance())
+            balances[i].append(start_year+i)
+
+            append_income(balances[i], start_year+i, self.owners)
+            process_accounts(balances[i], start_year+i, self, i!=0)
+
         return balances
-                
