@@ -34,7 +34,7 @@ def test_can_get_header():
     expenses = Expenses(expense_table)
 
     plan = Plan(config, owners, accounts, expenses, rmd)
-    assert plan.get_header() == ["Year", "Income", "Rmd", "Expenses"]
+    assert plan.get_header() == ["Year", "Income", "Rmd", "Expenses", "Taxes"]
 
 def test_can_fill_table_for_one_year():
     rmd_table = []
@@ -99,7 +99,7 @@ def test_can_fill_table_for_one_year():
     expenses = Expenses(expense_table)
 
     plan = Plan(config, owners, accounts, expenses, rmd)
-    assert plan.process_growth(2022, 0) == [[2022, 3000, 0, 22000, 4000, 10000]]
+    assert plan.process_growth(2022, 0) == [[2022, 3000, 0, 22000, 0, 4000, 10000]]
 
 def test_can_fill_table_for_two_years():
     rmd_table = []
@@ -164,7 +164,7 @@ def test_can_fill_table_for_two_years():
     expenses = Expenses(expense_table)
 
     plan = Plan(config, owners, accounts, expenses, rmd)
-    assert plan.process_growth(2022, 1) == [[2022, 3000, 0, 22000, 4000, 10000], [2023, 3000, 0, 2000, 6240.0, 15600.0]]
+    assert plan.process_growth(2022, 1) == [[2022, 3000, 0, 22000, 0, 4000, 10000], [2023, 3000, 0, 2000, 0, 6240.0, 15600.0]]
 
 def test_owners_do_not_match_accounts():
     rmd_table = []
@@ -309,7 +309,7 @@ def test_expenses_can_be_empty():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(config, owners, accounts, empty_expenses, rmd)
-    assert plan.process_growth(2022, 0) == [[2022, 3000, 0, 0, 4000, 10000]]
+    assert plan.process_growth(2022, 0) == [[2022, 3000, 0, 0, 0, 4000, 10000]]
 
 def test_account_growth_only_interest_when_owner_retired():
     rmd_table = []
@@ -339,7 +339,7 @@ def test_account_growth_only_interest_when_owner_retired():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(config, owners, accounts, empty_expenses, rmd)
-    assert plan.process_growth(2015, 1) == [[2015, 1000, 0, 0, 4000], [2016, 0, 0, 0, 4240]]
+    assert plan.process_growth(2015, 1) == [[2015, 1000, 0, 0, 0, 4000], [2016, 0, 0, 0, 0, 4240]]
 
 def test_calculates_rmds_of_accounts():
     accounts = []
@@ -411,7 +411,7 @@ def test_calculates_rmds_of_accounts():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(config, owners, accounts, empty_expenses, rmd)
-    assert plan.process_growth(2015, 0) == [[2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
+    assert plan.process_growth(2015, 0) == [[2015, 2000, 2960, 0, 0, 4000, 7040.0, 10000, 18000]]
 
 def test_calculates_rmds_of_accounts_several_years():
     accounts = []
@@ -483,4 +483,4 @@ def test_calculates_rmds_of_accounts_several_years():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(config, owners, accounts, empty_expenses, rmd)
-    assert plan.process_growth(2014, 1) == [[2014, 3000, 800.0, 0, 4000, 7200.0, 10000, 20000.0], [2015, 2000, 2864.0, 0, 4240.0, 6716.16, 15600, 24080.0]]
+    assert plan.process_growth(2014, 1) == [[2014, 3000, 800.0, 0, 0, 4000, 7200.0, 10000, 20000.0], [2015, 2000, 2864.0, 0, 0, 4240.0, 6716.16, 15600, 24080.0]]

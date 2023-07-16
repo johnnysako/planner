@@ -39,7 +39,7 @@ class Account:
     def withdrawl(self, amount):
         new_balance = self.config["balance"] - amount
         if new_balance >= 0:
-            self.config.update({"balance": new_balance})
+            self.config["balance"] = new_balance
             return True
         else:
             return False
