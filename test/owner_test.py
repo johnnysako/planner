@@ -106,3 +106,17 @@ def test_get_different_life():
 
     owner = Owner(config)
     assert owner.get_life() == 115
+
+def test_is_retired():
+    config = {
+        "birth_year": 1950,
+        "income": 56789,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }
+
+    owner = Owner(config)
+
+    assert owner.is_retired(2015) == False
+    assert owner.is_retired(2016) == True

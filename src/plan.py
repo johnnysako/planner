@@ -13,10 +13,17 @@ def append_income(data, year, owners):
         income+=owner.get_income(True, year)
     data.append(income)
 
+def owner_is_retired(owner_name, self, year):
+    for owner in self.owners:
+        if owner.get_name() == owner_name:
+            return owner.is_retired(year)
+    return False
+
 def process_accounts(data, year, self, growth):
     for account in self.accounts:
+        retired = owner_is_retired(account.get_owner(), self, year)
         if growth:
-            account.process_growth(self.config["average_growth"])
+            account.process_growth(self.config["average_growth"], retired)
         data.append(account.get_balance())
 
 def append_expenses(data, year, expenses):

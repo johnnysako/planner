@@ -292,3 +292,94 @@ def test_expenses_can_be_empty():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(config, owners, accounts, empty_expenses)
     assert plan.process_growth(2022, 0) == [[2022, 3000, 0, 4000, 10000]]
+
+def test_account_growth_only_interest_when_owner_retired():
+    accounts = []
+    accounts.append(Account({
+        "name": "Jerry's Roth",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Investment",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+    config = {
+        "average_growth": 6
+    }
+    owners = []
+    owners.append(Owner({
+        "name": "Jerry",
+        "birth_year": 1950,
+        "income": 1000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+    empty_expense_table = []
+    empty_expenses = Expenses(empty_expense_table)
+    plan = Plan(config, owners, accounts, empty_expenses)
+    assert plan.process_growth(2015, 1) == [[2015, 0, 0, 4000], [2016, 0, 0, 4240]]
+
+# def test_calculates_rmds_of_accounts():
+#     accounts = []
+#     accounts.append(Account({
+#         "name": "Jerry's Roth",
+#         "balance": 4000,
+#         "annual_additions":2000,
+#         "type": "Roth",
+#         "withdrawl priority": 1,
+#         "owner": "Jerry",
+#         "trail_with_rmd": False
+#     }))
+#     accounts.append(Account({
+#         "name": "Jerry's IRA",
+#         "balance": 8000,
+#         "annual_additions":2000,
+#         "type": "IRA",
+#         "withdrawl priority": 4,
+#         "owner": "Jerry",
+#         "trail_with_rmd": False
+#     }))
+#     accounts.append(Account({
+#         "name": "Jill's Investment",
+#         "balance": 10000,
+#         "annual_additions": 5000,
+#         "type": "Investment",
+#         "withdrawl priority": 2,
+#         "owner": "Jill",
+#         "trail_with_rmd": False
+#     }))
+#     accounts.append(Account({
+#         "name": "Jill's 401k",
+#         "balance": 20000,
+#         "annual_additions": 5000,
+#         "type": "401K",
+#         "withdrawl priority": 3,
+#         "owner": "Jill",
+#         "trail_with_rmd": False
+#     }))
+#     config = {
+#         "average_growth": 6
+#     }
+#     owners = []
+#     owners.append(Owner({
+#         "name": "Jill",
+#         "birth_year": 1950,
+#         "income": 2000,
+#         "retirement_age": 65,
+#         "social_security": 5678,
+#         "start_social_security": 70
+#     }))
+#     owners.append(Owner({
+#         "name": "Jerry",
+#         "birth_year": 1949,
+#         "income": 1000,
+#         "retirement_age": 65,
+#         "social_security": 5678,
+#         "start_social_security": 70
+#     }))
+#     empty_expense_table = []
+#     empty_expenses = Expenses(empty_expense_table)
+#     plan = Plan(config, owners, accounts, empty_expenses)
+#     assert plan.process_growth(2022, 0) == [[2022, 3000, 0, 4000, 10000]]
