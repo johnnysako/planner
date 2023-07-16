@@ -23,6 +23,9 @@ class Account:
     def get_type(self):
         return self.config["type"]
 
+    def is_taxable(self):
+        return self.get_type() == "Investment"
+
     def get_withdrawl_priority(self):
         return self.config["withdrawl_priority"]
 

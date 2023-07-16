@@ -168,3 +168,39 @@ def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     account = Account(config)
     assert account.withdrawl_rmd(10) == 0
     assert account.get_balance() == 5000
+
+def test_is_taxable_roth_false():
+    config = {
+        "type": "Roth",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.is_taxable() == False
+
+def test_is_taxable_IRA_false():
+    config = {
+        "type": "IRA",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.is_taxable() == False
+
+def test_is_taxable_401k_false():
+    config = {
+        "type": "401K",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.is_taxable() == False
+
+def test_is_taxable_investment_true():
+    config = {
+        "type": "Investment",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.is_taxable() == True

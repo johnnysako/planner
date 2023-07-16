@@ -34,8 +34,12 @@ def append_rmd(data, year, self):
 def append_expenses(data, year, expenses):
     data.append(expenses.get_expenses(year))        
 
-def append_tax(data):
-    data.append(0)
+def append_tax(data, self):
+    taxable = 0
+    for account in self.accounts:
+        if account.is_taxable():
+            taxable += round(account.get_balance() * self.config["average_growth"]/100, 2)
+    data.append(self.tax.calculate(taxable))
 
 def append_accounts(data, year, self, growth):
     for account in self.accounts:
@@ -45,12 +49,13 @@ def append_accounts(data, year, self, growth):
         data.append(account.get_balance())
 
 class Plan:
-    def __init__(self, config, owners, accounts, expenses, rmd):
+    def __init__(self, config, owners, accounts, expenses, rmd, tax):
         self.config = config
         self.accounts = accounts
         self.owners = owners
         self.expenses = expenses
         self.rmd = rmd
+        self.tax = tax
 
     def get_growth(self):
         return self.config["average_growth"]
@@ -61,10 +66,11 @@ class Plan:
         return True
 
     def get_header(self):
-        header = ["Year", "Income", "Rmd", "Expenses", "Taxes"]
+        header = ["Year", "Income", "Rmd", "Expenses"]
         for account in self.accounts:
             header.append(account.get_name())
         
+        header.append("Taxes")
         return header
 
     def process_growth(self, start_year, years):
@@ -77,7 +83,7 @@ class Plan:
             append_income(balances[i], start_year+i, self.owners)
             append_rmd(balances[i], start_year+i, self)
             append_expenses(balances[i], start_year+i, self.expenses)
-            append_tax(balances[i])
             append_accounts(balances[i], start_year+i, self, i!=0)
+            append_tax(balances[i], self)
 
         return balances
