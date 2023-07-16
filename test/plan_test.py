@@ -413,3 +413,76 @@ def test_calculates_rmds_of_accounts():
     plan = Plan(config, owners, accounts, empty_expenses, rmd)
     assert plan.process_growth(2015, 0) == [[2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
     assert plan.process_growth(2014, 0) == [[2014, 3000, 0, 0, 4000, 7040.0, 10000, 18000], [2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
+
+def test_calculates_rmds_of_accounts_several_years():
+    accounts = []
+    accounts.append(Account({
+        "name": "Jerry's Roth",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Roth",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jerry's IRA",
+        "balance": 8000,
+        "annual_additions":2000,
+        "type": "IRA",
+        "withdrawl priority": 4,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jill's Investment",
+        "balance": 10000,
+        "annual_additions": 5000,
+        "type": "Investment",
+        "withdrawl priority": 2,
+        "owner": "Jill",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jill's 401k",
+        "balance": 20000,
+        "annual_additions": 5000,
+        "type": "401K",
+        "withdrawl priority": 3,
+        "owner": "Jill",
+        "trail_with_rmd": False
+    }))
+    config = {
+        "average_growth": 6
+    }
+    owners = []
+    owners.append(Owner({
+        "name": "Jill",
+        "birth_year": 1950,
+        "income": 2000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+    owners.append(Owner({
+        "name": "Jerry",
+        "birth_year": 1949,
+        "income": 1000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+
+    rmd_table = [
+        {"rate": 10,
+         "age": 65},
+        {"rate": 12,
+         "age": 66}
+    ]
+    rmd = Rmd(rmd_table)
+
+    empty_expense_table = []
+    empty_expenses = Expenses(empty_expense_table)
+    plan = Plan(config, owners, accounts, empty_expenses, rmd)
+    assert plan.process_growth(2015, 0) == [[2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
+    assert plan.process_growth(2014, 0) == [[2014, 3000, 800, 0, 4000, 7200, 10000, 18000], [2015, 2000, 2960, 0, 4000, 7040.0, 10000, 18000]]
