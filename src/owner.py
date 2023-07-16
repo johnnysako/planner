@@ -24,7 +24,7 @@ class Owner:
         return year-self.config["birth_year"] > self.config["retirement_age"]
 
     def get_income(self, include_social_security, year):
-        if self.get_age(year) < self.get_retirement_age():
+        if not self.is_retired(year):
             return self.config["income"]
         elif include_social_security and self.get_age(year) >= self.config["start_social_security"]:
             return self.get_social_security()

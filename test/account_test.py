@@ -158,3 +158,13 @@ def test_withdrawl_negative_adds():
     account = Account(config)
     account.withdrawl(-1000)
     assert account.get_balance() == 6000
+
+def test_withdrawl_rmd_does_not_change_balance_for_Roth():
+    config = {
+        "type": "Roth",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.withdrawl_rmd(10) == 0
+    assert account.get_balance() == 5000

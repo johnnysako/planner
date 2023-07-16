@@ -1,3 +1,10 @@
+def rmd_applies(account_type):
+    rmd_types = ["401K", "IRA"]
+    for type in rmd_types:
+        if type == account_type:
+            return True
+    return False
+
 class Account:
     def __init__(self, config):
         valid_types = ["401K", "Roth", "IRA", "Investment"]
@@ -22,6 +29,13 @@ class Account:
     def get_balance(self):
         return self.config["balance"]
 
+    def withdrawl_rmd(self, rate):
+        rmd = 0
+        if rmd_applies(self.get_type()):
+            rmd = self.config["balance"] * rate/100
+        self.config["balance"] = self.config["balance"] - rmd
+        return rmd 
+        
     def withdrawl(self, amount):
         new_balance = self.config["balance"] - amount
         if new_balance >= 0:

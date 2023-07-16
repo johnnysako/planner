@@ -72,7 +72,8 @@ def test_get_income():
 
     owner = Owner(config)
     assert owner.get_income(True, 2010) == 56789
-    assert owner.get_income(True, 2042) == 0    
+    assert owner.get_income(True, 2042) == 56789 
+    assert owner.get_income(True, 2043) == 0    
     assert owner.get_income(True, 2046) == 0    
     assert owner.get_income(True, 2047) == 5678
 
@@ -87,7 +88,7 @@ def test_get_income_no_social_security():
 
     owner = Owner(config)
     assert owner.get_income(False, 2010) == 56789
-    assert owner.get_income(False, 2042) == 0    
+    assert owner.get_income(False, 2043) == 0    
     assert owner.get_income(False, 2046) == 0    
     assert owner.get_income(False, 2047) == 0
 

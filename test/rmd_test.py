@@ -7,7 +7,7 @@ def test_can_initialize_rmd():
         "age": 5
     }]
     rmd = Rmd(config)
-    assert rmd.getRate(5) == 5
+    assert rmd.get_rate(5) == 5
 
 
 def test_can_initialize_with_different_config():
@@ -16,7 +16,7 @@ def test_can_initialize_with_different_config():
         "age": 4
     }]
     rmd = Rmd(config)
-    assert rmd.getRate(4) == 4
+    assert rmd.get_rate(4) == 4
 
 
 def test_gets_rate_for_age():
@@ -25,7 +25,7 @@ def test_gets_rate_for_age():
         "age": 4
     }]
     rmd = Rmd(config)
-    assert rmd.getRate(4) == 5
+    assert rmd.get_rate(4) == 5
 
 
 def test_works_with_an_array():
@@ -36,8 +36,8 @@ def test_works_with_an_array():
          "age": 6}
     ]
     rmd = Rmd(config)
-    assert rmd.getRate(4) == 5
-    assert rmd.getRate(6) == 7
+    assert rmd.get_rate(4) == 5
+    assert rmd.get_rate(6) == 7
 
 
 def test_returns_zero_when_no_entry():
@@ -48,4 +48,4 @@ def test_returns_zero_when_no_entry():
          "age": 6}
     ]
     rmd = Rmd(config)
-    assert rmd.getRate(30) == 0
+    assert rmd.get_rate(30) == 0
