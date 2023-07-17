@@ -6,6 +6,7 @@ from src.plan import Plan
 from src.rmd import Rmd
 from src.tax import Tax
 from src.expenses import Expenses
+from src.expense import Expense
 from src.account import Account
 from src.owner import Owner
 
@@ -28,13 +29,16 @@ def load_constants():
     for o in json.load(f)["owners"]:
         owners.append(Owner(o))
 
-    return rmd, tax, owners 
+    f = open('expenses.json')
+    expense = []
+    for e in json.load(f)['expenses']:
+        expense.append(Expense(e))
+    expenses = Expenses(expense)
+
+    return rmd, tax, owners, expenses
 
 def main():
-    rmd, tax, owners = load_constants()
-
-    empty_expense_table = []
-    empty_expenses = Expenses(empty_expense_table)
+    rmd, tax, owners, expenses = load_constants()
 
     data_for_analysis = []
 
@@ -46,7 +50,7 @@ def main():
         for a in json.load(f)["accounts"]:
             accounts.append(Account(a))
 
-        plan = Plan(owners, accounts, empty_expenses, rmd, tax)
+        plan = Plan(owners, accounts, expenses, rmd, tax)
 
         data = []
         data.append(plan.get_header())
