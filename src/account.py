@@ -7,7 +7,7 @@ def rmd_applies(account_type):
 
 class Account:
     def __init__(self, config):
-        valid_types = ["401K", "Roth", "IRA", "Investment"]
+        valid_types = ["401K", "Roth", "IRA", "Investment", "HSA"]
         for type in valid_types:
             if type == config["type"]:
                 self.config = config

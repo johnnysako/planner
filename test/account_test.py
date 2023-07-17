@@ -169,6 +169,16 @@ def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     assert account.withdrawl_rmd(10) == 0
     assert account.get_balance() == 5000
 
+def test_withdrawl_rmd_does_not_change_balance_for_hsa():
+    config = {
+        "type": "HSA",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.withdrawl_rmd(10) == 0
+    assert account.get_balance() == 5000
+
 def test_is_taxable_roth_false():
     config = {
         "type": "Roth",
@@ -204,3 +214,12 @@ def test_is_taxable_investment_true():
 
     account = Account(config)
     assert account.is_taxable() == True
+
+def test_is_taxable_hsa_false():
+    config = {
+        "type": "HSA",
+        "balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.is_taxable() == False
