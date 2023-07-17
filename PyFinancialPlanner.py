@@ -11,39 +11,50 @@ from src.owner import Owner
 
 import json
 import csv
+import numpy as np
 
-def main():
-    """ Main program """
-    f = open('config.json')
-    config = json.load(f)
-
-    f = open('accounts.json')
-    accounts = []
-    for a in json.load(f)["accounts"]:
-        accounts.append(Account(a))
-
+def load_constants():
     f = open('rmd.json')
     rmd = Rmd(json.load(f)["rmd"])
 
     f = open('tax.json')
     tax = Tax(json.load(f)["tax"])
 
+    f = open('config.json')
+    config = json.load(f)
+
     f = open('owners.json')
     owners = []
     for o in json.load(f)["owners"]:
         owners.append(Owner(o))
 
+    return rmd, tax, config, owners 
+
+def main():
+    rmd, tax, config, owners = load_constants()
+
+    rates = np.random.normal(config["average_growth"], 12.0, 100)
+
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
 
-    plan = Plan(config, owners, accounts, empty_expenses, rmd, tax)
+    data_for_analysis = []
 
-    data = []
-    data.append(plan.get_header())
-    data += plan.process_growth(2023, 64)
+    for rate in rates:
+        config["average_growth"] = rate
 
-    wtr = csv.writer(open('out.csv', 'w'), delimiter=',', lineterminator='\n')
-    for x in data : wtr.writerow (x)
+        f = open('accounts.json')
+        accounts = []
+        for a in json.load(f)["accounts"]:
+            accounts.append(Account(a))
+
+        plan = Plan(config, owners, accounts, empty_expenses, rmd, tax)
+
+        data = []
+        data.append(plan.get_header())
+        data += plan.process_growth(2023, 64)
+
+        data_for_analysis.append(data)
 
     return 0
 
