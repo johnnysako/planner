@@ -40,7 +40,7 @@ def append_tax(data, self, rmd):
     for account in self.accounts:
         if account.is_taxable():
             taxable += round(account.get_balance() * self.config["average_growth"]/100, 2)
-    data.append(self.tax.calculate(taxable+rmd))
+    data.append(round(self.tax.calculate(taxable+rmd),2))
 
 def append_accounts(data, year, self, growth):
     for account in self.accounts:

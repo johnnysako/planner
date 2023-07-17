@@ -10,6 +10,7 @@ from src.account import Account
 from src.owner import Owner
 
 import json
+import csv
 
 def main():
     """ Main program """
@@ -37,8 +38,12 @@ def main():
 
     plan = Plan(config, owners, accounts, empty_expenses, rmd, tax)
 
-    print(plan.get_header())
-    print(plan.process_growth(2023, 5))
+    data = []
+    data.append(plan.get_header())
+    data += plan.process_growth(2023, 64)
+
+    wtr = csv.writer(open('out.csv', 'w'), delimiter=',', lineterminator='\n')
+    for x in data : wtr.writerow (x)
 
     return 0
 
