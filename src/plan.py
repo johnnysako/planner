@@ -35,34 +35,30 @@ def append_rmd(data, year, self):
 def append_expenses(data, year, expenses):
     data.append(expenses.get_expenses(year))        
 
-def append_tax(data, self, rmd):
+def append_tax(data, self, rate, rmd):
     taxable = 0
     for account in self.accounts:
         if account.is_taxable():
-            taxable += round(account.get_balance() * self.config["average_growth"]/100, 2)
-    data.append(round(self.tax.calculate(taxable+rmd),2))
+            taxable += round(account.get_balance() * rate/100, 2)
+    data.append(round(self.tax.calculate(taxable+rmd), 2))
 
-def append_accounts(data, year, self, growth):
+def append_accounts(data, year, self, rate, growth):
     total = 0
     for account in self.accounts:
         retired = owner_is_retired(account, self, year)
         if growth:
-            account.process_growth(self.config["average_growth"], retired)
+            account.process_growth(rate, retired)
         data.append(account.get_balance())
         total += account.get_balance()
     return total
 
 class Plan:
-    def __init__(self, config, owners, accounts, expenses, rmd, tax):
-        self.config = config
+    def __init__(self, owners, accounts, expenses, rmd, tax):
         self.accounts = accounts
         self.owners = owners
         self.expenses = expenses
         self.rmd = rmd
         self.tax = tax
-
-    def get_growth(self):
-        return self.config["average_growth"]
 
     def verify_config(self):
         for account in self.accounts:
@@ -77,7 +73,7 @@ class Plan:
         header+= ["Taxes", "Sum of Accounts"]
         return header
 
-    def process_growth(self, start_year, years):
+    def process_growth(self, start_year, years, rates):
         balances = []
 
         for i in range(years+1):
@@ -87,8 +83,8 @@ class Plan:
             append_income(balances[i], start_year+i, self.owners)
             rmd = append_rmd(balances[i], start_year+i, self)
             append_expenses(balances[i], start_year+i, self.expenses)
-            total = append_accounts(balances[i], start_year+i, self, i!=0)
-            append_tax(balances[i], self, rmd)
+            total = append_accounts(balances[i], start_year+i, self, rates[i], i!=0)
+            append_tax(balances[i], self, rates[i], rmd)
             balances[i].append(total)
 
         return balances

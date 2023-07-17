@@ -12,6 +12,9 @@ from src.owner import Owner
 import json
 import csv
 import numpy as np
+import matplotlib.pyplot as plt
+
+years_to_process = 64
 
 def load_constants():
     f = open('rmd.json')
@@ -20,20 +23,15 @@ def load_constants():
     f = open('tax.json')
     tax = Tax(json.load(f)["tax"])
 
-    f = open('config.json')
-    config = json.load(f)
-
     f = open('owners.json')
     owners = []
     for o in json.load(f)["owners"]:
         owners.append(Owner(o))
 
-    return rmd, tax, config, owners 
+    return rmd, tax, owners 
 
 def main():
-    rmd, tax, config, owners = load_constants()
-
-    rates = np.random.normal(config["average_growth"], 12.0, 100)
+    rmd, tax, owners = load_constants()
 
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
@@ -41,21 +39,35 @@ def main():
     data_for_analysis = []
 
     for rate in rates:
-        config["average_growth"] = rate
+        rates = np.random.normal(7.0, 12.0, years_to_process)
 
         f = open('accounts.json')
         accounts = []
         for a in json.load(f)["accounts"]:
             accounts.append(Account(a))
 
-        plan = Plan(config, owners, accounts, empty_expenses, rmd, tax)
+        plan = Plan(owners, accounts, empty_expenses, rmd, tax)
 
         data = []
         data.append(plan.get_header())
-        data += plan.process_growth(2023, 64)
+        data += plan.process_growth(2023, rates)
 
         data_for_analysis.append(data)
+        print(round(rate,2))
 
+    for data in data_for_analysis:
+        years = []
+        total = []
+        for year in data[1:]:
+            years.append(year[0])
+            total.append(year[-1])
+
+        print(round(total[-1],2))
+        plt.plot(years, total)
+
+    plt.xlabel('Year')
+    plt.ylabel('Net Worth')
+    plt.show()
     return 0
 
 if __name__ == "__main__":
