@@ -73,7 +73,7 @@ class Plan:
         header+= ["Taxes", "Sum of Accounts"]
         return header
 
-    def process_growth(self, start_year, years, rates):
+    def process_plan(self, start_year, years, rates):
         balances = []
 
         for i in range(years+1):

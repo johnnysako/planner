@@ -54,7 +54,7 @@ def main():
 
         data = []
         data.append(plan.get_header())
-        data += plan.process_growth(2023, years_to_process, rates)
+        data += plan.process_plan(2023, years_to_process, rates)
 
         data_for_analysis.append(data)
 
