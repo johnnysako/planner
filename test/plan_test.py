@@ -6,6 +6,8 @@ from src.expenses import Expenses
 from src.rmd import Rmd
 from src.tax import Tax
 
+import pytest
+
 expty_tax = [
     {
         "max_tax_previous": 0,
@@ -593,3 +595,23 @@ def test_calculates_tax_including_rmds():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, tax)
     assert plan.process_plan(2014, 1, rates) == [[2014, 3000, 800.0, 0, 4000, 7200.0, 10000, 20000.0, 140.0, 41200.0], [2015, 2000, 2864.0, 0, 4240.0, 6716.16, 15600, 24080.0, 380.0, 50636.16]]
+
+@pytest.mark.skip()
+def test_expenses_pulls_from_account():
+    assert True
+
+@pytest.mark.skip()
+def test_expenses_when_non_sufficient_pulls_from_next_account():
+    assert True
+
+@pytest.mark.skip()
+def test_expenses_when_non_sufficient_pulls_from_next_account():
+    assert True
+
+@pytest.mark.skip()
+def test_pulls_equally_from_all_accounts_at_same_priority():
+    assert True
+
+@pytest.mark.skip()
+def test_pulls_plan_fails_when_no_money_left():
+    assert True
