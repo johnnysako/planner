@@ -38,8 +38,8 @@ def main():
 
     data_for_analysis = []
 
-    for rate in rates:
-        rates = np.random.normal(7.0, 12.0, years_to_process)
+    for i in range(100):
+        rates = np.random.normal(7.0, 12.0, years_to_process+1)
 
         f = open('accounts.json')
         accounts = []
@@ -50,10 +50,9 @@ def main():
 
         data = []
         data.append(plan.get_header())
-        data += plan.process_growth(2023, rates)
+        data += plan.process_growth(2023, years_to_process, rates)
 
         data_for_analysis.append(data)
-        print(round(rate,2))
 
     for data in data_for_analysis:
         years = []
@@ -62,7 +61,6 @@ def main():
             years.append(year[0])
             total.append(year[-1])
 
-        print(round(total[-1],2))
         plt.plot(years, total)
 
     plt.xlabel('Year')

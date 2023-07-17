@@ -43,3 +43,19 @@ def test_can_get_different_expense_for_year():
     assert expense.get_expense(2005) == 0
     assert expense.get_expense(2006) == 0
     assert expense.get_expense(2007) == 200
+
+def test_expense_expires():
+    config = {
+        "starting_year": 2004,
+        "end_year": 2007,
+        "frequency": 1,
+        "ammount": 200
+    }
+
+    expense = Expense(config)
+    assert expense.get_expense(2003) == 0
+    assert expense.get_expense(2004) == 200
+    assert expense.get_expense(2005) == 200
+    assert expense.get_expense(2006) == 200
+    assert expense.get_expense(2007) == 200
+    assert expense.get_expense(2008) == 0
