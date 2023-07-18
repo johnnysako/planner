@@ -69,7 +69,7 @@ def main():
     data_for_analysis = []
 
     for i in range(1):
-        rates = np.random.normal(7.0, 12.0, years_to_process+1)
+        rates = np.random.normal(6.0, 12.0, years_to_process+1)
 
         f = open('accounts.json')
         accounts = []
