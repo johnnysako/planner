@@ -17,6 +17,7 @@ import pandas as pd
 import datetime
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 
 years_to_process = 64
@@ -49,25 +50,32 @@ def sort_data(data_for_analysis):
 
 def plot_failed_plans(failed_plans, pdf):
     for index, data in enumerate(failed_plans):
-        data.set_index('Year').plot.line()
+        fails_in_year = data['Year'].where(data['Sum of Accounts'] == 0).min()
+        data.set_index('Year').plot.line(figsize=(10,6), fontsize=12)
+        ax = plt.gca()
         plt.ticklabel_format(useOffset=False, style='plain')
-        plt.title('Failed Iteration ' + str(index+1))
+        ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,}'))
+        plt.title('Failed Iteration ' + str(index+1) + ' in year ' + str(fails_in_year))
         pdf.savefig()
         plt.close()
 
 def plot_monte_carlo(data_for_analysis, failed_plans, pdf):
-    fig = plt.figure(figsize=(7.5,7.5), dpi=300)
+    fig = plt.figure(figsize=(10,6), dpi=300)
     for data in data_for_analysis:
         plt.plot(data['Year'], data['Sum of Accounts'])
         if data.iloc[-1]['Sum of Accounts']==0:
             failed_plans.append(data)
     
+    ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
-    plt.xlabel('Year')
-    plt.ylabel('Net Worth')
+    ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,}'))
+    plt.xlabel('Year', fontsize=12)
+    plt.xticks(fontsize=12)
+    plt.ylabel('Net Worth', fontsize=12)
+    plt.yticks(fontsize=12)
     plt.title('Monte Carlo Analysis')
     pdf.savefig()
-    plt.close()
+    plt.close(fig)
 
     return failed_plans
 
@@ -75,8 +83,7 @@ def plot_results(data_for_analysis):
     with PdfPages('financial_analysis.pdf') as pdf:
         failed_plans = []
         plot_monte_carlo(data_for_analysis, failed_plans, pdf)
-
-        # plot_failed_plans(failed_plans, pdf)
+        plot_failed_plans(failed_plans, pdf)
 
         d = pdf.infodict()
         d['Title'] = 'Financial Plan'
