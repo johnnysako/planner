@@ -33,23 +33,33 @@ def append_rmd(data, year, self):
     return rmd
 
 def append_expenses(data, year, expenses):
-    data.append(expenses.get_expenses(year))        
+    value = expenses.get_expenses(year)
+    data.append(value)
+    return value
 
-def append_tax(data, self, rate, rmd):
+def calculate_tax(data, self, rate, rmd):
     taxable = 0
     for account in self.accounts:
         if account.is_taxable():
-            taxable += round(account.get_balance() * rate/100, 2)
-    data.append(round(self.tax.calculate(taxable+rmd), 2))
+            taxable += round((account.get_balance()) * rate/100, 2)
+    return round(self.tax.calculate(taxable+rmd), 2)
 
-def append_accounts(data, year, self, rate, growth):
+def append_accounts(data, year, self, rate, expense, growth):
     total = 0
     for account in self.accounts:
         retired = owner_is_retired(account, self, year)
         if growth:
             account.process_growth(rate, retired)
-        data.append(account.get_balance())
-        total += account.get_balance()
+        if expense:
+            if account.withdrawl(expense):
+                expense = 0
+            else:
+                balance = account.get_balance()
+                expense -= balance
+                account.withdrawl(balance)
+        balance = account.get_balance()
+        data.append(balance)
+        total += balance
     return total
 
 class Plan:
@@ -82,9 +92,10 @@ class Plan:
 
             append_income(balances[i], start_year+i, self.owners)
             rmd = append_rmd(balances[i], start_year+i, self)
-            append_expenses(balances[i], start_year+i, self.expenses)
-            total = append_accounts(balances[i], start_year+i, self, rates[i], i!=0)
-            append_tax(balances[i], self, rates[i], rmd)
+            expense = append_expenses(balances[i], start_year+i, self.expenses)
+            tax = calculate_tax(balances[i], self, rates[i], rmd)
+            total = append_accounts(balances[i], start_year+i, self, rates[i], expense+tax, i!=0)
+            balances[i].append(tax)
             balances[i].append(total)
 
         return balances

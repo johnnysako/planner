@@ -40,7 +40,8 @@ class Account:
         return rmd 
         
     def withdrawl(self, amount):
-        new_balance = self.config["balance"] - amount
+        new_balance = round(self.config["balance"] - amount, 2)
+
         if new_balance >= 0:
             self.config["balance"] = new_balance
             return True

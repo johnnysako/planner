@@ -102,14 +102,14 @@ def test_can_fill_table_for_one_year():
     expense_table.append(Expense({
         "name": "Car",
         "need": True,
-        "ammount": 20000,
+        "ammount": 200,
         "starting_year": 2007,
         "frequency": 5
     }))
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax)
-    assert plan.process_plan(2022, 0, rates) == [[2022, 3000, 0, 22000, 4000, 10000, 0, 14000]]
+    assert plan.process_plan(2022, 0, rates) == [[2022, 3000, 0, 2200, 1800.0, 10000, 0.0, 11800.0]]
 
 def test_can_fill_table_for_two_years():
     rmd_table = []
@@ -163,14 +163,14 @@ def test_can_fill_table_for_two_years():
     expense_table.append(Expense({
         "name": "Car",
         "need": True,
-        "ammount": 20000,
+        "ammount": 200,
         "starting_year": 2007,
         "frequency": 5
     }))
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 3000, 0, 22000, 4000, 10000, 0, 14000], [2023, 3000, 0, 2000, 6240.0, 15600.0, 0, 21840.0]]
+    assert plan.process_plan(2022, 1, rates) == [[2022, 3000, 0, 2200, 1800.0, 10000, 0.0, 11800.0], [2023, 3000, 0, 2000, 1908.0, 15600.0, 0.0, 17508.0]]
 
 def test_owners_do_not_match_accounts():
     rmd_table = []
@@ -517,7 +517,7 @@ def test_can_include_tax_on_account_growth():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 1000, 0, 0, 4000, 10000, 60.0, 14000], [2023, 1000, 0, 0, 6240.0, 15600.0, 93.6, 21840.0]]
+    assert plan.process_plan(2022, 1, rates) == [[2022, 1000, 0, 0, 3940.0, 10000, 60.0, 13940.0], [2023, 1000, 0, 0, 6116.4, 15600.0, 60.0, 21716.4]]
 
 def test_calculates_tax_including_rmds():
     accounts = []
@@ -594,11 +594,52 @@ def test_calculates_tax_including_rmds():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, tax)
-    assert plan.process_plan(2014, 1, rates) == [[2014, 3000, 800.0, 0, 4000, 7200.0, 10000, 20000.0, 140.0, 41200.0], [2015, 2000, 2864.0, 0, 4240.0, 6716.16, 15600, 24080.0, 380.0, 50636.16]]
+    assert plan.process_plan(2014, 1, rates) == [[2014, 3000, 800.0, 0, 3860.0, 7200.0, 10000, 20000.0, 140.0, 41060.0], [2015, 2000, 2864.0, 0, 3745.2, 6716.16, 15600.0, 24080.0, 346.4, 50141.36]]
 
-@pytest.mark.skip()
 def test_expenses_pulls_from_account():
-    assert True
+    rmd_table = []
+    rmd = Rmd(rmd_table)
+    accounts = []
+    accounts.append(Account({
+        "name": "Investment Priority 1",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Investment",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+
+    owners = []
+    owners.append(Owner({
+        "name": "Jerry",
+        "birth_year": 1977,
+        "income": 0,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+
+    tax_table = [
+        {
+            "max_tax_previous": 0,
+            "rate": 10,
+            "cutoff": 100000
+        }
+    ]
+    tax = Tax(tax_table)
+    expense_table = []
+    expense_table.append(Expense({
+        "name": "Travel",
+        "need": True,
+        "ammount": 1000,
+        "starting_year": 2022,
+        "frequency": 1
+    }))
+    expenses = Expenses(expense_table)
+
+    plan = Plan(owners, accounts, expenses, rmd, tax)
+    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 1000, 2976, 24.0, 2976], [2023, 0, 0, 1000, 4136.7, 17.86, 4136.7]]
 
 @pytest.mark.skip()
 def test_expenses_when_non_sufficient_pulls_from_next_account():
