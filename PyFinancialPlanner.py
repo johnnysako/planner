@@ -56,6 +56,7 @@ def plot_failed_plans(failed_plans, pdf):
         plt.close()
 
 def plot_monte_carlo(data_for_analysis, failed_plans, pdf):
+    fig = plt.figure(figsize=(7.5,7.5), dpi=300)
     for data in data_for_analysis:
         plt.plot(data['Year'], data['Sum of Accounts'])
         if data.iloc[-1]['Sum of Accounts']==0:
@@ -75,7 +76,7 @@ def plot_results(data_for_analysis):
         failed_plans = []
         plot_monte_carlo(data_for_analysis, failed_plans, pdf)
 
-        plot_failed_plans(failed_plans, pdf)
+        # plot_failed_plans(failed_plans, pdf)
 
         d = pdf.infodict()
         d['Title'] = 'Financial Plan'
