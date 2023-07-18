@@ -40,22 +40,20 @@ def load_constants():
     return rmd, tax, owners, expenses
 
 def sort_data(data_for_analysis):
-    sorted_data = sorted(data_for_analysis, key=lambda x: x[-1][-1], reverse=True)
+    sorted_data = sorted(data_for_analysis, key=lambda x: x.iloc[-1]['Sum of Accounts'], reverse=True)
     return sorted_data[5:]
+
+def plot_year(data):
+    data.set_index('Year').plot.line()
+    plt.ticklabel_format(useOffset=False, style='plain')
+    plt.show()
 
 def plot_results(data_for_analysis):
     failed_plans = 0
     for data in data_for_analysis:
-        years = []
-        total = []
-        for year in data[1:]:
-            years.append(year[0])
-            total.append(year[-1])
-
-        if total[-1]==0:
+        plt.plot(data['Year'], data['Sum of Accounts'])
+        if data.iloc[-1]['Sum of Accounts']==0:
             failed_plans+=1
-
-        plt.plot(years, total)
     
     print("Failed Plans:", failed_plans)
     plt.ticklabel_format(useOffset=False, style='plain')
@@ -68,7 +66,7 @@ def main():
 
     data_for_analysis = []
 
-    for i in range(1):
+    for i in range(10):
         rates = np.random.normal(6.0, 12.0, years_to_process+1)
 
         f = open('accounts.json')
@@ -78,14 +76,11 @@ def main():
 
         plan = Plan(owners, accounts, expenses, rmd, tax)
 
-        data = []
         df = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
-        df.set_index('Year').plot.line()
-        plt.show()
-        data_for_analysis.append(data)
+        data_for_analysis.append(df)
 
-    # sorted_data = sort_data(data_for_analysis)
-    # plot_results(sorted_data)
+    sorted_data = sort_data(data_for_analysis)
+    plot_results(sorted_data)
 
     return 0
 
