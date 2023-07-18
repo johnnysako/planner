@@ -51,6 +51,7 @@ def append_accounts(data, year, self, rate, expense, growth):
         if growth:
             account.process_growth(rate, retired)
         if expense:
+            print(expense)
             if account.withdrawl(expense):
                 expense = 0
             else:
@@ -60,7 +61,7 @@ def append_accounts(data, year, self, rate, expense, growth):
         balance = account.get_balance()
         data.append(balance)
         total += balance
-    return total
+    return round(total,2)
 
 class Plan:
     def __init__(self, owners, accounts, expenses, rmd, tax):
@@ -94,7 +95,7 @@ class Plan:
             rmd = append_rmd(balances[i], start_year+i, self)
             expense = append_expenses(balances[i], start_year+i, self.expenses)
             tax = calculate_tax(balances[i], self, rates[i], rmd)
-            total = append_accounts(balances[i], start_year+i, self, rates[i], expense+tax, i!=0)
+            total = append_accounts(balances[i], start_year+i, self, rates[i], expense+tax-rmd, i!=0)
             balances[i].append(tax)
             balances[i].append(total)
 

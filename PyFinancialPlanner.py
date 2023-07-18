@@ -13,6 +13,8 @@ from src.owner import Owner
 import json
 import csv
 import numpy as np
+import pandas as pd
+
 import matplotlib.pyplot as plt
 
 years_to_process = 64
@@ -42,6 +44,7 @@ def sort_data(data_for_analysis):
     return sorted_data[5:]
 
 def plot_results(data_for_analysis):
+    failed_plans = 0
     for data in data_for_analysis:
         years = []
         total = []
@@ -49,8 +52,12 @@ def plot_results(data_for_analysis):
             years.append(year[0])
             total.append(year[-1])
 
+        if total[-1]==0:
+            failed_plans+=1
+
         plt.plot(years, total)
     
+    print("Failed Plans:", failed_plans)
     plt.ticklabel_format(useOffset=False, style='plain')
     plt.xlabel('Year')
     plt.ylabel('Net Worth')
@@ -61,7 +68,7 @@ def main():
 
     data_for_analysis = []
 
-    for i in range(105):
+    for i in range(1):
         rates = np.random.normal(7.0, 12.0, years_to_process+1)
 
         f = open('accounts.json')
@@ -72,12 +79,13 @@ def main():
         plan = Plan(owners, accounts, expenses, rmd, tax)
 
         data = []
-        data += plan.process_plan(2023, years_to_process, rates)
-
+        df = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
+        df.set_index('Year').plot.line()
+        plt.show()
         data_for_analysis.append(data)
 
-    sorted_data = sort_data(data_for_analysis)
-    plot_results(sorted_data)
+    # sorted_data = sort_data(data_for_analysis)
+    # plot_results(sorted_data)
 
     return 0
 
