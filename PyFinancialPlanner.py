@@ -21,10 +21,11 @@ from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 
 years_to_process = 64
-iterations = 210
-remove = 5
+iterations = 1020
+iterations_per_thread = 102
+remove = 10
 mean_rate_of_return = 4
-standard_deviation_of_return = 6
+standard_deviation_of_return = 7
 
 import asyncio
 import time
@@ -157,11 +158,21 @@ def main():
 
     data_for_analysis = []
 
-    loop = asyncio.get_event_loop()                                              # Have a new event loop
+    loop = asyncio.get_event_loop()                                              
 
-    looper = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations)])         # Run the loop
-                                
-    results = loop.run_until_complete(looper)
+    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+
+    all_groups = asyncio.gather(group1, group2, group3, group4, group5, group6, group7, group8, group9, group10)                                
+    results = loop.run_until_complete(all_groups)
 
     sorted_data = sort_data(data_for_analysis)
     plot_results(sorted_data)
