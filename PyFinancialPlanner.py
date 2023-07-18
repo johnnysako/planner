@@ -37,12 +37,31 @@ def load_constants():
 
     return rmd, tax, owners, expenses
 
+def sort_data(data_for_analysis):
+    sorted_data = sorted(data_for_analysis, key=lambda x: x[-1][-1], reverse=True)
+    return sorted_data[5:]
+
+def plot_results(data_for_analysis):
+    for data in data_for_analysis:
+        years = []
+        total = []
+        for year in data[1:]:
+            years.append(year[0])
+            total.append(year[-1])
+
+        plt.plot(years, total)
+    
+    plt.ticklabel_format(useOffset=False, style='plain')
+    plt.xlabel('Year')
+    plt.ylabel('Net Worth')
+    plt.show()
+
 def main():
     rmd, tax, owners, expenses = load_constants()
 
     data_for_analysis = []
 
-    for i in range(100):
+    for i in range(105):
         rates = np.random.normal(7.0, 12.0, years_to_process+1)
 
         f = open('accounts.json')
@@ -53,23 +72,13 @@ def main():
         plan = Plan(owners, accounts, expenses, rmd, tax)
 
         data = []
-        data.append(plan.get_header())
         data += plan.process_plan(2023, years_to_process, rates)
 
         data_for_analysis.append(data)
 
-    for data in data_for_analysis:
-        years = []
-        total = []
-        for year in data[1:]:
-            years.append(year[0])
-            total.append(year[-1])
+    sorted_data = sort_data(data_for_analysis)
+    plot_results(sorted_data)
 
-        plt.plot(years, total)
-
-    plt.xlabel('Year')
-    plt.ylabel('Net Worth')
-    plt.show()
     return 0
 
 if __name__ == "__main__":
