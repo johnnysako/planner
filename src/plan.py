@@ -23,6 +23,7 @@ def append_income(data, year, owners):
     for owner in owners:
         income+=owner.get_income(True, year)
     data.append(income)
+    return income
 
 def append_rmd(data, year, self):
     rmd = 0
@@ -93,11 +94,15 @@ class Plan:
             balances.append([])
             balances[i].append(start_year+i)
 
-            append_income(balances[i], start_year+i, self.owners)
+            income = append_income(balances[i], start_year+i, self.owners)
             rmd = append_rmd(balances[i], start_year+i, self)
-            expense = append_expenses(balances[i], start_year+i, self.expenses)
+            expense = append_expenses(balances[i], start_year+i, self.expenses)            
             tax = append_tax(balances[i], self, rates[i], rmd)
-            total = append_accounts(balances[i], start_year+i, self, rates[i], expense+tax-rmd, i!=0)
+            
+            if income > (expense + tax): expense = 0
+            else: expense = expense + tax - income
+
+            total = append_accounts(balances[i], start_year+i, self, rates[i], expense-rmd, i!=0)
             balances[i].append(total)
 
         return balances

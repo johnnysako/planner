@@ -77,7 +77,7 @@ def test_can_fill_table_for_one_year():
     owners.append(Owner({
         "name": "Jill",
         "birth_year": 1977,
-        "income": 2000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -85,7 +85,7 @@ def test_can_fill_table_for_one_year():
     owners.append(Owner({
         "name": "Jerry",
         "birth_year": 1977,
-        "income": 1000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -109,7 +109,7 @@ def test_can_fill_table_for_one_year():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax)
-    assert plan.process_plan(2022, 0, rates) == [[2022, 3000, 0, 2200, 0.0, 1800.0, 10000, 11800.0]]
+    assert plan.process_plan(2022, 0, rates) == [[2022, 0, 0, 2200, 0.0, 1800.0, 10000, 11800.0]]
 
 def test_can_fill_table_for_two_years():
     rmd_table = []
@@ -138,7 +138,7 @@ def test_can_fill_table_for_two_years():
     owners.append(Owner({
         "name": "Jill",
         "birth_year": 1977,
-        "income": 2000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -146,7 +146,7 @@ def test_can_fill_table_for_two_years():
     owners.append(Owner({
         "name": "Jerry",
         "birth_year": 1977,
-        "income": 1000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -170,8 +170,8 @@ def test_can_fill_table_for_two_years():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 3000, 0, 2200, 0.0, 1800.0, 10000, 11800.0], 
-                                                 [2023, 3000, 0, 2000, 0.0, 1908.0, 15600.0, 17508.0]]
+    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 2200, 0.0, 1800.0, 10000, 11800.0], 
+                                                 [2023, 0, 0, 2000, 0.0, 1908.0, 15600.0, 17508.0]]
 
 def test_owners_do_not_match_accounts():
     rmd_table = []
@@ -502,7 +502,7 @@ def test_can_include_tax_on_account_growth():
     owners.append(Owner({
         "name": "Jerry",
         "birth_year": 1977,
-        "income": 1000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -520,8 +520,8 @@ def test_can_include_tax_on_account_growth():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 1000, 0, 0, 60.0, 3940.0, 10000, 13940.0], 
-                                                 [2023, 1000, 0, 0, 60.0, 6116.4, 15600.0, 21716.4]]
+    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 0, 60.0, 3940.0, 10000, 13940.0], 
+                                                 [2023, 0, 0, 0, 60.0, 6116.4, 15600.0, 21716.4]]
 
 def test_no_tax_on_negative_growth():
     rmd_table = []
@@ -615,7 +615,7 @@ def test_calculates_tax_including_rmds():
     owners.append(Owner({
         "name": "Jill",
         "birth_year": 1950,
-        "income": 2000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -623,7 +623,7 @@ def test_calculates_tax_including_rmds():
     owners.append(Owner({
         "name": "Jerry",
         "birth_year": 1949,
-        "income": 1000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -648,8 +648,8 @@ def test_calculates_tax_including_rmds():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, tax)
-    assert plan.process_plan(2014, 1, rates) == [[2014, 3000, 800.0, 0, 140.0, 4660.0, 7200.0, 10000, 20000.0, 41860.0], 
-                                                 [2015, 2000, 2864.0, 0, 346.4, 7457.2, 6716.16, 15600.0, 24080.0, 53853.36]]
+    assert plan.process_plan(2014, 1, rates) == [[2014, 0, 800.0, 0, 140.0, 4660.0, 7200.0, 10000, 20000.0, 41860.0], 
+                                                 [2015, 0, 2864.0, 0, 346.4, 7457.2, 6716.16, 15600.0, 24080.0, 53853.36]]
 
 def test_expenses_pulls_from_account():
     rmd_table = []
@@ -696,6 +696,52 @@ def test_expenses_pulls_from_account():
     plan = Plan(owners, accounts, expenses, rmd, tax)
     assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 1000, 24.0, 2976.0, 2976], 
                                                  [2023, 0, 0, 1000, 17.86, 4136.7, 4136.7]]
+
+def test_expenses_pulls_from_income():
+    rmd_table = []
+    rmd = Rmd(rmd_table)
+    accounts = []
+    accounts.append(Account({
+        "name": "Investment Priority 1",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Investment",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+
+    owners = []
+    owners.append(Owner({
+        "name": "Jerry",
+        "birth_year": 1977,
+        "income": 10000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+
+    tax_table = [
+        {
+            "max_tax_previous": 0,
+            "rate": 10,
+            "cutoff": 100000
+        }
+    ]
+    tax = Tax(tax_table)
+    expense_table = []
+    expense_table.append(Expense({
+        "name": "Travel",
+        "need": True,
+        "ammount": 1000,
+        "starting_year": 2022,
+        "frequency": 1
+    }))
+    expenses = Expenses(expense_table)
+
+    plan = Plan(owners, accounts, expenses, rmd, tax)
+    assert plan.process_plan(2022, 1, rates) == [[2022, 10000, 0, 1000, 24.0, 4000.0, 4000], 
+                                                 [2023, 10000, 0, 1000, 24.0, 6240.0, 6240.0]]
 
 def test_expenses_when_non_sufficient_pulls_from_next_account():
     rmd_table = []
@@ -832,7 +878,7 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     owners.append(Owner({
         "name": "Jerry",
         "birth_year": 1949,
-        "income": 1000,
+        "income": 0,
         "retirement_age": 65,
         "social_security": 5678,
         "start_social_security": 70
@@ -866,5 +912,5 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax)
-    assert plan.process_plan(2014, 1, rates) == [[2014, 1000, 2800.0, 0, 280.0, 9720.0, 18000.0, 27720.0], 
+    assert plan.process_plan(2014, 1, rates) == [[2014, 0, 2800.0, 0, 280.0, 9720.0, 18000.0, 27720.0], 
                                                  [2015, 0, 3326.4, 0, 332.64, 12060.58, 16790.4, 28850.98]]

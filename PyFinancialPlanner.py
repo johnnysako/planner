@@ -26,6 +26,19 @@ remove = 5
 mean_rate_of_return = 4
 standard_deviation_of_return = 6
 
+import asyncio
+import time
+
+def background(f):
+    def wrapped(*args, **kwargs):
+        return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
+
+    return wrapped
+
+def your_function(argument, other_argument): # Added another argument
+    time.sleep(5)
+    print(f"function finished for {argument=} and {other_argument=}")
+    
 def load_constants():
     f = open('rmd.json')
     rmd = Rmd(json.load(f)["rmd"])
@@ -63,7 +76,7 @@ def _draw_as_table(df, pagesize):
                         cellColours=alternating_colors,
                         loc='center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(5)
+    the_table.set_fontsize(4)
     return fig
  
 def plot_failed_plan_data_table(df, pdf, numpages=(1, 1), pagesize=(11, 8.5)):
@@ -126,23 +139,29 @@ def plot_results(data_for_analysis):
         d['Author'] = u'John Chapman'
         d['CreationDate'] = datetime.datetime.today()
 
+@background
+def process_run(iteration, rmd, tax, owners, expenses, data_for_analysis):
+    rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
+    f = open('accounts.json')
+    accounts = []
+    for a in json.load(f)["accounts"]:
+        accounts.append(Account(a))
+
+    plan = Plan(owners, accounts, expenses, rmd, tax)
+
+    df = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
+    data_for_analysis.append(df)
+
 def main():
     rmd, tax, owners, expenses = load_constants()
 
     data_for_analysis = []
 
-    for i in range(iterations):
-        rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
+    loop = asyncio.get_event_loop()                                              # Have a new event loop
 
-        f = open('accounts.json')
-        accounts = []
-        for a in json.load(f)["accounts"]:
-            accounts.append(Account(a))
-
-        plan = Plan(owners, accounts, expenses, rmd, tax)
-
-        df = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
-        data_for_analysis.append(df)
+    looper = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations)])         # Run the loop
+                                
+    results = loop.run_until_complete(looper)
 
     sorted_data = sort_data(data_for_analysis)
     plot_results(sorted_data)
