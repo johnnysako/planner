@@ -29,6 +29,7 @@ def append_rmd(data, year, self):
     for account in self.accounts:
         owner = get_account_owner(account, self)
         rmd += account.withdrawl_rmd(self.rmd.get_rate(owner.get_age(year)))
+    rmd = round(rmd, 2)
     data.append(rmd)
     return rmd
 
@@ -40,7 +41,7 @@ def append_expenses(data, year, expenses):
 def append_tax(data, self, rate, rmd):
     taxable = 0
     for account in self.accounts:
-        if account.is_taxable():
+        if account.is_taxable() and rate > 0:
             taxable += round((account.get_balance()) * rate/100, 2)
     tax = round(self.tax.calculate(taxable+rmd), 2)
     data.append(tax)

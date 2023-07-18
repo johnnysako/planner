@@ -523,6 +523,56 @@ def test_can_include_tax_on_account_growth():
     assert plan.process_plan(2022, 1, rates) == [[2022, 1000, 0, 0, 60.0, 3940.0, 10000, 13940.0], 
                                                  [2023, 1000, 0, 0, 60.0, 6116.4, 15600.0, 21716.4]]
 
+def test_no_tax_on_negative_growth():
+    rmd_table = []
+    rmd = Rmd(rmd_table)
+    accounts = []
+    accounts.append(Account({
+        "name": "Jerry's Roth",
+        "balance": 4000,
+        "annual_additions":2000,
+        "type": "Roth",
+        "withdrawl priority": 1,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+    accounts.append(Account({
+        "name": "Jerry's Investment",
+        "balance": 10000,
+        "annual_additions": 5000,
+        "type": "Investment",
+        "withdrawl priority": 3,
+        "owner": "Jerry",
+        "trail_with_rmd": False
+    }))
+
+    owners = []
+    owners.append(Owner({
+        "name": "Jerry",
+        "birth_year": 1977,
+        "income": 1000,
+        "retirement_age": 65,
+        "social_security": 5678,
+        "start_social_security": 70
+    }))
+
+    tax_table = [
+        {
+            "max_tax_previous": 0,
+            "rate": 10,
+            "cutoff": 100000
+        }
+    ]
+    tax = Tax(tax_table)
+    expense_table = []
+    expenses = Expenses(expense_table)
+
+    negative_growth = [-1, -1]
+
+    plan = Plan(owners, accounts, expenses, rmd, tax)
+    assert plan.process_plan(2022, 1, negative_growth) == [[2022, 1000, 0, 0, 0.0, 4000, 10000, 14000], 
+                                                           [2023, 1000, 0, 0, 0.0, 5960.0, 14900.0, 20860.0] ]
+
 def test_calculates_tax_including_rmds():
     accounts = []
     accounts.append(Account({

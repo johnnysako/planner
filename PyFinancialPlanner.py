@@ -21,8 +21,10 @@ from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 
 years_to_process = 64
-iterations = 1010
+iterations = 210
 remove = 5
+mean_rate_of_return = 4
+standard_deviation_of_return = 6
 
 def load_constants():
     f = open('rmd.json')
@@ -48,6 +50,39 @@ def sort_data(data_for_analysis):
     sorted_data = sorted(data_for_analysis, key=lambda x: x.iloc[-1]['Sum of Accounts'], reverse=True)
     return sorted_data[remove:-remove]
 
+def _draw_as_table(df, pagesize):
+    alternating_colors = [['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
+    alternating_colors = alternating_colors[:len(df)]
+    fig, ax = plt.subplots(figsize=pagesize)
+    ax.axis('tight')
+    ax.axis('off')
+    the_table = ax.table(cellText=df.values,
+                        colLabels=df.columns,
+                        rowColours=['lightblue']*len(df),
+                        colColours=['lightblue']*len(df.columns),
+                        cellColours=alternating_colors,
+                        loc='center')
+    the_table.auto_set_font_size(False)
+    the_table.set_fontsize(5)
+    return fig
+ 
+def plot_failed_plan_data_table(df, pdf, numpages=(1, 1), pagesize=(11, 8.5)):
+    nh, nv = numpages
+    rows_per_page = len(df) // nh
+    cols_per_page = len(df.columns) // nv
+    for i in range(0, nh):
+        for j in range(0, nv):
+            page = df.iloc[(i*rows_per_page):min((i+1)*rows_per_page, len(df)),
+                           (j*cols_per_page):min((j+1)*cols_per_page, len(df.columns))]
+            fig = _draw_as_table(page, pagesize)
+            if nh > 1 or nv > 1:
+                # Add a part/page number at bottom-center of page
+                fig.text(0.5, 0.5/pagesize[0],
+                         "Part-{}x{}: Page-{}".format(i+1, j+1, i*nv + j + 1),
+                         ha='center', fontsize=8)
+            pdf.savefig(fig, bbox_inches='tight')
+            plt.close()
+
 def plot_failed_plans(failed_plans, pdf):
     for index, data in enumerate(failed_plans):
         fails_in_year = data['Year'].where(data['Sum of Accounts'] == 0).min()
@@ -58,6 +93,7 @@ def plot_failed_plans(failed_plans, pdf):
         plt.title('Failed Iteration ' + str(index+1) + ' in year ' + str(fails_in_year))
         pdf.savefig()
         plt.close()
+        plot_failed_plan_data_table(data, pdf, numpages=(2,1))
 
 def plot_monte_carlo(data_for_analysis, failed_plans, pdf):
     fig = plt.figure(figsize=(10,6), dpi=300)
@@ -96,7 +132,7 @@ def main():
     data_for_analysis = []
 
     for i in range(iterations):
-        rates = np.random.normal(4.0, 5.0, years_to_process+1)
+        rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
 
         f = open('accounts.json')
         accounts = []
