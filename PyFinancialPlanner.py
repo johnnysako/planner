@@ -21,8 +21,8 @@ from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 
 years_to_process = 64
-iterations = 105
-remove_top = 5
+iterations = 1010
+remove = 5
 
 def load_constants():
     f = open('rmd.json')
@@ -46,7 +46,7 @@ def load_constants():
 
 def sort_data(data_for_analysis):
     sorted_data = sorted(data_for_analysis, key=lambda x: x.iloc[-1]['Sum of Accounts'], reverse=True)
-    return sorted_data[remove_top:]
+    return sorted_data[remove:-remove]
 
 def plot_failed_plans(failed_plans, pdf):
     for index, data in enumerate(failed_plans):
@@ -96,7 +96,7 @@ def main():
     data_for_analysis = []
 
     for i in range(iterations):
-        rates = np.random.normal(4.0, 12.0, years_to_process)
+        rates = np.random.normal(4.0, 5.0, years_to_process+1)
 
         f = open('accounts.json')
         accounts = []
