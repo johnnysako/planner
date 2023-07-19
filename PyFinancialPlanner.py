@@ -19,17 +19,17 @@ import datetime
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
-
-years_to_process = 64
-iterations = 310
-iterations_per_thread = 31
-remove = 5
-actual_iterations = int(iterations-remove*2)
-mean_rate_of_return = 3.2
-standard_deviation_of_return = 7
-
 import asyncio
 import time
+
+years_to_process = 64
+iterations = 1020
+iterations_per_thread = int(iterations/10)
+remove = 10
+actual_iterations = int(iterations-remove*2)
+mean_rate_of_return = 3.5
+standard_deviation_of_return = 7
+include_tables = False
 
 def background(f):
     def wrapped(*args, **kwargs):
@@ -107,11 +107,12 @@ def plot_failed_plans(failed_plans, pdf):
         pdf.savefig()
         plt.close()
 
-        labels = data['Year'].values.astype(int)
-        data.drop('Year', axis=1, inplace=True)
-        data.update(data.astype(float))
-        data.update(data.applymap('{:,.0f}'.format))
-        plot_data_table(data, pdf, labels, numpages=(2,1))
+        if include_tables: 
+            labels = data['Year'].values.astype(int)
+            data.drop('Year', axis=1, inplace=True)
+            data.update(data.astype(float))
+            data.update(data.applymap('{:,.0f}'.format))
+            plot_data_table(data, pdf, labels, numpages=(2,1))
 
 def plot_monte_carlos_summary(data_for_analysis, pdf):
     data = []
