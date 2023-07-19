@@ -21,10 +21,11 @@ from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 
 years_to_process = 64
-iterations = 1020
-iterations_per_thread = 102
-remove = 10
-mean_rate_of_return = 4
+iterations = 310
+iterations_per_thread = 31
+remove = 5
+actual_iterations = int(iterations-remove*2)
+mean_rate_of_return = 3.2
 standard_deviation_of_return = 7
 
 import asyncio
@@ -64,7 +65,7 @@ def sort_data(data_for_analysis):
     sorted_data = sorted(data_for_analysis, key=lambda x: x.iloc[-1]['Sum of Accounts'], reverse=True)
     return sorted_data[remove:-remove]
 
-def _draw_as_table(df, pagesize):
+def _draw_as_table(df, pagesize, rowlabels):
     alternating_colors = [['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
     alternating_colors = alternating_colors[:len(df)]
     fig, ax = plt.subplots(figsize=pagesize)
@@ -72,28 +73,26 @@ def _draw_as_table(df, pagesize):
     ax.axis('off')
     the_table = ax.table(cellText=df.values,
                         colLabels=df.columns,
+                        rowLabels=rowlabels,
                         rowColours=['lightblue']*len(df),
                         colColours=['lightblue']*len(df.columns),
                         cellColours=alternating_colors,
+                        cellLoc='center',
                         loc='center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(4)
+    the_table.set_fontsize(6)
     return fig
  
-def plot_failed_plan_data_table(df, pdf, numpages=(1, 1), pagesize=(11, 8.5)):
+def plot_data_table(data, pdf, rowlabels, numpages=(1, 1), pagesize=(11, 8.5)):
     nh, nv = numpages
-    rows_per_page = len(df) // nh
-    cols_per_page = len(df.columns) // nv
+    rows_per_page = len(data) // nh
+    cols_per_page = len(data.columns) // nv
     for i in range(0, nh):
         for j in range(0, nv):
-            page = df.iloc[(i*rows_per_page):min((i+1)*rows_per_page, len(df)),
-                           (j*cols_per_page):min((j+1)*cols_per_page, len(df.columns))]
-            fig = _draw_as_table(page, pagesize)
-            if nh > 1 or nv > 1:
-                # Add a part/page number at bottom-center of page
-                fig.text(0.5, 0.5/pagesize[0],
-                         "Part-{}x{}: Page-{}".format(i+1, j+1, i*nv + j + 1),
-                         ha='center', fontsize=8)
+            pagelabels = rowlabels[(i*rows_per_page):min((i+1)*rows_per_page, len(rowlabels))]
+            page = data.iloc[(i*rows_per_page):min((i+1)*rows_per_page, len(data)),
+                           (j*cols_per_page):min((j+1)*cols_per_page, len(data.columns))]
+            fig = _draw_as_table(page, pagesize, pagelabels)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close()
 
@@ -103,13 +102,37 @@ def plot_failed_plans(failed_plans, pdf):
         data.set_index('Year').plot.line(figsize=(10,6), fontsize=12)
         ax = plt.gca()
         plt.ticklabel_format(useOffset=False, style='plain')
-        ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,}'))
+        ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
         plt.title('Failed Iteration ' + str(index+1) + ' in year ' + str(fails_in_year))
         pdf.savefig()
         plt.close()
-        plot_failed_plan_data_table(data, pdf, numpages=(2,1))
 
-def plot_monte_carlo(data_for_analysis, failed_plans, pdf):
+        labels = data['Year'].values.astype(int)
+        data.drop('Year', axis=1, inplace=True)
+        data.update(data.astype(float))
+        data.update(data.applymap('{:,.0f}'.format))
+        plot_data_table(data, pdf, labels, numpages=(2,1))
+
+def plot_monte_carlos_summary(data_for_analysis, pdf):
+    data = []
+    range = [int(actual_iterations/100), int(actual_iterations/4), int(actual_iterations/2), int(actual_iterations*3/4), int(actual_iterations*99/100)]
+    for i in range:
+        data.append([i, 
+                     data_for_analysis[i]['Sum of Accounts'][5], 
+                     data_for_analysis[i]['Sum of Accounts'][10], 
+                     data_for_analysis[i]['Sum of Accounts'][15], 
+                     data_for_analysis[i]['Sum of Accounts'][20], 
+                     data_for_analysis[i]['Sum of Accounts'][25], 
+                     data_for_analysis[i]['Sum of Accounts'][years_to_process]])
+
+    summary = pd.DataFrame(np.array(data), columns=['Trial', 'Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan'])
+    labels = summary['Trial'].values.astype(int)
+    summary.drop('Trial', axis=1, inplace=True)
+    summary.update(summary.astype(float))
+    summary.update(summary.applymap('{:,.0f}'.format))
+    plot_data_table(summary, pdf, labels)
+
+def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
     fig = plt.figure(figsize=(10,6), dpi=300)
     for data in data_for_analysis:
         plt.plot(data['Year'], data['Sum of Accounts'])
@@ -118,7 +141,7 @@ def plot_monte_carlo(data_for_analysis, failed_plans, pdf):
     
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
-    ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,}'))
+    ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
     plt.xlabel('Year', fontsize=12)
     plt.xticks(fontsize=12)
     plt.ylabel('Net Worth', fontsize=12)
@@ -132,7 +155,8 @@ def plot_monte_carlo(data_for_analysis, failed_plans, pdf):
 def plot_results(data_for_analysis):
     with PdfPages('financial_analysis.pdf') as pdf:
         failed_plans = []
-        plot_monte_carlo(data_for_analysis, failed_plans, pdf)
+        plot_monte_carlos(data_for_analysis, failed_plans, pdf)
+        plot_monte_carlos_summary(data_for_analysis, pdf)
         plot_failed_plans(failed_plans, pdf)
 
         d = pdf.infodict()
@@ -150,8 +174,8 @@ def process_run(iteration, rmd, tax, owners, expenses, data_for_analysis):
 
     plan = Plan(owners, accounts, expenses, rmd, tax)
 
-    df = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
-    data_for_analysis.append(df)
+    data = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
+    data_for_analysis.append(data)
 
 def main():
     rmd, tax, owners, expenses = load_constants()
