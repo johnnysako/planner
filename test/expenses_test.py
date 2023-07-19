@@ -49,3 +49,7 @@ def test_can_get_needs():
     assert expenses.get_needs(2011) == 0
     assert expenses.get_needs(2012) == 20000
     assert expenses.get_needs(2013) == 0
+
+def test_can_get_expense_breakdown():
+    expenses = Expenses(table)
+    assert expenses.get_year(2012) == [2000, 20000]
