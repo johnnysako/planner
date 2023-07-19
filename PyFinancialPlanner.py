@@ -155,7 +155,26 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
     return failed_plans
 
 def plot_expense_table(expenses, pdf):
-    return
+    expense_table = []
+    for year in range(start_year,start_year+years_to_process):
+        expense_table.append([year] + expenses.get_year(year))
+    data = pd.DataFrame(expense_table, columns = ['Year'] + expenses.get_names())
+
+    data.plot.bar(x='Year', stacked=True, figsize=(10,6))
+    plt.xlabel('Year', fontsize=10)
+    plt.xticks(fontsize=6)
+    plt.ylabel('Expenses', fontsize=10)
+    plt.yticks(fontsize=10)
+    plt.title('Expenses over Time')
+    plt.legend(prop={'size': 6})
+    pdf.savefig()
+    plt.close()
+
+    labels = data['Year'].values.astype(int)
+    data.drop('Year', axis=1, inplace=True)
+    data.update(data.astype(float))
+    data.update(data.applymap('{:,.0f}'.format))
+    plot_data_table(data, pdf, labels, numpages=(2,2))
 
 def plot_results(data_for_analysis, expenses):
     with PdfPages('financial_analysis.pdf') as pdf:
