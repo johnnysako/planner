@@ -23,6 +23,7 @@ import asyncio
 import time
 
 years_to_process = 64
+start_year = 2023
 iterations = 1020
 iterations_per_thread = int(iterations/10)
 remove = 10
@@ -153,9 +154,13 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
 
     return failed_plans
 
-def plot_results(data_for_analysis):
+def plot_expense_table(expenses, pdf):
+    return
+
+def plot_results(data_for_analysis, expenses):
     with PdfPages('financial_analysis.pdf') as pdf:
         failed_plans = []
+        plot_expense_table(expenses, pdf)
         plot_monte_carlos(data_for_analysis, failed_plans, pdf)
         plot_monte_carlos_summary(data_for_analysis, pdf)
         plot_failed_plans(failed_plans, pdf)
@@ -175,7 +180,7 @@ def process_run(iteration, rmd, tax, owners, expenses, data_for_analysis):
 
     plan = Plan(owners, accounts, expenses, rmd, tax)
 
-    data = pd.DataFrame(np.array(plan.process_plan(2023, years_to_process, rates)), columns = plan.get_header())
+    data = pd.DataFrame(np.array(plan.process_plan(start_year, years_to_process, rates)), columns = plan.get_header())
     data_for_analysis.append(data)
 
 def main():
@@ -200,7 +205,7 @@ def main():
     results = loop.run_until_complete(all_groups)
 
     sorted_data = sort_data(data_for_analysis)
-    plot_results(sorted_data)
+    plot_results(sorted_data, expenses)
 
     return 0
 
