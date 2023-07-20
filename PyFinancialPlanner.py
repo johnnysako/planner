@@ -149,6 +149,9 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
 
+    t = ax.annotate('John Retires', xy=(2036, 1), xytext=(2036, 40000000),
+            arrowprops=dict(arrowstyle="-", facecolor='black'))
+    
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
