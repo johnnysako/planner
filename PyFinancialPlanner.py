@@ -11,7 +11,6 @@ from src.account import Account
 from src.owner import Owner
 
 import json
-import csv
 import numpy as np
 import pandas as pd
 import datetime
@@ -26,8 +25,6 @@ years_to_process = 64
 start_year = 2023
 iterations = 1000
 iterations_per_thread = int(iterations/10)
-remove = 1
-actual_iterations = int(iterations-remove*2)
 mean_rate_of_return = 3.2
 standard_deviation_of_return = 8
 include_tables = False
@@ -64,7 +61,7 @@ def load_constants():
 
 def sort_data(data_for_analysis):
     sorted_data = sorted(data_for_analysis, key=lambda x: x.iloc[-1]['Sum of Accounts'], reverse=True)
-    return sorted_data[remove:-remove]
+    return sorted_data
 
 def _draw_as_table(df, pagesize, rowlabels):
     alternating_colors = [['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
@@ -120,25 +117,27 @@ def plot_failed_plans(failed_plans, pdf):
 
 def plot_monte_carlos_summary(data_for_analysis, pdf):
     data = []
-    range = [int(actual_iterations/100), int(actual_iterations/4), int(actual_iterations/2), int(actual_iterations*3/4), int(actual_iterations*99/100)]
+    range = [int(iterations/100), int(iterations/4), int(iterations/2), int(iterations*3/4), int(iterations*99/100)]
     for i in range:
+        fails_in_year = data_for_analysis[i]['Year'].where(data_for_analysis[i]['Sum of Accounts'] == 0).min()
         data.append([i, 
                      data_for_analysis[i]['Sum of Accounts'][5], 
                      data_for_analysis[i]['Sum of Accounts'][10], 
                      data_for_analysis[i]['Sum of Accounts'][15], 
                      data_for_analysis[i]['Sum of Accounts'][20], 
                      data_for_analysis[i]['Sum of Accounts'][25], 
-                     data_for_analysis[i]['Sum of Accounts'][years_to_process]])
+                     data_for_analysis[i]['Sum of Accounts'][years_to_process],
+                     fails_in_year])
 
-    summary = pd.DataFrame(np.array(data), columns=['Trial', 'Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan'])
+    summary = pd.DataFrame(np.array(data), columns=['Trial', 'Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan', 'Money to $0'])
     labels = summary['Trial'].values.astype(int)
     summary.drop('Trial', axis=1, inplace=True)
     summary.update(summary.astype(float))
     summary.update(summary.applymap('{:,.0f}'.format))
     plot_data_table(summary, pdf, labels)
 
-def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
-    analysis = np.empty([actual_iterations, years_to_process+1])
+def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners):
+    analysis = np.empty([iterations, years_to_process+1])
     fig = plt.figure(figsize=(10,6), dpi=300)
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
@@ -148,18 +147,23 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
     
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
-
-    t = ax.annotate('John Retires', xy=(2036, 1), xytext=(2036, 40000000),
-            arrowprops=dict(arrowstyle="-", facecolor='black'))
+    print(round(np.median(analysis, axis=0)[-1], 2))
     
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+    for owner in owners:
+        if not owner.is_retired(start_year):
+            ticks, _ = plt.yticks()
+            retire_year = start_year + owner.get_retirement_age()-owner.get_age(start_year)
+            label = owner.get_name() + ' Retires\n' + str(retire_year)
+            ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
+            plt.vlines(x = retire_year, ymin = ticks[1], ymax = ticks[-2], colors = 'purple')            
     plt.xlabel('Year', fontsize=12)
     plt.xticks(fontsize=6)
     plt.ylabel('Net Worth', fontsize=12)
     plt.yticks(fontsize=6)
-    plt.title('Monte Carlo Analysis')
+    plt.title('Monte Carlo Analysis\nAverage EoP: $' + '{:,.0f}'.format(round(average_plot[-1],2)))
     pdf.savefig()
     plt.close(fig)
 
@@ -187,11 +191,11 @@ def plot_expense_table(expenses, pdf):
     data.update(data.applymap('{:,.0f}'.format))
     plot_data_table(data, pdf, labels, numpages=(2,2))
 
-def plot_results(data_for_analysis, expenses):
+def plot_results(data_for_analysis, expenses, owners):
     with PdfPages('financial_analysis.pdf') as pdf:
         failed_plans = []
         plot_expense_table(expenses, pdf)
-        plot_monte_carlos(data_for_analysis, failed_plans, pdf)
+        plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners)
         plot_monte_carlos_summary(data_for_analysis, pdf)
         plot_failed_plans(failed_plans, pdf)
 
@@ -235,7 +239,7 @@ def main():
     results = loop.run_until_complete(all_groups)
 
     sorted_data = sort_data(data_for_analysis)
-    plot_results(sorted_data, expenses)
+    plot_results(sorted_data, expenses, owners)
 
     return 0
 
