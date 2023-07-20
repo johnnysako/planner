@@ -24,12 +24,12 @@ import time
 
 years_to_process = 64
 start_year = 2023
-iterations = 1020
+iterations = 1000
 iterations_per_thread = int(iterations/10)
-remove = 10
+remove = 1
 actual_iterations = int(iterations-remove*2)
-mean_rate_of_return = 3.5
-standard_deviation_of_return = 7
+mean_rate_of_return = 3.2
+standard_deviation_of_return = 8
 include_tables = False
 
 def background(f):
@@ -105,6 +105,9 @@ def plot_failed_plans(failed_plans, pdf):
         plt.ticklabel_format(useOffset=False, style='plain')
         ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
         plt.title('Failed Iteration ' + str(index+1) + ' in year ' + str(fails_in_year))
+        plt.legend(prop={'size': 6})
+        plt.xticks(fontsize=6)
+        plt.yticks(fontsize=6)
         pdf.savefig()
         plt.close()
 
@@ -135,19 +138,24 @@ def plot_monte_carlos_summary(data_for_analysis, pdf):
     plot_data_table(summary, pdf, labels)
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf):
+    analysis = np.empty([actual_iterations, years_to_process+1])
     fig = plt.figure(figsize=(10,6), dpi=300)
-    for data in data_for_analysis:
+    for i, data in enumerate(data_for_analysis):
+        analysis[i] = data['Sum of Accounts'].values
         plt.plot(data['Year'], data['Sum of Accounts'])
         if data.iloc[-1]['Sum of Accounts']==0:
             failed_plans.append(data)
     
+    average_plot = analysis.mean(axis=0)
+    plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
+
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
     plt.xlabel('Year', fontsize=12)
-    plt.xticks(fontsize=12)
+    plt.xticks(fontsize=6)
     plt.ylabel('Net Worth', fontsize=12)
-    plt.yticks(fontsize=12)
+    plt.yticks(fontsize=6)
     plt.title('Monte Carlo Analysis')
     pdf.savefig()
     plt.close(fig)
