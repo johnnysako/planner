@@ -18,18 +18,18 @@ def owner_is_retired(account, self, year):
     owner = get_account_owner(account, self)
     return owner.is_retired(year)
 
-def append_income(data, year, owners):
+def append_income(data, year, owners, social_security):
     income = 0
     for owner in owners:
-        income+=owner.get_income(True, year)
+        income+=owner.get_income(social_security, year)
     data.append(income)
     return income
 
-def append_rmd(data, year, self):
+def append_rmd(data, year, self, roth_with_rmd):
     rmd = 0
     for account in self.accounts:
         owner = get_account_owner(account, self)
-        rmd += account.withdrawl_rmd(self.rmd.get_rate(owner.get_age(year)))
+        rmd += account.withdrawl_rmd(self.rmd.get_rate(owner.get_age(year)), roth_with_rmd)
     rmd = round(rmd, 2)
     data.append(rmd)
     return rmd
@@ -67,12 +67,13 @@ def append_accounts(data, year, self, rate, expense, growth):
     return round(total,2)
 
 class Plan:
-    def __init__(self, owners, accounts, expenses, rmd, tax):
+    def __init__(self, owners, accounts, expenses, rmd, tax, config):
         self.accounts = accounts
         self.owners = owners
         self.expenses = expenses
         self.rmd = rmd
         self.tax = tax
+        self.config = config
 
     def verify_config(self):
         for account in self.accounts:
@@ -94,8 +95,8 @@ class Plan:
             balances.append([])
             balances[i].append(start_year+i)
 
-            income = append_income(balances[i], start_year+i, self.owners)
-            rmd = append_rmd(balances[i], start_year+i, self)
+            income = append_income(balances[i], start_year+i, self.owners, self.config["social_security"])
+            rmd = append_rmd(balances[i], start_year+i, self, self.config["rmd"])
             expense = append_expenses(balances[i], start_year+i, self.expenses)            
             tax = append_tax(balances[i], self, rates[i], rmd)
             

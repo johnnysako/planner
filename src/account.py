@@ -1,8 +1,10 @@
-def rmd_applies(account_type):
+def rmd_applies(account_type, roth_with_rmd):
     rmd_types = ["401K", "IRA"]
     for type in rmd_types:
         if type == account_type:
             return True
+    if account_type == "Roth" and roth_with_rmd:
+        return True
     return False
 
 class Account:
@@ -32,9 +34,9 @@ class Account:
     def get_balance(self):
         return self.config["balance"]
 
-    def withdrawl_rmd(self, rate):
+    def withdrawl_rmd(self, rate, roth_with_rmd = False):
         rmd = 0
-        if rmd_applies(self.get_type()):
+        if rmd_applies(self.get_type(), self.config["trail_with_rmd"] and roth_with_rmd):
             rmd = self.config["balance"] * rate/100
         self.config["balance"] = round(self.config["balance"] - rmd, 2)
         return rmd 

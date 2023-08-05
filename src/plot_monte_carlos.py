@@ -56,7 +56,7 @@ def _plot_summary(data_for_analysis, pdf):
 
     plot_data_table(summary, pdf, labels)
 
-def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners):
+def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     iterations = len(data_for_analysis)
     start_year = data_for_analysis[0]['Year'][0]
     years_to_process = len(data_for_analysis[0].index)
@@ -68,18 +68,21 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners):
     
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
-    print('{:,.0f}'.format(round(np.median(analysis, axis=0)[-1], 2)))
+    # print('{:,.0f}'.format(round(np.median(analysis, axis=0)[-1], 2)))
     
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+    ticks, _ = plt.yticks()
     for owner in owners:
         if not owner.is_retired(start_year):
-            ticks, _ = plt.yticks()
             retire_year = start_year + owner.get_retirement_age()-owner.get_age(start_year)
             label = owner.get_name() + ' Retires\n' + str(retire_year)
             ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
             plt.vlines(x = retire_year, ymin = ticks[1], ymax = ticks[-2], colors = 'purple')   
+
+    trial_label = 'Include Social Security = ' + str(trial["social_security"]) + '\nRoth has RMD = ' + str(trial["rmd"])
+    ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
 
     plt.xlabel('Year', fontsize=12)
     plt.xticks(fontsize=6)

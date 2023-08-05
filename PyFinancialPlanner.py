@@ -28,7 +28,7 @@ start_year = 2023
 iterations = 1000
 iterations_per_thread = int(iterations/10)
 mean_rate_of_return = 4.19
-standard_deviation_of_return = 10.94
+standard_deviation_of_return = 9.5
 
 def background(f):
     def wrapped(*args, **kwargs):
@@ -106,31 +106,31 @@ def plot_expense_table(expenses, pdf):
     plot_data_table(data, pdf, labels, numpages=(2,2))
 
 @background
-def process_run(iteration, rmd, tax, owners, expenses, data_for_analysis):
+def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis):
     rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
     f = open('accounts.json')
     accounts = []
     for a in json.load(f)["accounts"]:
         accounts.append(Account(a))
 
-    plan = Plan(owners, accounts, expenses, rmd, tax)
+    plan = Plan(owners, accounts, expenses, rmd, tax, trial)
 
     data = pd.DataFrame(np.array(plan.process_plan(start_year, years_to_process, rates)), columns = plan.get_header())
     data_for_analysis.append(data)
 
-def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses):
+def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial):
     loop = asyncio.get_event_loop()                                              
 
-    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
-    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, data_for_analysis) for i in range(iterations_per_thread)])
+    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
 
     all_groups = asyncio.gather(group1, group2, group3, group4, group5, group6, group7, group8, group9, group10)                                
     results = loop.run_until_complete(all_groups)
@@ -141,18 +141,27 @@ def main():
     # 2. Trial selected 401K as Roth
     # 3. No Social Security
     # 4. No Social Security and Trial selected 401K as Roth
+    trials = [
+        { "social_security": True, "rmd": False },
+        # { "social_security": True, "rmd": True },
+        # { "social_security": False, "rmd": False },
+        # { "social_security": False, "rmd": True }
+    ]
 
     rmd, tax, owners, expenses = load_constants()
 
-    data_for_analysis = []
-
-    run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses)
-
-    sorted_data, failed_plans = sort_data(data_for_analysis)
-
     with PdfPages('financial_analysis.pdf') as pdf:
-        plot_monte_carlos(sorted_data, failed_plans, pdf, owners)
+        for trial in trials:
+            data_for_analysis = []
+
+            run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial)
+
+            sorted_data, failed_plans = sort_data(data_for_analysis)
+
+            plot_monte_carlos(sorted_data, failed_plans, pdf, owners, trial)
+
         plot_expense_table(expenses, pdf)
+
         d = pdf.infodict()
         d['Title'] = 'Financial Plan'
         d['Author'] = u'John Chapman'

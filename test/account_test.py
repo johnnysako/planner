@@ -163,16 +163,29 @@ def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     config = {
         "type": "Roth",
         "balance": 5000,
+        "trail_with_rmd": False
     }
 
     account = Account(config)
     assert account.withdrawl_rmd(10) == 0
     assert account.get_balance() == 5000
 
+def test_withdrawl_rmd_does_change_balance_for_Roth_when_testing_rmd():
+    config = {
+        "type": "Roth",
+        "balance": 5000,
+        "trail_with_rmd": True
+    }
+
+    account = Account(config)
+    assert account.withdrawl_rmd(10, True) == 500
+    assert account.get_balance() == 4500
+
 def test_withdrawl_rmd_does_not_change_balance_for_hsa():
     config = {
         "type": "HSA",
         "balance": 5000,
+        "trail_with_rmd": False
     }
 
     account = Account(config)
