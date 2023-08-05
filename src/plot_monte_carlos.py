@@ -81,7 +81,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
             ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
             plt.vlines(x = retire_year, ymin = ticks[1], ymax = ticks[-2], colors = 'purple')   
 
-    trial_label = 'Include Social Security = ' + str(trial["social_security"]) + '\nRoth has RMD = ' + str(trial["rmd"])
+    trial_label = 'Include Social Security: ' + str(trial["social_security"]) + '\nSelected roths have RMDs: ' + str(trial["rmd"])
     ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
 
     plt.xlabel('Year', fontsize=12)

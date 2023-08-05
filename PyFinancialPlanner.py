@@ -143,9 +143,9 @@ def main():
     # 4. No Social Security and Trial selected 401K as Roth
     trials = [
         { "social_security": True, "rmd": False },
-        # { "social_security": True, "rmd": True },
-        # { "social_security": False, "rmd": False },
-        # { "social_security": False, "rmd": True }
+        { "social_security": True, "rmd": True },
+        { "social_security": False, "rmd": False },
+        { "social_security": False, "rmd": True }
     ]
 
     rmd, tax, owners, expenses = load_constants()
