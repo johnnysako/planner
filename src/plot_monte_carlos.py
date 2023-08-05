@@ -7,10 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 
-include_tables = False
-years_to_process = 64
-start_year = 2023
-iterations = 1000
+include_tables = True
 
 def _plot_failed_plans(failed_plans, pdf):
     for index, data in enumerate(failed_plans):
@@ -35,10 +32,11 @@ def _plot_failed_plans(failed_plans, pdf):
 
 def _plot_summary(data_for_analysis, pdf):
     data = []
+    iterations = len(data_for_analysis)
     range = [int(iterations/100), int(iterations/4), int(iterations/2), int(iterations*3/4), int(iterations*99/100)]
     for i in range:
         fails_in_year = ""
-        if data_for_analysis[i]['Sum of Accounts'][years_to_process] == 0:
+        if data_for_analysis[i].iloc[-1]['Sum of Accounts'] == 0:
             fails_in_year = '{:.0f}'.format(data_for_analysis[i]['Year'].where(data_for_analysis[i]['Sum of Accounts'] == 0).min())
         data.append([i, 
                      data_for_analysis[i]['Sum of Accounts'][5], 
@@ -46,7 +44,7 @@ def _plot_summary(data_for_analysis, pdf):
                      data_for_analysis[i]['Sum of Accounts'][15], 
                      data_for_analysis[i]['Sum of Accounts'][20], 
                      data_for_analysis[i]['Sum of Accounts'][25], 
-                     data_for_analysis[i]['Sum of Accounts'][years_to_process],
+                     data_for_analysis[i].iloc[-1]['Sum of Accounts'],
                      fails_in_year])
 
     summary = pd.DataFrame(np.array(data), columns=['Trial', 'Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan', 'Money to $0'])
@@ -59,7 +57,10 @@ def _plot_summary(data_for_analysis, pdf):
     plot_data_table(summary, pdf, labels)
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners):
-    analysis = np.empty([iterations, years_to_process+1])
+    iterations = len(data_for_analysis)
+    start_year = data_for_analysis[0]['Year'][0]
+    years_to_process = len(data_for_analysis[0].index)
+    analysis = np.empty([iterations, years_to_process])
     fig = plt.figure(figsize=(10,6), dpi=300)
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values

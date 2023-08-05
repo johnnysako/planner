@@ -151,7 +151,7 @@ def main():
     sorted_data, failed_plans = sort_data(data_for_analysis)
 
     with PdfPages('financial_analysis.pdf') as pdf:
-        plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners)
+        plot_monte_carlos(sorted_data, failed_plans, pdf, owners)
         plot_expense_table(expenses, pdf)
         d = pdf.infodict()
         d['Title'] = 'Financial Plan'
