@@ -79,16 +79,6 @@ def test_can_get_type():
     assert account.get_type() == "Roth"
 
 
-def test_can_get_priority():
-    config = {
-        "type": "Roth",
-        "withdrawl_priority": 1,
-    }
-
-    account = Account(config)
-    assert account.get_withdrawl_priority() == 1
-
-
 def test_can_pull_funds():
     config = {
         "type": "Roth",

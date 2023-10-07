@@ -39,7 +39,6 @@ def test_can_get_header():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -59,7 +58,6 @@ def test_can_fill_table_for_one_year():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -68,7 +66,6 @@ def test_can_fill_table_for_one_year():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -120,7 +117,6 @@ def test_can_fill_table_for_two_years():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -129,7 +125,6 @@ def test_can_fill_table_for_two_years():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -182,7 +177,6 @@ def test_owners_do_not_match_accounts():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -211,7 +205,6 @@ def test_owners_match_accounts():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -220,7 +213,6 @@ def test_owners_match_accounts():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -272,7 +264,6 @@ def test_expenses_can_be_empty():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -281,7 +272,6 @@ def test_expenses_can_be_empty():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -317,7 +307,6 @@ def test_account_growth_only_interest_when_owner_retired():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -343,7 +332,6 @@ def test_calculates_rmds_of_accounts():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -352,7 +340,6 @@ def test_calculates_rmds_of_accounts():
         "balance": 8000,
         "annual_additions":2000,
         "type": "IRA",
-        "withdrawl priority": 4,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -361,7 +348,6 @@ def test_calculates_rmds_of_accounts():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 2,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -370,7 +356,6 @@ def test_calculates_rmds_of_accounts():
         "balance": 20000,
         "annual_additions": 5000,
         "type": "401K",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -412,7 +397,6 @@ def test_calculates_rmds_of_accounts_several_years():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -421,7 +405,6 @@ def test_calculates_rmds_of_accounts_several_years():
         "balance": 8000,
         "annual_additions":2000,
         "type": "IRA",
-        "withdrawl priority": 4,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -430,7 +413,6 @@ def test_calculates_rmds_of_accounts_several_years():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 2,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -439,7 +421,6 @@ def test_calculates_rmds_of_accounts_several_years():
         "balance": 20000,
         "annual_additions": 5000,
         "type": "401K",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -484,7 +465,6 @@ def test_can_include_tax_on_account_growth():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -493,7 +473,6 @@ def test_can_include_tax_on_account_growth():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 3,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -532,7 +511,6 @@ def test_no_tax_on_negative_growth():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -541,7 +519,6 @@ def test_no_tax_on_negative_growth():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 3,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -580,7 +557,6 @@ def test_calculates_tax_including_rmds():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Roth",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -589,7 +565,6 @@ def test_calculates_tax_including_rmds():
         "balance": 8000,
         "annual_additions":2000,
         "type": "IRA",
-        "withdrawl priority": 4,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -598,7 +573,6 @@ def test_calculates_tax_including_rmds():
         "balance": 10000,
         "annual_additions": 5000,
         "type": "Investment",
-        "withdrawl priority": 2,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -607,7 +581,6 @@ def test_calculates_tax_including_rmds():
         "balance": 20000,
         "annual_additions": 5000,
         "type": "401K",
-        "withdrawl priority": 3,
         "owner": "Jill",
         "trail_with_rmd": False
     }))
@@ -660,7 +633,6 @@ def test_expenses_pulls_from_account():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -706,7 +678,6 @@ def test_expenses_pulls_from_income():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -752,7 +723,6 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
         "balance": 4000,
         "annual_additions":2000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -761,7 +731,6 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
         "balance": 10000,
         "annual_additions":2000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -807,7 +776,6 @@ def test_pulls_plan_fails_when_no_money_left():
         "balance": 4000,
         "annual_additions":0,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -816,7 +784,6 @@ def test_pulls_plan_fails_when_no_money_left():
         "balance": 10000,
         "annual_additions":1000,
         "type": "Investment",
-        "withdrawl priority": 1,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -861,7 +828,6 @@ def test_pulls_rmd_can_cover_expense_and_tax():
         "balance": 8000,
         "annual_additions":0,
         "type": "IRA",
-        "withdrawl priority": 4,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -870,7 +836,6 @@ def test_pulls_rmd_can_cover_expense_and_tax():
         "balance": 20000,
         "annual_additions": 0,
         "type": "401K",
-        "withdrawl priority": 3,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -922,7 +887,6 @@ def test_does_not_include_social_security_when_config():
         "balance": 8000,
         "annual_additions":0,
         "type": "IRA",
-        "withdrawl priority": 4,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -931,7 +895,6 @@ def test_does_not_include_social_security_when_config():
         "balance": 20000,
         "annual_additions": 0,
         "type": "401K",
-        "withdrawl priority": 3,
         "owner": "Jerry",
         "trail_with_rmd": False
     }))
@@ -985,7 +948,6 @@ def test_roth_has_rmd_when_config():
         "balance": 8000,
         "annual_additions":0,
         "type": "Roth",
-        "withdrawl priority": 4,
         "owner": "Jerry",
         "trail_with_rmd": True
     }))
