@@ -77,7 +77,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     for owner in owners:
         if not owner.is_retired(start_year):
             retire_year = start_year + owner.get_retirement_age()-owner.get_age(start_year)
-            label = owner.get_name() + ' Retires\n' + str(retire_year)
+            label = owner.get_name() + ' Retires\n' + '{:.0f}'.format(retire_year)
             ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
             plt.vlines(x = retire_year, ymin = ticks[1], ymax = ticks[-2], colors = 'purple')   
 

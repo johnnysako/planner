@@ -27,6 +27,8 @@ years_to_process = 64
 start_year = 2023
 iterations = 1000
 iterations_per_thread = int(iterations/10)
+
+# Adjust rate of return assumption here. Currently not adjusted for inflation
 mean_rate_of_return = 4.19
 standard_deviation_of_return = 9.5
 
@@ -36,7 +38,7 @@ def background(f):
 
     return wrapped
 
-def your_function(argument, other_argument): # Added another argument
+def your_function(argument, other_argument): 
     time.sleep(5)
     print(f"function finished for {argument=} and {other_argument=}")
     
@@ -138,9 +140,9 @@ def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial):
 def main():
     # Scenerios:
     # 1. As is
-    # 2. Trial selected 401K as Roth
+    # 2. Trial selected Roth with RMDs (aka 401K)
     # 3. No Social Security
-    # 4. No Social Security and Trial selected 401K as Roth
+    # 4. No Social Security and Trial selected Roth with RMDs
     trials = [
         { "social_security": True, "rmd": False },
         { "social_security": True, "rmd": True },
