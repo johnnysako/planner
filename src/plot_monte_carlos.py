@@ -90,7 +90,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     plt.yticks(fontsize=6)
     plt.title('Monte Carlo Analysis\nAverage EoP: ' 
               + '${:,.0f}\n'.format(average_plot[-1])
-              + "Mean EoP: "
+              + "Median EoP: "
               + '${:,.0f}\n'.format(median)
               + '{:.2f}%'.format(len(failed_plans)/iterations*100)
               + ' Plans failed', fontsize=10)
