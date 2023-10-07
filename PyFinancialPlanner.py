@@ -120,6 +120,8 @@ def plot_accounts_table(personal_path, pdf):
 
     labels = data['Account']
     data.drop('Account', axis=1, inplace=True)
+    data.update(data[['Balance']].astype(float))
+    data.update(data[['Balance']].applymap('{:,.0f}'.format))
     plot_data_table(data, pdf, labels, "Account Summary")
 
 @background
