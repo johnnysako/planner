@@ -146,6 +146,10 @@ To run the plan simply execute:
 ```
 python3 PyFinancialPlanner.py
 ```
+It is possible to pu ta copy of `accounts.json`, `expenses.json`, and `owners.json` in a different folder and specify that when running:
+```
+python3 PyFinancialPlanner.py path_to_your_data
+```
 The results will be stored in a pdf file named financial_analysis.pdf
 
 It is possible to see expanded details of the failed trials. This significantly adds to the time to run the program as pyplot does not appear to be terribly fast. In `plot_monte_carlos.py` uncomment the following:

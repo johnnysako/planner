@@ -12,6 +12,7 @@ from src.owner import Owner
 from src.draw_table import plot_data_table
 from src.plot_monte_carlos import plot_monte_carlos
 
+import sys
 import json
 import numpy as np
 import pandas as pd
@@ -38,19 +39,19 @@ def background(f):
 
     return wrapped
 
-def load_constants():
+def load_constants(personal_path):
     f = open('rmd.json')
     rmd = Rmd(json.load(f)["rmd"])
 
     f = open('tax.json')
     tax = Tax(json.load(f)["tax"])
 
-    f = open('owners.json')
+    f = open(personal_path + 'owners.json')
     owners = []
     for o in json.load(f)["owners"]:
         owners.append(Owner(o))
 
-    f = open('expenses.json')
+    f = open(personal_path + 'expenses.json')
     expense = []
     for e in json.load(f)['expenses']:
         expense.append(Expense(e))
@@ -103,8 +104,8 @@ def plot_expense_table(expenses, pdf):
     data.update(data.applymap('{:,.0f}'.format))
     plot_data_table(data, pdf, labels, "Expense Table", numpages=(2,2))
 
-def plot_accounts_table(pdf):
-    f = open('accounts.json')
+def plot_accounts_table(personal_path, pdf):
+    f = open(personal_path + 'accounts.json')
     accounts = []
     for a in json.load(f)["accounts"]:
         accounts.append(Account(a))
@@ -122,9 +123,9 @@ def plot_accounts_table(pdf):
     plot_data_table(data, pdf, labels, "Account Summary")
 
 @background
-def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis):
+def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path):
     rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
-    f = open('accounts.json')
+    f = open(personal_path + 'accounts.json')
     accounts = []
     for a in json.load(f)["accounts"]:
         accounts.append(Account(a))
@@ -134,24 +135,24 @@ def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis)
     data = pd.DataFrame(np.array(plan.process_plan(start_year, years_to_process, rates)), columns = plan.get_header())
     data_for_analysis.append(data)
 
-def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial):
+def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, personal_path):
     loop = asyncio.get_event_loop()                                              
 
-    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
-    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis) for i in range(iterations_per_thread)])
+    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
 
     all_groups = asyncio.gather(group1, group2, group3, group4, group5, group6, group7, group8, group9, group10)                                
     results = loop.run_until_complete(all_groups)
 
-def main():
+def main(personal_path=""):
     # Scenerios:
     # 1. As is
     # 2. Trial selected Roth with RMDs (aka 401K)
@@ -164,15 +165,15 @@ def main():
         { "social_security": False, "rmd": True }
     ]
 
-    rmd, tax, owners, expenses = load_constants()
+    rmd, tax, owners, expenses = load_constants(personal_path)
 
     with PdfPages('financial_analysis.pdf') as pdf:
-        plot_accounts_table(pdf)
+        plot_accounts_table(personal_path, pdf)
         
         for trial in trials:
             data_for_analysis = []
 
-            run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial)
+            run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, personal_path)
 
             sorted_data, failed_plans = sort_data(data_for_analysis)
 
@@ -188,4 +189,7 @@ def main():
     return 0
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        main(sys.argv[1] + '/')
+    else:
+        main()
