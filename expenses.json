@@ -1,0 +1,55 @@
+{
+    "expenses": [
+        {
+            "name": "Living",
+            "need": true,
+            "ammount": 60000,
+            "starting_year": 2023,
+            "end_year": 2042,
+            "frequency": 1
+        },
+        {
+            "name": "Living Jack Joe Retired",
+            "need": true,
+            "ammount": 50000,
+            "starting_year": 2043,
+            "end_year": 2049,
+            "frequency": 1
+        },
+        {
+            "name": "Living Both Retired",
+            "need": true,
+            "ammount": 40000,
+            "starting_year": 2050,
+            "frequency": 1
+        },
+        {
+            "name": "Healthcare",
+            "need": true,
+            "ammount": 10000,
+            "starting_year": 2040,
+            "frequency": 1
+        },
+        {
+            "name": "Home Maintenance",
+            "need": true,
+            "ammount": 15000,
+            "starting_year": 2045,
+            "frequency": 5
+        },
+        {
+            "name": "Charity",
+            "need": true,
+            "ammount": 1000,
+            "starting_year": 2045,
+            "frequency": 1
+        },
+        {
+            "name": "End of life care",
+            "need": true,
+            "ammount": 60000,
+            "starting_year": 2069,
+            "frequency": 1
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "accounts": [
+        {
+            "name": "Account A",
+            "balance": 12345.00,
+            "annual_additions": 0.0,
+            "type": "Investment",
+            "owner": "Jane Doe",
+            "trail_with_rmd": false
+        },
+        {
+            "name": "Account B",
+            "balance": 54321.44,
+            "annual_additions": 1000.0,
+            "type": "Investment",
+            "owner": "Jack Joe",
+            "trail_with_rmd": false
+        },
+        {
+            "name": "Account C",
+            "balance": 67890.94,
+            "annual_additions": 5000.0,
+            "type": "Roth",
+            "owner": "Jane Doe",
+            "trail_with_rmd": false
+        },
+        {
+            "name": "Account D",
+            "balance": 98765.50,
+            "annual_additions": 6000.0,
+            "type": "401K",
+            "owner": "Jack Joe",
+            "trail_with_rmd": false
+        }
+    ]
+}

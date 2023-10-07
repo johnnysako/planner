@@ -1,0 +1,24 @@
+{
+    "owners": [
+        {
+            "name": "Jane Doe",
+            "birth_year": 1980,
+            "life": 99,
+            "retirement_age": 70,
+            "income": 90000,
+            "social_security": 20000,
+            "start_social_security": 70,
+            "trial_social_security": true
+        },
+        {
+            "name": "Jack Joe",
+            "birth_year": 1975,
+            "life": 99,
+            "retirement_age": 68,
+            "income": 50000,
+            "social_security": 15000,
+            "start_social_security": 70,
+            "trial_social_security": true
+        }
+    ]
+}

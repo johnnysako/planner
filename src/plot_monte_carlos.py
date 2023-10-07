@@ -68,7 +68,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
-    # print('{:,.0f}'.format(round(np.median(analysis, axis=0)[-1], 2)))
+    median = round(np.median(analysis, axis=0)[-1], 2)
     
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
@@ -90,8 +90,10 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     plt.yticks(fontsize=6)
     plt.title('Monte Carlo Analysis\nAverage EoP: ' 
               + '${:,.0f}\n'.format(average_plot[-1])
+              + "Mean EoP: "
+              + '${:,.0f}\n'.format(median)
               + '{:.2f}%'.format(len(failed_plans)/iterations*100)
-              + ' Plans failed')
+              + ' Plans failed', fontsize=10)
     pdf.savefig()
     plt.close(fig)
 
