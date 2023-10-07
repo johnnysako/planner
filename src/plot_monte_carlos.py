@@ -28,7 +28,7 @@ def _plot_failed_plans(failed_plans, pdf):
             data.drop('Year', axis=1, inplace=True)
             data.update(data.astype(float))
             data.update(data.applymap('{:,.0f}'.format))
-            plot_data_table(data, pdf, labels, numpages=(2,1))
+            plot_data_table(data, pdf, labels, "Failed Plan Data Table", numpages=(2,1))
 
 def _plot_summary(data_for_analysis, pdf):
     data = []
@@ -54,7 +54,7 @@ def _plot_summary(data_for_analysis, pdf):
     summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan']].astype(float))
     summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan']].applymap('{:,.0f}'.format))
 
-    plot_data_table(summary, pdf, labels)
+    plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     iterations = len(data_for_analysis)

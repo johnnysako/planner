@@ -38,10 +38,6 @@ def background(f):
 
     return wrapped
 
-def your_function(argument, other_argument): 
-    time.sleep(5)
-    print(f"function finished for {argument=} and {other_argument=}")
-    
 def load_constants():
     f = open('rmd.json')
     rmd = Rmd(json.load(f)["rmd"])
@@ -105,7 +101,25 @@ def plot_expense_table(expenses, pdf):
     data.drop('Year', axis=1, inplace=True)
     data.update(data.astype(float))
     data.update(data.applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, numpages=(2,2))
+    plot_data_table(data, pdf, labels, "Expense Table", numpages=(2,2))
+
+def plot_accounts_table(pdf):
+    f = open('accounts.json')
+    accounts = []
+    for a in json.load(f)["accounts"]:
+        accounts.append(Account(a))
+
+    account_table = []
+    total = 0
+    for account in accounts:
+        total = total + account.get_balance()
+        account_table.append([account.get_name(), account.get_balance(), account.get_type(), account.get_owner()])
+    account_table.append(['Total', total, ''])
+    data = pd.DataFrame(account_table, columns = ['Account', 'Balance', 'Type', 'Owner'])
+
+    labels = data['Account']
+    data.drop('Account', axis=1, inplace=True)
+    plot_data_table(data, pdf, labels, "Account Summary")
 
 @background
 def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis):
@@ -153,6 +167,8 @@ def main():
     rmd, tax, owners, expenses = load_constants()
 
     with PdfPages('financial_analysis.pdf') as pdf:
+        plot_accounts_table(pdf)
+        
         for trial in trials:
             data_for_analysis = []
 
@@ -165,7 +181,7 @@ def main():
         plot_expense_table(expenses, pdf)
 
         d = pdf.infodict()
-        d['Title'] = 'Financial Plan'
+        d['Title'] = 'Financial Projection'
         d['Author'] = u'John Chapman'
         d['CreationDate'] = datetime.datetime.today()
 
