@@ -17,21 +17,21 @@ import json
 import numpy as np
 import pandas as pd
 import datetime
+import yfinance as yf
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 import asyncio
-import time
 
 years_to_process = 64
 start_year = 2023
 iterations = 1000
 iterations_per_thread = int(iterations/10)
 
-# Adjust rate of return assumption here. Currently not adjusted for inflation
-mean_rate_of_return = 4.19
-standard_deviation_of_return = 9.5
+# Place holders. Values will be generated based on S&P performance
+mean_rate_of_return = 7
+standard_deviation_of_return = 15
 
 def background(f):
     def wrapped(*args, **kwargs):
@@ -127,6 +127,7 @@ def plot_accounts_table(personal_path, pdf):
 @background
 def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path):
     rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
+
     f = open(personal_path + 'accounts.json')
     accounts = []
     for a in json.load(f)["accounts"]:
@@ -168,6 +169,21 @@ def main(personal_path=""):
     ]
 
     rmd, tax, owners, expenses = load_constants(personal_path)
+
+    # Define the S&P 500 symbol and time period for historical data
+    symbol = "^GSPC"
+    start_date = "1950-01-01"
+    end_date = "2021-12-31"
+
+    # Download historical S&P 500 data using Yahoo Finance
+    data = yf.download(symbol, start=start_date, end=end_date)
+
+    # Calculate annual returns from historical data
+    annual_returns = data['Adj Close'].resample('Y').ffill().pct_change().dropna()
+
+    # Calculate the mean and standard deviation of annual returns
+    mean_rate_of_return = 100*annual_returns.mean()-1
+    standard_deviation_of_return = 100*annual_returns.std()
 
     with PdfPages('financial_analysis.pdf') as pdf:
         plot_accounts_table(personal_path, pdf)
