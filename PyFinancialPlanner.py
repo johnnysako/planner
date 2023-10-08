@@ -30,8 +30,8 @@ iterations = 1000
 iterations_per_thread = int(iterations/10)
 
 # Place holders. Values will be generated based on S&P performance
-mean_rate_of_return = 7
-standard_deviation_of_return = 15
+mean_rate_of_return = 7.0
+standard_deviation_of_return = 15.0
 
 def background(f):
     def wrapped(*args, **kwargs):
@@ -126,7 +126,7 @@ def plot_accounts_table(personal_path, pdf):
 
 @background
 def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path):
-    rates = np.random.normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
+    rates = np.random.default_rng().normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
 
     f = open(personal_path + 'accounts.json')
     accounts = []
