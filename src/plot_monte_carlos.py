@@ -64,7 +64,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     fig = plt.figure(figsize=(10,6), dpi=300)
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
-        plt.plot(data['Year'], data['Sum of Accounts'])
+        plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
     
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
