@@ -30,9 +30,6 @@ iterations = 1000
 iterations_per_thread = int(iterations/10)
 
 # Place holders. Values will be generated based on S&P performance
-mean_rate_of_return = 7.0
-standard_deviation_of_return = 15.0
-
 def background(f):
     def wrapped(*args, **kwargs):
         return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
@@ -124,9 +121,19 @@ def plot_accounts_table(personal_path, pdf):
     data.update(data[['Balance']].applymap('{:,.0f}'.format))
     plot_data_table(data, pdf, labels, "Account Summary")
 
+def generate_returns(data_distribution):
+    randoms = [int(x) for x in np.floor(np.random.default_rng().normal(26, 7, years_to_process+1))]
+    returns = []
+    for random in randoms:
+        if random <= 0:
+            returns.append(data_distribution[random])
+        else:
+            returns.append(np.random.uniform(data_distribution[random-1], data_distribution[random]))
+    return np.array(returns)
+
 @background
 def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path):
-    rates = np.random.default_rng().normal(mean_rate_of_return, standard_deviation_of_return, years_to_process+1)
+    rates = generate_returns(trial["dist"])*100
 
     f = open(personal_path + 'accounts.json')
     accounts = []
@@ -156,18 +163,6 @@ def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, perso
     results = loop.run_until_complete(all_groups)
 
 def main(personal_path=""):
-    # Scenerios:
-    # 1. As is
-    # 2. Trial selected Roth with RMDs (aka 401K)
-    # 3. No Social Security
-    # 4. No Social Security and Trial selected Roth with RMDs
-    trials = [
-        { "social_security": True, "rmd": False },
-        { "social_security": True, "rmd": True },
-        { "social_security": False, "rmd": False },
-        { "social_security": False, "rmd": True }
-    ]
-
     rmd, tax, owners, expenses = load_constants(personal_path)
 
     # Define the S&P 500 symbol and time period for historical data
@@ -180,10 +175,19 @@ def main(personal_path=""):
 
     # Calculate annual returns from historical data
     annual_returns = data['Adj Close'].resample('Y').ffill().pct_change().dropna()
+    sorted_annual_returns = sorted(annual_returns)
 
-    # Calculate the mean and standard deviation of annual returns
-    mean_rate_of_return = 100*annual_returns.mean()-1
-    standard_deviation_of_return = 100*annual_returns.std()
+    # Scenerios:
+    # 1. As is
+    # 2. Trial selected Roth with RMDs (aka 401K)
+    # 3. No Social Security
+    # 4. No Social Security and Trial selected Roth with RMDs
+    trials = [
+        { "social_security": True, "rmd": False, "dist": sorted_annual_returns },
+        { "social_security": True, "rmd": True, "dist": sorted_annual_returns },
+        { "social_security": False, "rmd": False, "dist": sorted_annual_returns },
+        { "social_security": False, "rmd": True, "dist": sorted_annual_returns }
+    ]
 
     with PdfPages('financial_analysis.pdf') as pdf:
         plot_accounts_table(personal_path, pdf)
