@@ -122,7 +122,8 @@ def plot_accounts_table(personal_path, pdf):
     plot_data_table(data, pdf, labels, "Account Summary")
 
 def generate_returns(data_distribution):
-    randoms = [int(x) for x in np.floor(np.random.default_rng().normal(26, 7, years_to_process+1))]
+    randoms = [int(x) for x in np.floor(np.random.default_rng().normal(26, 9, years_to_process+1))]
+    randoms = np.clip(randoms, 0, len(randoms))
     returns = []
     for random in randoms:
         if random <= 0:
@@ -132,7 +133,7 @@ def generate_returns(data_distribution):
     return np.array(returns)
 
 @background
-def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path):
+def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path):
     rates = generate_returns(trial["dist"])*100
 
     f = open(personal_path + 'accounts.json')
@@ -144,20 +145,21 @@ def process_run(iteration, rmd, tax, owners, expenses, trial, data_for_analysis,
 
     data = pd.DataFrame(np.array(plan.process_plan(start_year, years_to_process, rates)), columns = plan.get_header())
     data_for_analysis.append(data)
+    average_rates.append(np.average(rates))
 
-def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, personal_path):
+def run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, average_rates, personal_path):
     loop = asyncio.get_event_loop()                                              
 
-    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
-    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, personal_path) for i in range(iterations_per_thread)])
+    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
+    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners, expenses, trial, data_for_analysis, average_rates, personal_path) for i in range(iterations_per_thread)])
 
     all_groups = asyncio.gather(group1, group2, group3, group4, group5, group6, group7, group8, group9, group10)                                
     results = loop.run_until_complete(all_groups)
@@ -194,11 +196,13 @@ def main(personal_path=""):
         
         for trial in trials:
             data_for_analysis = []
+            average_rates = []
 
-            run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, personal_path)
+            run_monte_carlos(data_for_analysis, rmd, tax, owners, expenses, trial, average_rates, personal_path)
 
             sorted_data, failed_plans = sort_data(data_for_analysis)
 
+            print('Average Rate of Return: {:0.2f}%'.format(np.average(average_rates)))
             plot_monte_carlos(sorted_data, failed_plans, pdf, owners, trial)
 
         plot_expense_table(expenses, pdf)

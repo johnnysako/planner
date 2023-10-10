@@ -53,7 +53,7 @@ def _plot_summary(data_for_analysis, pdf):
     summary.drop('Trial', axis=1, inplace=True)
     summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan']].astype(float))
     summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20', 'Year 25', 'End of Plan']].applymap('{:,.0f}'.format))
-
+    print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
@@ -69,7 +69,8 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
     median = round(np.median(analysis, axis=0)[-1], 2)
-    
+    print('Median EoP: ${:,.0f}'.format(median))
+    print('MEan EoP: ${:,.0f}'.format(average_plot[-1]))
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
@@ -82,6 +83,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
             plt.vlines(x = retire_year, ymin = ticks[1], ymax = ticks[-2], colors = 'purple')   
 
     trial_label = 'Include Social Security: ' + str(trial["social_security"]) + '\nSelected roths have RMDs: ' + str(trial["rmd"])
+    print(trial_label)
     ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
 
     plt.xlabel('Year', fontsize=12)
