@@ -48,6 +48,14 @@ def append_tax(data, self, rate, rmd):
     data.append(tax)
     return tax
 
+def append_reinvestment(data, income, tax, expense, rmd):
+    change = expense + tax - income - rmd
+    
+    if change < 0: data.append(-change)
+    else: data.append(0.0)
+
+    return change
+
 def append_accounts(data, year, self, rate, expense, growth):
     total = 0
     for account in self.accounts:
@@ -81,7 +89,7 @@ class Plan:
         return True
 
     def get_header(self):
-        header = ["Year", "Income", "Rmd", "Expenses", "Taxes"]
+        header = ["Year", "Income", "Rmd", "Expenses", "Taxes", "Reinvested"]
         for account in self.accounts:
             header.append(account.get_name())
         
@@ -99,11 +107,9 @@ class Plan:
             rmd = append_rmd(balances[i], start_year+i, self, self.config["rmd"])
             expense = append_expenses(balances[i], start_year+i, self.expenses)            
             tax = append_tax(balances[i], self, rates[i], rmd)
-            
-            if income > (expense + tax): expense = 0
-            else: expense = expense + tax - income
+            change = append_reinvestment(balances[i], income, tax, expense, rmd)
 
-            total = append_accounts(balances[i], start_year+i, self, rates[i], expense-rmd, i!=0)
+            total = append_accounts(balances[i], start_year+i, self, rates[i], change, i!=0)
             balances[i].append(total)
 
         return balances
