@@ -3,7 +3,7 @@
         {
             "name": "Living",
             "need": true,
-            "ammount": 60000,
+            "ammount": 90000,
             "starting_year": 2023,
             "end_year": 2042,
             "frequency": 1
