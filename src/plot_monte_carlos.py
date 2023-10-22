@@ -64,7 +64,8 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     fig = plt.figure(figsize=(10,6), dpi=300)
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
-        plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
+        if i%20==0:
+            plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
     
     average_plot = analysis.mean(axis=0)
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
@@ -90,12 +91,12 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     plt.xticks(fontsize=6)
     plt.ylabel('Net Worth', fontsize=12)
     plt.yticks(fontsize=6)
-    plt.title('Monte Carlo Analysis\nAverage EoP: ' 
-              + '${:,.0f}\n'.format(average_plot[-1])
-              + "Median EoP: "
-              + '${:,.0f}\n'.format(median)
-              + '{:.2f}%'.format(len(failed_plans)/iterations*100)
-              + ' Plans failed', fontsize=10)
+    plt.title('Monte Carlo Analysis', fontsize=14)
+        
+    results_to_include = 'Average EoP: ' + '${:,.0f}\n'.format(average_plot[-1]) + "Median EoP: " + '${:,.0f}\n'.format(median) + '{:.1f}%'.format(len(failed_plans)/iterations*100) + ' Plans failed'   
+    box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
+    plt.text(0.025, 0.9, results_to_include, transform=plt.gca().transAxes, fontsize=8, bbox=box_props)
+
     pdf.savefig()
     plt.close(fig)
 
