@@ -56,18 +56,18 @@ def append_reinvestment(data, income, tax, expense, rmd):
 
     return change
 
-def append_accounts(data, year, self, rate, expense, growth):
+def append_accounts(data, year, self, rate, change, growth):
     total = 0
     for account in self.accounts:
         retired = owner_is_retired(account, self, year)
         if growth:
             account.process_growth(rate, retired)
-        if expense:
-            if account.withdrawl(expense):
-                expense = 0
+        if change:
+            if account.withdrawl(change):
+                change = 0
             else:
                 balance = account.get_balance()
-                expense -= balance
+                change -= balance
                 account.withdrawl(balance)
         balance = account.get_balance()
         data.append(balance)
