@@ -87,7 +87,7 @@ def test_can_pull_funds():
     }
 
     account = Account(config)
-    account.withdrawl(1000)
+    account.withdraw(1000)
     assert account.get_balance() == 4000
 
 
@@ -98,7 +98,7 @@ def test_balance_does_not_change_when_withrawl_fails():
     }
 
     account = Account(config)
-    assert account.withdrawl(6000) is False
+    assert account.withdraw(6000) is False
     assert account.get_balance() == 5000
 
 
@@ -153,7 +153,7 @@ def test_withdrawl_negative_adds():
     }
 
     account = Account(config)
-    account.withdrawl(-1000)
+    account.withdraw(-1000)
     assert account.get_balance() == 6000
 
 
@@ -165,7 +165,7 @@ def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     }
 
     account = Account(config)
-    assert account.withdrawl_rmd(10) == 0
+    assert account.withdraw_rmd(10) == 0
     assert account.get_balance() == 5000
 
 
@@ -177,7 +177,7 @@ def test_withdrawl_rmd_does_change_balance_for_Roth_when_testing_rmd():
     }
 
     account = Account(config)
-    assert account.withdrawl_rmd(10, True) == 500
+    assert account.withdraw_rmd(10, True) == 500
     assert account.get_balance() == 4500
 
 
@@ -189,7 +189,7 @@ def test_withdrawl_rmd_does_not_change_balance_for_hsa():
     }
 
     account = Account(config)
-    assert account.withdrawl_rmd(10) == 0
+    assert account.withdraw_rmd(10) == 0
     assert account.get_balance() == 5000
 
 

@@ -18,5 +18,5 @@ class Expense:
             return 0
         elif (year - self.config["starting_year"]) \
                 % self.config["frequency"] == 0:
-            return self.config["ammount"]
+            return self.config["amount"]
         return 0

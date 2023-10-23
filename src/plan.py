@@ -30,7 +30,7 @@ def append_rmd(data, year, self, roth_with_rmd):
     rmd = 0
     for account in self.accounts:
         owner = get_account_owner(account, self)
-        rmd += account.withdrawl_rmd(self.rmd.get_rate(
+        rmd += account.withdraw_rmd(self.rmd.get_rate(
             owner.get_age(year)), roth_with_rmd)
     rmd = round(rmd, 2)
     data.append(rmd)
@@ -71,12 +71,12 @@ def append_accounts(data, year, self, rate, change, growth):
         if growth:
             account.process_growth(rate, retired)
         if change:
-            if account.withdrawl(change):
+            if account.withdraw(change):
                 change = 0
             else:
                 balance = account.get_balance()
                 change -= balance
-                account.withdrawl(balance)
+                account.withdraw(balance)
         balance = account.get_balance()
         data.append(balance)
         total += balance

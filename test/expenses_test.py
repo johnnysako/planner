@@ -5,14 +5,14 @@ table = []
 table.append(Expense({
     "name": "Travel",
     "need": False,
-    "ammount": 2000,
+    "amount": 2000,
     "starting_year": 2010,
     "frequency": 1
 }))
 table.append(Expense({
     "name": "Car",
     "need": True,
-    "ammount": 20000,
+    "amount": 20000,
     "starting_year": 2007,
     "frequency": 5
 }))

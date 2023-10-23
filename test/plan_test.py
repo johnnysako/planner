@@ -6,14 +6,14 @@ from src.expenses import Expenses
 from src.rmd import Rmd
 from src.tax import Tax
 
-expty_tax = [
+empty_tax = [
     {
         "max_tax_previous": 0,
         "rate": 0,
         "cutoff": 22000
     }
 ]
-no_tax = Tax(expty_tax)
+no_tax = Tax(empty_tax)
 
 rates = [6, 6, 6]
 
@@ -96,14 +96,14 @@ def test_can_fill_table_for_one_year():
     expense_table.append(Expense({
         "name": "Travel",
         "need": False,
-        "ammount": 2000,
+        "amount": 2000,
         "starting_year": 2010,
         "frequency": 1
     }))
     expense_table.append(Expense({
         "name": "Car",
         "need": True,
-        "ammount": 200,
+        "amount": 200,
         "starting_year": 2007,
         "frequency": 5
     }))
@@ -157,14 +157,14 @@ def test_can_fill_table_for_two_years():
     expense_table.append(Expense({
         "name": "Travel",
         "need": False,
-        "ammount": 2000,
+        "amount": 2000,
         "starting_year": 2010,
         "frequency": 1
     }))
     expense_table.append(Expense({
         "name": "Car",
         "need": True,
-        "ammount": 200,
+        "amount": 200,
         "starting_year": 2007,
         "frequency": 5
     }))
@@ -247,14 +247,14 @@ def test_owners_match_accounts():
     expense_table.append(Expense({
         "name": "Travel",
         "need": False,
-        "ammount": 2000,
+        "amount": 2000,
         "starting_year": 2010,
         "frequency": 1
     }))
     expense_table.append(Expense({
         "name": "Car",
         "need": True,
-        "ammount": 20000,
+        "amount": 20000,
         "starting_year": 2007,
         "frequency": 5
     }))
@@ -679,7 +679,7 @@ def test_expenses_pulls_from_account():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 1000,
+        "amount": 1000,
         "starting_year": 2022,
         "frequency": 1
     }))
@@ -725,7 +725,7 @@ def test_expenses_pulls_from_income():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 1000,
+        "amount": 1000,
         "starting_year": 2022,
         "frequency": 1
     }))
@@ -779,7 +779,7 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 5000,
+        "amount": 5000,
         "starting_year": 2022,
         "frequency": 1
     }))
@@ -833,7 +833,7 @@ def test_pulls_plan_fails_when_no_money_left():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 6000,
+        "amount": 6000,
         "starting_year": 2022,
         "frequency": 1
     }))
@@ -895,7 +895,7 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 500,
+        "amount": 500,
         "starting_year": 2022,
         "frequency": 1
     }))
@@ -955,7 +955,7 @@ def test_does_not_include_social_security_when_config():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 500,
+        "amount": 500,
         "starting_year": 2022,
         "frequency": 1
     }))
@@ -1009,7 +1009,7 @@ def test_roth_has_rmd_when_config():
     expense_table.append(Expense({
         "name": "Travel",
         "need": True,
-        "ammount": 500,
+        "amount": 500,
         "starting_year": 2022,
         "frequency": 1
     }))

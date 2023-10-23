@@ -23,7 +23,7 @@ def test_can_get_expense_for_year():
     config = {
         "starting_year": 2000,
         "frequency": 1,
-        "ammount": 100
+        "amount": 100
     }
 
     expense = Expense(config)
@@ -37,7 +37,7 @@ def test_can_get_different_expense_for_year():
     config = {
         "starting_year": 2004,
         "frequency": 3,
-        "ammount": 200
+        "amount": 200
     }
 
     expense = Expense(config)
@@ -53,7 +53,7 @@ def test_expense_expires():
         "starting_year": 2004,
         "end_year": 2007,
         "frequency": 1,
-        "ammount": 200
+        "amount": 200
     }
 
     expense = Expense(config)

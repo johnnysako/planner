@@ -12,10 +12,10 @@ This does run a Monte Carlos simulation of 4 different scenarios:
 - Without Social Security, Selected Roth do NOT have RMDs
 - Without Social Security, Selected Roths DO have RMDs
 
-This simulation does NOT adjust or account for inflation, so all numbers are in the dollar amount for the simulation start year (set to 2023 in `PyFinancialPlanner.py`). For each of the 1000 iteratios, a random number is generated based on the S&P 500 average rate of return and standard deviation with a normal distribution for each year of the financial plan duration as the growth for that year.
+This simulation does NOT adjust or account for inflation, so all numbers are in the dollar amount for the simulation start year (set to 2023 in `PyFinancialPlanner.py`). For each of the 1000 iterations, a random number is generated based on the S&P 500 average rate of return and standard deviation with a normal distribution for each year of the financial plan duration as the growth for that year.
 
 Some notes: 
-- When it comes time to withdrawl funds to cover expenses (i.e. income from sources such as RMD, income, social security) the program will pull funds from the first account it finds in `accounts.json` until it reaches 0 and then move to the next account. Once an account is at 0 it is effectively "closed".
+- When it comes time to withdraw funds to cover expenses (i.e. income from sources such as RMD, income, social security) the program will pull funds from the first account it finds in `accounts.json` until it reaches 0 and then move to the next account. Once an account is at 0 it is effectively "closed". A plan fails when all accounts are 0.
 - If it happens that income (social security or income) and RMDs exceed expenses and taxes, the excess funds will get added to the first account in the list of accounts. In the future this should be adjusted to the first "investment" account. 
 
 ## Requirements
@@ -60,7 +60,7 @@ This program also has two files included as "adjustable" in the event that the g
     ]
 }
 ```
-- `"name"`: This is just a lable, name it whatever you want. Nothing was tested with two accounts having the same name...
+- `"name"`: This is just a label, name it whatever you want. Nothing was tested with two accounts having the same name...
 - `"balance"`: Self describing
 - `"annual_additions"`: If the account has funds added (like 401K while working), add that here
 - `"type"`: Options:
@@ -78,7 +78,7 @@ This program also has two files included as "adjustable" in the event that the g
         {
             "name": "Living",
             "need": true,
-            "ammount": 60000,
+            "amount": 60000,
             "starting_year": 2023,
             "end_year": 2042,
             "frequency": 1
@@ -86,7 +86,7 @@ This program also has two files included as "adjustable" in the event that the g
         {
             "name": "Living Jack Joe Retired",
             "need": true,
-            "ammount": 50000,
+            "amount": 50000,
             "starting_year": 2043,
             "end_year": 2049,
             "frequency": 1
@@ -96,7 +96,7 @@ This program also has two files included as "adjustable" in the event that the g
 ```
 - `"name"`: Just a label
 - `"need"`: Not used yet, this is for future use in simulating plan success with wants vs needs
-- `"ammount"`: How much is the expense annually?
+- `"amount"`: How much is the expense annually?
 - `"starting_year"`: Year the expense starts
 - `"end_year"`: Year the expense ends [optional] - if not included expense will run to end of plan
 - `"frequency"`: How many years between expenses? For example, 5 means the expense happens every 5th year (2043, 2048, 2053, etc.)
@@ -127,7 +127,7 @@ This program also has two files included as "adjustable" in the event that the g
     ]
 }
 ```
-- `"name"`: Just a lable
+- `"name"`: Just a label
 - `"birth_year"`: What year was this person born?
 - `"life"`: How many years will this person live?
 - `"retirement_age"`: What year will this person retire?
@@ -138,21 +138,6 @@ This program also has two files included as "adjustable" in the event that the g
 
 ## Usage
 This has been developed with unit tests for some aspects. From the root directory run `pytest` and the unit tests will run:
-```
-===================================================================================== test session starts ======================================================================================
-platform darwin -- Python 3.9.6, pytest-7.3.2, pluggy-1.0.0
-rootdir: /Users/johnny_sako/dev/planner
-plugins: anyio-3.6.2
-collected 75 items                                                                                                                                                                             
-
-test/account_test.py .......................                                                                                                                                             [ 30%]
-test/expense_test.py .....                                                                                                                                                               [ 37%]
-test/expenses_test.py .....                                                                                                                                                              [ 44%]
-test/owner_test.py ...........                                                                                                                                                           [ 58%]
-test/plan_test.py ....................                                                                                                                                                   [ 85%]
-test/rmd_test.py .....                                                                                                                                                                   [ 92%]
-test/tax_test.py ......                      
-```
 
 To run the plan simply execute:
 ```

@@ -32,7 +32,7 @@ class Account:
     def get_balance(self):
         return self.config["balance"]
 
-    def withdrawl_rmd(self, rate, roth_with_rmd=False):
+    def withdraw_rmd(self, rate, roth_with_rmd=False):
         rmd = 0
         if rmd_applies(self.get_type(),
                        self.config["trail_with_rmd"] and roth_with_rmd):
@@ -40,7 +40,7 @@ class Account:
         self.config["balance"] = round(self.config["balance"] - rmd, 2)
         return rmd
 
-    def withdrawl(self, amount):
+    def withdraw(self, amount):
         new_balance = self.config["balance"] - amount
 
         if new_balance >= 0:
