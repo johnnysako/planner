@@ -158,7 +158,7 @@ To run the plan simply execute:
 ```
 python3 PyFinancialPlanner.py
 ```
-It is possible to pu ta copy of `accounts.json`, `expenses.json`, and `owners.json` in a different folder and specify that when running:
+It is possible to put a copy of `accounts.json`, `expenses.json`, and `owners.json` in a different folder and specify that when running:
 ```
 python3 PyFinancialPlanner.py path_to_your_data
 ```
