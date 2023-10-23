@@ -1,5 +1,3 @@
-from src.expense import Expense
-
 class Expenses:
     def __init__(self, config):
         self.config = config
@@ -9,14 +7,14 @@ class Expenses:
         for expense in self.config:
             names.append(expense.get_name())
         return names
-    
+
     def get_needs_names(self):
         names = []
         for expense in self.config:
             if expense.is_need():
                 names.append(expense.get_name())
         return names
-    
+
     def get_wants_names(self):
         names = []
         for expense in self.config:
@@ -36,7 +34,7 @@ class Expenses:
             if expense.is_need():
                 expenses += expense.get_expense(year)
         return expenses
-    
+
     def get_year(self, year):
         expenses = []
         for expense in self.config:

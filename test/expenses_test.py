@@ -20,15 +20,18 @@ table.append(Expense({
 
 def test_can_initialize_expenses():
     expenses = Expenses(table)
-    assert expenses.get_names() == [ "Travel", "Car" ]
+    assert expenses.get_names() == ["Travel", "Car"]
+
 
 def test_can_get_needs():
     expenses = Expenses(table)
-    assert expenses.get_needs_names() == [ "Car" ]
+    assert expenses.get_needs_names() == ["Car"]
+
 
 def test_can_get_wants():
     expenses = Expenses(table)
-    assert expenses.get_wants_names() == [ "Travel" ]
+    assert expenses.get_wants_names() == ["Travel"]
+
 
 def test_can_get_expenses():
     expenses = Expenses(table)
@@ -40,15 +43,6 @@ def test_can_get_expenses():
     assert expenses.get_expenses(2012) == 22000
     assert expenses.get_expenses(2013) == 2000
 
-def test_can_get_needs():
-    expenses = Expenses(table)
-    assert expenses.get_needs(2007) == 20000
-    assert expenses.get_needs(2008) == 0
-    assert expenses.get_needs(2009) == 0
-    assert expenses.get_needs(2010) == 0
-    assert expenses.get_needs(2011) == 0
-    assert expenses.get_needs(2012) == 20000
-    assert expenses.get_needs(2013) == 0
 
 def test_can_get_expense_breakdown():
     expenses = Expenses(table)

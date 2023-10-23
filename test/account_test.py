@@ -46,6 +46,7 @@ def test_different_values():
     account.process_growth(7)
     assert account.get_balance() == 5000*1.07 + 3000
 
+
 def test_can_only_increase_by_interest():
     config = {
         "name": "John's Roth",
@@ -97,8 +98,9 @@ def test_balance_does_not_change_when_withrawl_fails():
     }
 
     account = Account(config)
-    assert account.withdrawl(6000) == False
+    assert account.withdrawl(6000) is False
     assert account.get_balance() == 5000
+
 
 def test_bob_is_invalid():
     try:
@@ -106,38 +108,43 @@ def test_bob_is_invalid():
             "type": "bob",
         }
 
-        account = Account(config)
+        Account(config)
         assert False
     except TypeError:
         assert True
+
 
 def test_roth_is_valid():
     config = {
         "type": "Roth",
     }
 
-    account = Account(config)
+    Account(config)
+
 
 def test_401K_is_valid():
     config = {
         "type": "401K",
     }
 
-    account = Account(config)
+    Account(config)
+
 
 def test_IRA_is_valid():
     config = {
         "type": "IRA",
     }
 
-    account = Account(config)
+    Account(config)
+
 
 def test_investment_is_valid():
     config = {
         "type": "Investment",
     }
 
-    account = Account(config)
+    Account(config)
+
 
 def test_withdrawl_negative_adds():
     config = {
@@ -148,6 +155,7 @@ def test_withdrawl_negative_adds():
     account = Account(config)
     account.withdrawl(-1000)
     assert account.get_balance() == 6000
+
 
 def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     config = {
@@ -160,6 +168,7 @@ def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     assert account.withdrawl_rmd(10) == 0
     assert account.get_balance() == 5000
 
+
 def test_withdrawl_rmd_does_change_balance_for_Roth_when_testing_rmd():
     config = {
         "type": "Roth",
@@ -170,6 +179,7 @@ def test_withdrawl_rmd_does_change_balance_for_Roth_when_testing_rmd():
     account = Account(config)
     assert account.withdrawl_rmd(10, True) == 500
     assert account.get_balance() == 4500
+
 
 def test_withdrawl_rmd_does_not_change_balance_for_hsa():
     config = {
@@ -182,6 +192,7 @@ def test_withdrawl_rmd_does_not_change_balance_for_hsa():
     assert account.withdrawl_rmd(10) == 0
     assert account.get_balance() == 5000
 
+
 def test_is_taxable_roth_false():
     config = {
         "type": "Roth",
@@ -189,7 +200,8 @@ def test_is_taxable_roth_false():
     }
 
     account = Account(config)
-    assert account.is_taxable() == False
+    assert account.is_taxable() is False
+
 
 def test_is_taxable_IRA_false():
     config = {
@@ -198,7 +210,8 @@ def test_is_taxable_IRA_false():
     }
 
     account = Account(config)
-    assert account.is_taxable() == False
+    assert account.is_taxable() is False
+
 
 def test_is_taxable_401k_false():
     config = {
@@ -207,7 +220,8 @@ def test_is_taxable_401k_false():
     }
 
     account = Account(config)
-    assert account.is_taxable() == False
+    assert account.is_taxable() is False
+
 
 def test_is_taxable_investment_true():
     config = {
@@ -216,7 +230,8 @@ def test_is_taxable_investment_true():
     }
 
     account = Account(config)
-    assert account.is_taxable() == True
+    assert account.is_taxable() is True
+
 
 def test_is_taxable_hsa_false():
     config = {
@@ -225,4 +240,4 @@ def test_is_taxable_hsa_false():
     }
 
     account = Account(config)
-    assert account.is_taxable() == False
+    assert account.is_taxable() is False

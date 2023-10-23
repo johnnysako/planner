@@ -7,6 +7,7 @@ def rmd_applies(account_type, roth_with_rmd):
         return True
     return False
 
+
 class Account:
     def __init__(self, config):
         valid_types = ["401K", "Roth", "IRA", "Investment", "HSA"]
@@ -31,13 +32,14 @@ class Account:
     def get_balance(self):
         return self.config["balance"]
 
-    def withdrawl_rmd(self, rate, roth_with_rmd = False):
+    def withdrawl_rmd(self, rate, roth_with_rmd=False):
         rmd = 0
-        if rmd_applies(self.get_type(), self.config["trail_with_rmd"] and roth_with_rmd):
+        if rmd_applies(self.get_type(),
+                       self.config["trail_with_rmd"] and roth_with_rmd):
             rmd = self.config["balance"] * rate/100
         self.config["balance"] = round(self.config["balance"] - rmd, 2)
-        return rmd 
-        
+        return rmd
+
     def withdrawl(self, amount):
         new_balance = self.config["balance"] - amount
 
@@ -46,10 +48,11 @@ class Account:
             return True
         else:
             return False
-        
+
     def process_growth(self, rate, interest_only=False):
         if interest_only:
             new_balance = self.config["balance"] * (1 + rate/100)
         else:
-            new_balance = self.config["balance"] * (1 + rate/100) + self.config["annual_additions"]
+            new_balance = self.config["balance"] \
+                            * (1 + rate/100) + self.config["annual_additions"]
         self.config["balance"] = round(new_balance, 2)

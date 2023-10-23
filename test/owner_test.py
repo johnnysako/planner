@@ -52,14 +52,15 @@ def test_should_trial_social_security():
     }
 
     owner = Owner(config)
-    assert owner.trial_social_security() == True
+    assert owner.trial_social_security() is True
 
     config_other = {
         "trial_social_security": False
     }
 
     other_owner = Owner(config_other)
-    assert other_owner.trial_social_security() == False
+    assert other_owner.trial_social_security() is False
+
 
 def test_get_income():
     config = {
@@ -72,10 +73,11 @@ def test_get_income():
 
     owner = Owner(config)
     assert owner.get_income(True, 2010) == 56789
-    assert owner.get_income(True, 2042) == 56789 
-    assert owner.get_income(True, 2043) == 0    
-    assert owner.get_income(True, 2046) == 0    
+    assert owner.get_income(True, 2042) == 56789
+    assert owner.get_income(True, 2043) == 0
+    assert owner.get_income(True, 2046) == 0
     assert owner.get_income(True, 2047) == 5678
+
 
 def test_get_income_no_social_security():
     config = {
@@ -88,9 +90,10 @@ def test_get_income_no_social_security():
 
     owner = Owner(config)
     assert owner.get_income(False, 2010) == 56789
-    assert owner.get_income(False, 2043) == 0    
-    assert owner.get_income(False, 2046) == 0    
+    assert owner.get_income(False, 2043) == 0
+    assert owner.get_income(False, 2046) == 0
     assert owner.get_income(False, 2047) == 0
+
 
 def test_get_life():
     config = {
@@ -100,6 +103,7 @@ def test_get_life():
     owner = Owner(config)
     assert owner.get_life() == 110
 
+
 def test_get_different_life():
     config = {
         "life": 115
@@ -107,6 +111,7 @@ def test_get_different_life():
 
     owner = Owner(config)
     assert owner.get_life() == 115
+
 
 def test_is_retired():
     config = {
@@ -119,5 +124,5 @@ def test_is_retired():
 
     owner = Owner(config)
 
-    assert owner.is_retired(2015) == False
-    assert owner.is_retired(2016) == True
+    assert owner.is_retired(2015) is False
+    assert owner.is_retired(2016) is True
