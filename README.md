@@ -1,4 +1,5 @@
 ## Retirement Projection
+![Tests](https://github.com/johnnysako/planner/actions/workflows/python-app.yml/badge.svg)
 ![](images/example_result.jpg)
 This tool was built to be able to run comparisons of a few different scenarios for retirement. First and foremost it was built to understand the impact on a plan of using a Roth 401K vs a Traditional 401K. Most financial projections make this comparison difficult at best. Second, the plan will run with and without social security.
 
