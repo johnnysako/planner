@@ -6,7 +6,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 
+include_failed_plans = False
 include_tables = True
+
+
+def _plot_year_summary_table(data, pdf, title):
+    labels = data['Year'].values.astype(int)
+    data.drop('Year', axis=1, inplace=True)
+    data.update(data.astype(float))
+    data.update(data.applymap('{:,.0f}'.format))
+    plot_data_table(data, pdf, labels,
+                    title, numpages=(2, 1))
 
 
 def _plot_failed_plans(failed_plans, pdf):
@@ -25,12 +35,7 @@ def _plot_failed_plans(failed_plans, pdf):
         plt.close()
 
         if include_tables:
-            labels = data['Year'].values.astype(int)
-            data.drop('Year', axis=1, inplace=True)
-            data.update(data.astype(float))
-            data.update(data.applymap('{:,.0f}'.format))
-            plot_data_table(data, pdf, labels,
-                            "Failed Plan Data Table", numpages=(2, 1))
+            _plot_year_summary_table(data, pdf, "Failed Plan Data Table")
 
 
 def _plot_summary(data_for_analysis, pdf):
@@ -38,6 +43,7 @@ def _plot_summary(data_for_analysis, pdf):
     iterations = len(data_for_analysis)
     range = [int(iterations/100), int(iterations/4), int(iterations/2),
              int(iterations*3/4), int(iterations*99/100)]
+
     for i in range:
         fails_in_year = ""
         if data_for_analysis[i].iloc[-1]['Sum of Accounts'] == 0:
@@ -65,6 +71,9 @@ def _plot_summary(data_for_analysis, pdf):
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
+    _plot_year_summary_table(
+        data_for_analysis[int(iterations/2)], pdf, "Median Data Table")
+
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     iterations = len(data_for_analysis)
@@ -81,7 +90,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
     median = round(np.median(analysis, axis=0)[-1], 2)
     print('Median EoP: ${:,.0f}'.format(median))
-    print('MEan EoP: ${:,.0f}'.format(average_plot[-1]))
+    print('Mean EoP: ${:,.0f}'.format(average_plot[-1]))
     ax = plt.gca()
     plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
@@ -89,7 +98,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     for owner in owners:
         if not owner.is_retired(start_year):
             retire_year = start_year + owner.get_retirement_age() \
-                          - owner.get_age(start_year)
+                - owner.get_age(start_year)
             label = owner.get_name() + ' Retires\n' + \
                 '{:.0f}'.format(retire_year)
             ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
@@ -122,6 +131,8 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     plt.close(fig)
 
     _plot_summary(data_for_analysis, pdf)
-    # _plot_failed_plans(failed_plans, pdf)
+
+    if include_failed_plans:
+        _plot_failed_plans(failed_plans, pdf)
 
     return failed_plans
