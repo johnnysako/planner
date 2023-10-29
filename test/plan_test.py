@@ -50,7 +50,7 @@ def test_can_get_header():
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax, default_trial)
     assert plan.get_header() == ["Year", "Income", "Rmd", "Expenses",
-                                 "Taxes", "Reinvested", "Jerry's Roth", "% of Savings Withdrawn", "Sum of Accounts"]
+                                 "Taxes", "Reinvested", "Jerry's Roth", "% Withdrawn", "Sum of Accounts"]
 
 
 def test_can_fill_table_for_one_year():

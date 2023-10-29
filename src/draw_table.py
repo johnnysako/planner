@@ -26,7 +26,7 @@ def plot_data_table(data, pdf, rowlabels, title,
                     numpages=(1, 1), pagesize=(11, 8.5)):
     nh, nv = numpages
     rows_per_page = len(data) // nh
-    cols_per_page = len(data.columns) // nv
+    cols_per_page = len(data.columns) // nv + 1
     for i in range(0, nh):
         for j in range(0, nv):
             pagelabels = rowlabels[(i*rows_per_page):min(

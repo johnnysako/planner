@@ -2,21 +2,13 @@ from src.draw_table import plot_data_table
 
 import numpy as np
 import pandas as pd
+import math
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 
 include_failed_plans = False
 include_tables = True
-
-
-def _plot_year_summary_table(data, pdf, title):
-    labels = data['Year'].values.astype(int)
-    data.drop('Year', axis=1, inplace=True)
-    data.update(data.astype(float))
-    data.update(data.applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels,
-                    title, numpages=(2, 1))
 
 
 def _plot_failed_plans(failed_plans, pdf):
@@ -35,7 +27,12 @@ def _plot_failed_plans(failed_plans, pdf):
         plt.close()
 
         if include_tables:
-            _plot_year_summary_table(data, pdf, "Failed Plan Data Table")
+            labels = data['Year'].values.astype(int)
+            data.drop('Year', axis=1, inplace=True)
+            data.update(data.astype(float))
+            data.update(data.applymap('{:,.0f}'.format))
+            plot_data_table(data, pdf, labels,
+                            'Failed Plan Data Table', numpages=(2, 1))
 
 
 def _plot_summary(data_for_analysis, pdf):
@@ -71,8 +68,22 @@ def _plot_summary(data_for_analysis, pdf):
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
-    _plot_year_summary_table(
-        data_for_analysis[int(iterations/2)], pdf, "Median Data Table")
+    median_result = pd.DataFrame(data_for_analysis[int(iterations/2)])
+    labels = median_result['Year'].values.astype(int)
+    median_result.drop('Year', axis=1, inplace=True)
+    median_result.update(median_result.astype(float))
+
+    cols = median_result.columns.tolist()
+    for col in cols:
+        if col == '% Withdrawn':
+            median_result[col] = median_result[col].map('{:,.2f}%'.format)
+        else:
+            median_result[col] = median_result[col].map('${:,.0f}'.format)
+
+    num_rows, num_columns = median_result.shape
+    plot_data_table(median_result, pdf, labels,
+                    'Median Data Table', numpages=(
+                        math.ceil(num_rows / 33), math.ceil(num_columns / 10)))
 
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):

@@ -103,7 +103,7 @@ class Plan:
         for account in self.accounts:
             header.append(account.get_name())
 
-        header += ["% of Savings Withdrawn", "Sum of Accounts"]
+        header += ["% Withdrawn", "Sum of Accounts"]
         return header
 
     def process_plan(self, start_year, years, rates):
