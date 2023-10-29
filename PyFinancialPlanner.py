@@ -254,7 +254,7 @@ def main(personal_path=""):
         'Y').ffill().pct_change().dropna()
     sorted_annual_returns = sorted(annual_returns)
 
-    # Scenerios:
+    # Scenarios:
     # 1. As is
     # 2. Trial selected Roth with RMDs (aka 401K)
     # 3. No Social Security

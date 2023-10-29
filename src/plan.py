@@ -99,24 +99,27 @@ class Plan:
         return True
 
     def get_header(self):
-        header = ["Year", "Income", "Rmd", "Expenses", "Taxes", "Reinvested"]
+        header = ['Year', 'Rate of Return', 'Income', 'Rmd', 
+                  'Expenses', 'Taxes', 'Reinvested']
         for account in self.accounts:
             header.append(account.get_name())
 
-        header += ["% Withdrawn", "Sum of Accounts"]
+        header += ['% Withdrawn', 'Sum of Accounts']
         return header
 
     def process_plan(self, start_year, years, rates):
         balances = []
+        print(rates)
 
         for i in range(years+1):
             balances.append([])
             balances[i].append(start_year+i)
+            balances[i].append(rates[i])
 
             income = append_income(balances[i], start_year+i,
-                                   self.owners, self.config["social_security"])
+                                   self.owners, self.config['social_security'])
             rmd = append_rmd(balances[i], start_year+i,
-                             self, self.config["rmd"])
+                             self, self.config['rmd'])
             expense = append_expenses(balances[i], start_year+i, self.expenses)
             tax = append_tax(balances[i], self, rates[i], rmd)
             change = append_reinvestment(balances[i], income,
