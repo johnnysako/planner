@@ -50,7 +50,7 @@ def test_can_get_header():
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax, default_trial)
     assert plan.get_header() == ["Year", "Income", "Rmd", "Expenses",
-                                 "Taxes", "Reinvested", "Jerry's Roth", "Sum of Accounts"]
+                                 "Taxes", "Reinvested", "Jerry's Roth", "% of Savings Withdrawn", "Sum of Accounts"]
 
 
 def test_can_fill_table_for_one_year():
@@ -110,8 +110,8 @@ def test_can_fill_table_for_one_year():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax, default_trial)
-    assert plan.process_plan(2022, 0, rates) == [
-        [2022, 0, 0, 2200, 0.0, 0.0, 1800.0, 10000, 11800.0]]
+    assert plan.process_plan(2022, 0, rates) == \
+        [[2022, 0, 0, 2200, 0.0, 0.0, 1800.0, 10000, 18.64, 11800.0]]
 
 
 def test_can_fill_table_for_two_years():
@@ -171,8 +171,9 @@ def test_can_fill_table_for_two_years():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax, default_trial)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 2200, 0.0, 0.0, 1800.0, 10000, 11800.0],
-                                                 [2023, 0, 0, 2000, 0.0, 0.0, 1908.0, 15600.0, 17508.0]]
+    assert plan.process_plan(2022, 1, rates) == \
+        [[2022, 0, 0, 2200, 0.0, 0.0, 1800.0, 10000, 18.64, 11800.0],
+         [2023, 0, 0, 2000, 0.0, 0.0, 1908.0, 15600.0, 11.42, 17508.0]]
 
 
 def test_owners_do_not_match_accounts():
@@ -305,8 +306,8 @@ def test_expenses_can_be_empty():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, no_tax, default_trial)
-    assert plan.process_plan(2022, 0, rates) == [
-        [2022, 3000, 0, 0, 0.0, 3000.0, 7000.0, 10000, 17000.0]]
+    assert plan.process_plan(2022, 0, rates) == \
+        [[2022, 3000, 0, 0, 0.0, 3000.0, 7000.0, 10000, -17.65, 17000.0]]
 
 
 def test_account_growth_only_interest_when_owner_retired():
@@ -333,8 +334,9 @@ def test_account_growth_only_interest_when_owner_retired():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, no_tax, default_trial)
-    assert plan.process_plan(2015, 1, rates) == [[2015, 1000, 0, 0, 0.0, 1000.0, 5000.0, 5000.0],
-                                                 [2016, 0, 0, 0, 0.0, 0.0, 5300.0, 5300.0]]
+    assert plan.process_plan(2015, 1, rates) == \
+        [[2015, 1000, 0, 0, 0.0, 1000.0, 5000.0, -20.0, 5000.0],
+         [2016, 0, 0, 0, 0.0, 0.0, 5300.0, 0.0, 5300.0] ]
 
 
 def test_calculates_rmds_of_accounts():
@@ -400,8 +402,8 @@ def test_calculates_rmds_of_accounts():
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, no_tax, default_trial)
-    assert plan.process_plan(2015, 0, rates) == [
-        [2015, 2000, 2666.67, 0, 0.0, 4666.67, 8666.67, 7333.33, 10000, 18000.0, 44000.0]]
+    assert plan.process_plan(2015, 0, rates) == \
+        [[2015, 2000, 2666.67, 0, 0.0, 4666.67, 8666.67, 7333.33, 10000, 18000.0, -10.61, 44000.0]]
 
 
 def test_calculates_rmds_of_accounts_several_years():
@@ -468,8 +470,8 @@ def test_calculates_rmds_of_accounts_several_years():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, no_tax, default_trial)
     assert plan.process_plan(2014, 1, rates) == \
-        [[2014, 3000, 800.0, 0, 0.0, 3800.0, 7800.0, 7200.0, 10000, 20000, 45000.0],
-         [2015, 2000, 2600.0, 0, 0.0, 4600.0, 12868.0, 6996.0, 15600.0, 24080.0, 59544.0]]
+        [[2014, 3000, 800.0, 0, 0.0, 3800.0, 7800.0, 7200.0, 10000, 20000, -8.44, 45000.0],
+         [2015, 2000, 2600.0, 0, 0.0, 4600.0, 12868.0, 6996.0, 15600.0, 24080.0, -7.73, 59544.0]]
 
 
 def test_can_include_tax_on_account_growth():
@@ -515,8 +517,9 @@ def test_can_include_tax_on_account_growth():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 0, 60.0, 0.0, 3940.0, 10000, 13940.0],
-                                                 [2023, 0, 0, 0, 60.0, 0.0, 6116.4, 15600.0, 21716.4]]
+    assert plan.process_plan(2022, 1, rates) == \
+        [[2022, 0, 0, 0, 60.0, 0.0, 3940.0, 10000, 0.43, 13940.0],
+         [2023, 0, 0, 0, 60.0, 0.0, 6116.4, 15600.0, 0.28, 21716.4]]
 
 
 def test_no_tax_on_negative_growth():
@@ -564,8 +567,9 @@ def test_no_tax_on_negative_growth():
     negative_growth = [-1, -1]
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2022, 1, negative_growth) == [[2022, 1000, 0, 0, 0.0, 1000.0, 5000, 10000, 15000.0],
-                                                           [2023, 1000, 0, 0, 0.0, 1000.0, 7950.0, 14900.0, 22850.0]]
+    assert plan.process_plan(2022, 1, negative_growth) == \
+        [[2022, 1000, 0, 0, 0.0, 1000.0, 5000.0, 10000, -6.67, 15000.0],
+         [2023, 1000, 0, 0, 0.0, 1000.0, 7950.0, 14900.0, -4.38, 22850.0]]
 
 
 def test_calculates_tax_including_rmds():
@@ -640,8 +644,8 @@ def test_calculates_tax_including_rmds():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, tax, default_trial)
     assert plan.process_plan(2014, 1, rates) == \
-        [[2014, 0, 800.0, 0, 140.0, 660.0, 4660.0, 7200.0, 10000, 20000, 41860.0],
-         [2015, 0, 2600.0, 0, 320.0, 2280.0, 7219.6, 6996.0, 15600.0, 24080.0, 53895.6]]
+        [[2014, 0, 800.0, 0, 140.0, 660.0, 4660.0, 7200.0, 10000, 20000, -1.58, 41860.0],
+         [2015, 0, 2600.0, 0, 320.0, 2280.0, 7219.6, 6996.0, 15600.0, 24080.0, -4.23, 53895.6]]
 
 
 def test_expenses_pulls_from_account():
@@ -686,8 +690,9 @@ def test_expenses_pulls_from_account():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 1000, 24.0, 0.0, 2976.0, 2976],
-                                                 [2023, 0, 0, 1000, 17.86, 0.0, 4136.7, 4136.7]]
+    assert plan.process_plan(2022, 1, rates) == \
+        [[2022, 0, 0, 1000, 24.0, 0.0, 2976.0, 34.41, 2976.0],
+         [2023, 0, 0, 1000, 17.86, 0.0, 4136.7, 24.61, 4136.7]]
 
 
 def test_expenses_pulls_from_income():
@@ -732,8 +737,9 @@ def test_expenses_pulls_from_income():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 10000, 0, 1000, 24.0, 8976.0, 12976.0, 12976.0],
-                                                 [2023, 10000, 0, 1000, 77.86, 8922.14, 24676.7, 24676.7]]
+    assert plan.process_plan(2022, 1, rates) == \
+        [[2022, 10000, 0, 1000, 24.0, 8976.0, 12976.0, -69.17, 12976.0],
+         [2023, 10000, 0, 1000, 77.86, 8922.14, 24676.7, -36.16, 24676.7]]
 
 
 def test_expenses_when_non_sufficient_pulls_from_next_account():
@@ -786,8 +792,9 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2022, 1, rates) == [[2022, 0, 0, 5000, 84.0, 0.0, 0, 8916.0, 8916.0],
-                                                 [2023, 0, 0, 5000, 53.5, 0.0, 0.0, 8397.46, 8397.46]]
+    assert plan.process_plan(2022, 1, rates) == \
+        [[2022, 0, 0, 5000, 84.0, 0.0, 0, 8916.0, 57.02, 8916.0],
+         [2023, 0, 0, 5000, 53.5, 0.0, 0.0, 8397.46, 60.18, 8397.46]]
 
 
 def test_pulls_plan_fails_when_no_money_left():
@@ -840,10 +847,10 @@ def test_pulls_plan_fails_when_no_money_left():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2022, 2, rates) == [[2022, 0, 0, 6000, 84.0, 0.0, 0, 7916.0, 7916.0],
-                                                 [2023, 0, 0, 6000, 47.5, 0.0,
-                                                     0.0, 3343.46, 3343.46],
-                                                 [2024, 0, 0, 6000, 20.06, 0.0, 0.0, 0.0, 0.0]]
+    assert plan.process_plan(2022, 2, rates) == \
+        [[2022, 0, 0, 6000, 84.0, 0.0, 0, 7916.0, 76.86, 7916.0],
+         [2023, 0, 0, 6000, 47.5, 0.0, 0.0, 3343.46, 180.88, 3343.46],
+         [2024, 0, 0, 6000, 20.06, 0.0, 0.0, 0.0, 0, 0.0]]
 
 
 def test_pulls_rmd_can_cover_expense_and_tax():
@@ -902,8 +909,9 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
-    assert plan.process_plan(2014, 1, rates) == [[2014, 0, 2800.0, 0, 280.0, 2520.0, 9720.0, 18000.0, 27720.0],
-                                                 [2015, 0, 2310.0, 0, 231.0, 2079.0, 11523.6, 17490.0, 29013.6]]
+    assert plan.process_plan(2014, 1, rates) == \
+        [[2014, 0, 2800.0, 0, 280.0, 2520.0, 9720.0, 18000.0, -9.09, 27720.0],
+         [2015, 0, 2310.0, 0, 231.0, 2079.0, 11523.6, 17490.0, -7.17, 29013.6]]
 
 
 def test_does_not_include_social_security_when_config():
@@ -964,8 +972,9 @@ def test_does_not_include_social_security_when_config():
     trial = {"social_security": False, "rmd": False}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
-    assert plan.process_plan(2014, 1, rates) == [[2014, 0, 2800.0, 0, 280.0, 2520.0, 9720.0, 18000.0, 27720.0],
-                                                 [2015, 0, 2310.0, 0, 231.0, 2079.0, 11523.6, 17490.0, 29013.6]]
+    assert plan.process_plan(2014, 1, rates) == \
+        [[2014, 0, 2800.0, 0, 280.0, 2520.0, 9720.0, 18000.0, -9.09, 27720.0],
+         [2015, 0, 2310.0, 0, 231.0, 2079.0, 11523.6, 17490.0, -7.17, 29013.6]]
 
 
 def test_roth_has_rmd_when_config():
@@ -1018,5 +1027,6 @@ def test_roth_has_rmd_when_config():
     trial = {"social_security": False, "rmd": True}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
-    assert plan.process_plan(2014, 1, rates) == [[2014, 0, 800, 0, 80.0, 720.0, 7920.0, 7920.0],
-                                                 [2015, 0, 660.0, 0, 66.0, 594.0, 8289.6, 8289.6]]
+    assert plan.process_plan(2014, 1, rates) == \
+        [[2014, 0, 800.0, 0, 80.0, 720.0, 7920.0, -9.09, 7920.0],
+         [2015, 0, 660.0, 0, 66.0, 594.0, 8289.6, -7.17, 8289.6]]

@@ -103,7 +103,7 @@ class Plan:
         for account in self.accounts:
             header.append(account.get_name())
 
-        header += ["Sum of Accounts"]
+        header += ["% of Savings Withdrawn", "Sum of Accounts"]
         return header
 
     def process_plan(self, start_year, years, rates):
@@ -124,6 +124,8 @@ class Plan:
 
             total = append_accounts(balances[i], start_year+i,
                                     self, rates[i], change, i != 0)
+            if total>0: balances[i].append(round(change/total*100, 2))
+            else: balances[i].append(0)
             balances[i].append(total)
 
         return balances
