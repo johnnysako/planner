@@ -36,7 +36,7 @@ class Account:
         rmd = 0
         if rmd_applies(self.get_type(),
                        self.config["trail_with_rmd"] and roth_with_rmd):
-            rmd = self.config["balance"] * rate/100
+            rmd = self.config["balance"] / rate
         self.config["balance"] = round(self.config["balance"] - rmd, 2)
         return rmd
 
