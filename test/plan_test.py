@@ -336,7 +336,7 @@ def test_account_growth_only_interest_when_owner_retired():
     plan = Plan(owners, accounts, empty_expenses, rmd, no_tax, default_trial)
     assert plan.process_plan(2015, 1, rates) == \
         [[2015, 1000, 0, 0, 0.0, 1000.0, 5000.0, -20.0, 5000.0],
-         [2016, 0, 0, 0, 0.0, 0.0, 5300.0, 0.0, 5300.0] ]
+         [2016, 0, 0, 0, 0.0, 0.0, 5300.0, 0.0, 5300.0]]
 
 
 def test_calculates_rmds_of_accounts():

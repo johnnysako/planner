@@ -124,8 +124,10 @@ class Plan:
 
             total = append_accounts(balances[i], start_year+i,
                                     self, rates[i], change, i != 0)
-            if total>0: balances[i].append(round(change/total*100, 2))
-            else: balances[i].append(0)
+            if total > 0:
+                balances[i].append(round(change/total*100, 2))
+            else:
+                balances[i].append(0)
             balances[i].append(total)
 
         return balances
