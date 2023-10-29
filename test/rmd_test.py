@@ -48,4 +48,4 @@ def test_returns_zero_when_no_entry():
          "age": 6}
     ]
     rmd = Rmd(config)
-    assert rmd.get_rate(30) == 1
+    assert rmd.get_rate(30) == 0

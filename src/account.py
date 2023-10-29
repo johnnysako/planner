@@ -34,8 +34,7 @@ class Account:
 
     def withdraw_rmd(self, rate, roth_with_rmd=False):
         rmd = 0
-        if rmd_applies(self.get_type(),
-                       self.config["trail_with_rmd"] and roth_with_rmd):
+        if rmd_applies(self.get_type(), self.config["trail_with_rmd"] and roth_with_rmd) and rate is not 0:
             rmd = self.config["balance"] / rate
         self.config["balance"] = round(self.config["balance"] - rmd, 2)
         return rmd

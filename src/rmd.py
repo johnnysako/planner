@@ -6,4 +6,4 @@ class Rmd:
         for entry in self.config:
             if entry["age"] == age:
                 return entry["rate"]
-        return 1
+        return 0
