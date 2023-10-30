@@ -109,7 +109,6 @@ class Plan:
 
     def process_plan(self, start_year, years, rates):
         balances = []
-        print(rates)
 
         for i in range(years+1):
             balances.append([])

@@ -54,19 +54,23 @@ def _plot_summary(data_for_analysis, pdf):
                      data_for_analysis[i]['Sum of Accounts'][25],
                      data_for_analysis[i].iloc[-1]['Sum of Accounts'],
                      data_for_analysis[i]['% Withdrawn'].mean(),
+                     data_for_analysis[i]['Rate of Return'].mean(),
                      fails_in_year])
 
     summary = pd.DataFrame(np.array(data), columns=[
                            'Trial', 'Year 5', 'Year 10', 'Year 15',
-                           'Year 20', 'Year 25', 'End of Plan', 'Average Withdrawn', 'Money to $0'])
+                           'Year 20', 'Year 25', 'End of Plan', 'Average Withdrawn',
+                           'Average Return', 'Money to $0'])
 
     labels = summary['Trial'].values.astype(int)
     summary.drop('Trial', axis=1, inplace=True)
     summary.update(summary[['Year 5', 'Year 10', 'Year 15',
-                   'Year 20', 'Year 25', 'Average Withdrawn', 'End of Plan']].astype(float))
+                   'Year 20', 'Year 25', 'Average Withdrawn',
+                            'Average Return', 'End of Plan']].astype(float))
     summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20',
                    'Year 25', 'End of Plan']].applymap('${:,.0f}'.format))
-    summary.update(summary[['Average Withdrawn']].applymap('{:.2f}%'.format))
+    summary.update(
+        summary[['Average Withdrawn', 'Average Return']].applymap('{:.2f}%'.format))
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
@@ -77,7 +81,7 @@ def _plot_summary(data_for_analysis, pdf):
 
     cols = median_result.columns.tolist()
     for col in cols:
-        if col == '% Withdrawn':
+        if col == '% Withdrawn' or col == 'Rate of Return':
             median_result[col] = median_result[col].map('{:,.2f}%'.format)
         else:
             median_result[col] = median_result[col].map('${:,.0f}'.format)
