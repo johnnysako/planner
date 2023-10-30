@@ -99,7 +99,7 @@ class Plan:
         return True
 
     def get_header(self):
-        header = ['Year', 'Rate of Return', 'Income', 'Rmd', 
+        header = ['Year', 'Rate of Return', 'Income', 'Rmd',
                   'Expenses', 'Taxes', 'Reinvested']
         for account in self.accounts:
             header.append(account.get_name())
