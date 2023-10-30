@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 
 include_failed_plans = False
-include_tables = True
+include_tables = False
 
 
 def _plot_failed_plans(failed_plans, pdf):

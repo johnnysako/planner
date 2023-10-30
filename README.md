@@ -149,7 +149,8 @@ python3 PyFinancialPlanner.py path_to_your_data
 ```
 The results will be stored in a pdf file named financial_analysis.pdf
 
-It is possible to see expanded details of the failed trials. This significantly adds to the time to run the program as pyplot does not appear to be terribly fast. In `plot_monte_carlos.py` uncomment the following:
+It is possible to see expanded details of the failed trials. This significantly adds to the time to run the program as pyplot does not appear to be terribly fast. In `plot_monte_carlos.py` change the following to `True` as appropriate:
 ```
-    # _plot_failed_plans(failed_plans, pdf)
+include_failed_plans = False
+include_tables = False
 ```
