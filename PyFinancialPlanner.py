@@ -270,7 +270,7 @@ def main(personal_path=""):
          "dist": sorted_annual_returns}
     ]
 
-    with PdfPages('financial_analysis.pdf') as pdf:
+    with PdfPages(personal_path+'financial_analysis.pdf') as pdf:
         plot_accounts_table(personal_path, pdf)
 
         for trial in trials:
@@ -301,3 +301,4 @@ if __name__ == "__main__":
         main(sys.argv[1] + '/')
     else:
         main()
+        
