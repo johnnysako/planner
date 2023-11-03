@@ -136,13 +136,14 @@ def plot_accounts_table(personal_path, pdf):
     plot_data_table(data, pdf, labels, "Account Summary")
 
 
-def generate_returns(data_distribution):
+def generate_returns(data_distribution, mean, std):
     randoms = [int(x) for x in np.floor(np
                                         .random.default_rng()
-                                        .normal(26,
-                                                9,
+                                        .normal(mean,
+                                                std,
                                                 years_to_process+1))]
-    randoms = np.clip(randoms, 0, len(randoms))
+    randoms = np.clip(randoms, 0, len(data_distribution)-1)
+    # print(randoms)
     returns = []
     for random in randoms:
         if random <= 0:
@@ -162,9 +163,11 @@ def process_run(iteration,
                 expenses,
                 trial,
                 data_for_analysis,
-                average_rates,
+                average_stock_rates,
+                average_bond_rates,
                 personal_path):
-    rates = generate_returns(trial["dist"])*100
+    stock_rates = generate_returns(trial["dist"]["stocks"], 26, 9)*100
+    bond_rates = generate_returns(trial["dist"]["bonds"], 6, 2)*100
 
     f = open(personal_path + 'accounts.json')
     accounts = []
@@ -173,13 +176,14 @@ def process_run(iteration,
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
 
-    combined_rates = {"s": rates}
+    combined_rates = {"s": stock_rates, "b": bond_rates}
     data = pd.DataFrame(np.array(
         plan.process_plan(start_year,
                           years_to_process,
                           combined_rates)), columns=plan.get_header())
     data_for_analysis.append(data)
-    average_rates.append(np.average(rates))
+    average_stock_rates.append(np.average(stock_rates))
+    average_bond_rates.append(np.average(bond_rates))
 
 
 def run_monte_carlos(data_for_analysis,
@@ -188,49 +192,60 @@ def run_monte_carlos(data_for_analysis,
                      owners,
                      expenses,
                      trial,
-                     average_rates,
+                     average_stock_rates,
+                     average_bond_rates,
                      personal_path):
     loop = asyncio.get_event_loop()
 
     group1 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates, average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group2 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates,  average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group3 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates,  average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group4 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates,  average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group5 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates, average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group6 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates, average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group7 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates, average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group8 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates, average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group9 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_rates, personal_path)
+                            average_stock_rates, average_bond_rates,
+                            personal_path)
                             for i in range(iterations_per_thread)])
     group10 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                              expenses, trial, data_for_analysis,
-                             average_rates, personal_path)
+                             average_stock_rates, average_bond_rates,
+                             personal_path)
                              for i in range(iterations_per_thread)])
 
     all_groups = asyncio.gather(
@@ -251,9 +266,25 @@ def main(personal_path=""):
     data = yf.download(symbol, start=start_date, end=end_date)
 
     # Calculate annual returns from historical data
-    annual_returns = data['Adj Close'].resample(
+    stock_annual_returns = data['Adj Close'].resample(
         'Y').ffill().pct_change().dropna()
-    sorted_annual_returns = sorted(annual_returns)
+    sorted_stock_annual_returns = sorted(stock_annual_returns)
+
+    # Define the S&P 500 symbol and time period for historical data
+    symbol = "LQD"
+    start_date = "2002-07-29"
+    end_date = "2021-12-31"
+
+    # Download historical S&P 500 data using Yahoo Finance
+    data = yf.download(symbol, start=start_date, end=end_date)
+
+    # Calculate annual returns from historical data
+    bond_annual_returns = data['Adj Close'].resample(
+        'Y').ffill().pct_change().dropna()
+    sorted_bond_annual_returns = sorted(bond_annual_returns)
+
+    returns = {"stocks": sorted_stock_annual_returns,
+               "bonds": sorted_bond_annual_returns}
 
     # Scenarios:
     # 1. As is
@@ -262,13 +293,13 @@ def main(personal_path=""):
     # 4. No Social Security and Trial selected Roth with RMDs
     trials = [
         {"social_security": True, "rmd": False,
-         "dist": sorted_annual_returns},
+         "dist": returns},
         {"social_security": True, "rmd": True,
-         "dist": sorted_annual_returns},
+         "dist": returns},
         {"social_security": False, "rmd": False,
-         "dist": sorted_annual_returns},
+         "dist": returns},
         {"social_security": False, "rmd": True,
-         "dist": sorted_annual_returns}
+         "dist": returns}
     ]
 
     with PdfPages(personal_path + 'financial_analysis.pdf') as pdf:
@@ -276,15 +307,19 @@ def main(personal_path=""):
 
         for trial in trials:
             data_for_analysis = []
-            average_rates = []
+            average_stock_rates = []
+            average_bond_rates = []
 
             run_monte_carlos(data_for_analysis, rmd, tax, owners,
-                             expenses, trial, average_rates, personal_path)
+                             expenses, trial, average_stock_rates,
+                             average_bond_rates, personal_path)
 
             sorted_data, failed_plans = sort_data(data_for_analysis)
 
-            print('Average Rate of Return: {:0.2f}%'.format(
-                np.average(average_rates)))
+            print('Average Rate of Return (Stocks): {:0.2f}%'.format(
+                np.average(average_stock_rates)))
+            print('Average Rate of Return (Bonds): {:0.2f}%'.format(
+                np.average(average_bond_rates)))
             plot_monte_carlos(sorted_data, failed_plans, pdf, owners, trial)
 
         plot_expense_table(expenses, pdf)

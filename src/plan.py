@@ -101,7 +101,7 @@ class Plan:
         return True
 
     def get_header(self):
-        header = ['Year', 'Rate of Return', 'Income', 'Rmd',
+        header = ['Year', 'Stock Returns', 'Bond Returns', 'Income', 'Rmd',
                   'Expenses', 'Taxes', 'Reinvested']
         for account in self.accounts:
             header.append(account.get_name())
@@ -116,6 +116,7 @@ class Plan:
             balances.append([])
             balances[i].append(start_year+i)
             balances[i].append(rates["s"][i])
+            balances[i].append(rates["b"][i])
 
             income = append_income(balances[i], start_year+i,
                                    self.owners, self.config['social_security'])
