@@ -86,7 +86,7 @@ def _plot_summary(data_for_analysis, pdf):
     cols = median_result.columns.tolist()
     for col in cols:
         if col == '% Withdrawn' or col == 'Stock Returns' \
-            or col == 'Bond Returns':
+           or col == 'Bond Returns':
             median_result[col] = median_result[col].map('{:,.2f}%'.format)
         else:
             median_result[col] = median_result[col].map('${:,.0f}'.format)
