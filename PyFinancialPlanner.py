@@ -173,10 +173,11 @@ def process_run(iteration,
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
 
+    combined_rates = {"s": rates}
     data = pd.DataFrame(np.array(
         plan.process_plan(start_year,
                           years_to_process,
-                          rates)), columns=plan.get_header())
+                          combined_rates)), columns=plan.get_header())
     data_for_analysis.append(data)
     average_rates.append(np.average(rates))
 

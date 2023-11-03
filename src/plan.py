@@ -69,7 +69,9 @@ def append_accounts(data, year, self, rate, change, growth):
     for account in self.accounts:
         retired = owner_is_retired(account, self, year)
         if growth:
-            account.process_growth(rate, retired)
+            rates = {"s": rate}
+            account.process_growth(rates, retired)
+
         if change:
             if account.withdraw(change):
                 change = 0
@@ -113,19 +115,19 @@ class Plan:
         for i in range(years+1):
             balances.append([])
             balances[i].append(start_year+i)
-            balances[i].append(rates[i])
+            balances[i].append(rates["s"][i])
 
             income = append_income(balances[i], start_year+i,
                                    self.owners, self.config['social_security'])
             rmd = append_rmd(balances[i], start_year+i,
                              self, self.config['rmd'])
             expense = append_expenses(balances[i], start_year+i, self.expenses)
-            tax = append_tax(balances[i], self, rates[i], rmd)
+            tax = append_tax(balances[i], self, rates["s"][i], rmd)
             change = append_reinvestment(balances[i], income,
                                          tax, expense, rmd)
 
             total = append_accounts(balances[i], start_year+i,
-                                    self, rates[i], change, i != 0)
+                                    self, rates["s"][i], change, i != 0)
             if change > 0 and total > 0:
                 balances[i].append(round(change/total*100, 2))
             else:

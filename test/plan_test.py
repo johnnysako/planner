@@ -15,7 +15,7 @@ empty_tax = [
 ]
 no_tax = Tax(empty_tax)
 
-rates = [6, 6, 6]
+rates = {"s": [6, 6, 6]}
 
 default_trial = {"social_security": True, "rmd": False}
 
@@ -49,8 +49,10 @@ def test_can_get_header():
     expenses = Expenses(expense_table)
 
     plan = Plan(owners, accounts, expenses, rmd, no_tax, default_trial)
-    assert plan.get_header() == ['Year', 'Rate of Return', 'Income', 'Rmd', 'Expenses',
-                                 'Taxes', 'Reinvested', 'Jerry Roth', '% Withdrawn', 'Sum of Accounts']
+    assert plan.get_header() == ['Year', 'Rate of Return', 'Income', 'Rmd',
+                                 'Expenses', 'Taxes', 'Reinvested',
+                                 'Jerry Roth', '% Withdrawn',
+                                 'Sum of Accounts']
 
 
 def test_can_fill_table_for_one_year():
@@ -403,7 +405,8 @@ def test_calculates_rmds_of_accounts():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, no_tax, default_trial)
     assert plan.process_plan(2015, 0, rates) == \
-        [[2015, 6, 2000, 2666.67, 0, 0.0, 4666.67, 8666.67, 7333.33, 10000, 18000.0, 0.0, 44000.0]]
+        [[2015, 6, 2000, 2666.67, 0, 0.0, 4666.67, 8666.67,
+            7333.33, 10000, 18000.0, 0.0, 44000.0]]
 
 
 def test_calculates_rmds_of_accounts_several_years():
@@ -564,7 +567,7 @@ def test_no_tax_on_negative_growth():
     expense_table = []
     expenses = Expenses(expense_table)
 
-    negative_growth = [-1, -1]
+    negative_growth = {"s": [-1, -1]}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
     assert plan.process_plan(2022, 1, negative_growth) == \

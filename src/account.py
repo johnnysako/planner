@@ -10,11 +10,17 @@ def rmd_applies(account_type, roth_with_rmd):
 
 class Account:
     def __init__(self, config):
+        if "allocation" in config:
+            if config["allocation"]["bonds"] \
+             + config["allocation"]["stocks"] != 100:
+                raise TypeError
+
         valid_types = ["401K", "Roth", "IRA", "Investment", "HSA"]
         for type in valid_types:
             if type == config["type"]:
                 self.config = config
                 return
+
         raise TypeError
 
     def get_name(self):
@@ -32,9 +38,14 @@ class Account:
     def get_balance(self):
         return self.config["balance"]
 
+    def get_allocation(self, type):
+        return self.config["allocation"][type]
+
     def withdraw_rmd(self, rate, roth_with_rmd=False):
         rmd = 0
-        if rmd_applies(self.get_type(), self.config["trail_with_rmd"] and roth_with_rmd) and rate != 0:
+        if rmd_applies(self.get_type(),
+                       self.config["trail_with_rmd"]
+                       and roth_with_rmd) and rate != 0:
             rmd = self.config["balance"] / rate
         self.config["balance"] = round(self.config["balance"] - rmd, 2)
         return rmd
@@ -48,10 +59,22 @@ class Account:
         else:
             return False
 
-    def process_growth(self, rate, interest_only=False):
+    def process_growth(self, rates, interest_only=False):
+        growth = 0
+        if "allocation" not in self.config:
+            growth = self.config["balance"] * rates["s"]/100
+        else:
+            growth_s = self.config["balance"] \
+                * self.config["allocation"]["stocks"]/100 \
+                * rates["s"]/100
+            growth_b = self.config["balance"] \
+                * self.config["allocation"]["bonds"]/100 \
+                * rates["b"]/100
+            growth = growth_s + growth_b
+
         if interest_only:
-            new_balance = self.config["balance"] * (1 + rate/100)
+            new_balance = self.config["balance"] + growth
         else:
             new_balance = self.config["balance"] \
-                            * (1 + rate/100) + self.config["annual_additions"]
+                + growth + self.config["annual_additions"]
         self.config["balance"] = round(new_balance, 2)

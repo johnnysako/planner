@@ -29,7 +29,7 @@ def test_apply_growth():
     }
 
     account = Account(config)
-    account.process_growth(6)
+    account.process_growth({"s": 6, "b": 5})
     assert account.get_balance() == 4000*1.06 + 2000
 
 
@@ -43,7 +43,7 @@ def test_different_values():
 
     account = Account(config)
     assert account.get_name() == "John's Roth"
-    account.process_growth(7)
+    account.process_growth({"s": 7, "b": 6})
     assert account.get_balance() == 5000*1.07 + 3000
 
 
@@ -57,7 +57,7 @@ def test_can_only_increase_by_interest():
 
     account = Account(config)
     assert account.get_name() == "John's Roth"
-    account.process_growth(7, True)
+    account.process_growth({"s": 7, "b": 6}, True)
     assert account.get_balance() == 5000*1.07
 
 
@@ -91,7 +91,7 @@ def test_can_pull_funds():
     assert account.get_balance() == 4000
 
 
-def test_balance_does_not_change_when_withrawl_fails():
+def test_balance_does_not_change_when_withdrawal_fails():
     config = {
         "type": "Roth",
         "balance": 5000,
@@ -146,7 +146,7 @@ def test_investment_is_valid():
     Account(config)
 
 
-def test_withdrawl_negative_adds():
+def test_withdrawal_negative_adds():
     config = {
         "type": "Roth",
         "balance": 5000,
@@ -157,7 +157,7 @@ def test_withdrawl_negative_adds():
     assert account.get_balance() == 6000
 
 
-def test_withdrawl_rmd_does_not_change_balance_for_Roth():
+def test_withdrawal_rmd_does_not_change_balance_for_Roth():
     config = {
         "type": "Roth",
         "balance": 5000,
@@ -169,7 +169,7 @@ def test_withdrawl_rmd_does_not_change_balance_for_Roth():
     assert account.get_balance() == 5000
 
 
-def test_withdrawl_rmd_does_change_balance_for_Roth_when_testing_rmd():
+def test_withdrawal_rmd_does_change_balance_for_Roth_when_testing_rmd():
     config = {
         "type": "Roth",
         "balance": 5000,
@@ -181,7 +181,7 @@ def test_withdrawl_rmd_does_change_balance_for_Roth_when_testing_rmd():
     assert account.get_balance() == 4500
 
 
-def test_withdrawl_rmd_does_not_change_balance_for_hsa():
+def test_withdrawal_rmd_does_not_change_balance_for_hsa():
     config = {
         "type": "HSA",
         "balance": 5000,
@@ -241,3 +241,42 @@ def test_is_taxable_hsa_false():
 
     account = Account(config)
     assert account.is_taxable() is False
+
+
+def test_can_include_allocation():
+    config = {
+        "type": "HSA",
+        "balance": 5000,
+        "allocation": {"stocks": 50, "bonds": 50}
+    }
+
+    account = Account(config)
+    assert account.get_allocation("stocks") == 50
+    assert account.get_allocation("bonds") == 50
+
+
+def test_allocation_must_total_100():
+    try:
+        config = {
+            "type": "HSA",
+            "balance": 5000,
+            "allocation": {"stocks": 45, "bonds": 50}
+        }
+
+        Account(config)
+        assert False
+    except TypeError:
+        assert True
+
+
+def test_apply_growth_with_allocation():
+    config = {
+        "type": "Roth",
+        "balance": 4000,
+        "annual_additions": 2000,
+        "allocation": {"stocks": 40, "bonds": 60}
+        }
+
+    account = Account(config)
+    account.process_growth({"s": 6, "b": 5})
+    assert account.get_balance() == 1600*1.06 + 2400*1.05 + 2000

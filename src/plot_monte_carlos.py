@@ -59,8 +59,9 @@ def _plot_summary(data_for_analysis, pdf):
 
     summary = pd.DataFrame(np.array(data), columns=[
                            'Trial', 'Year 5', 'Year 10', 'Year 15',
-                           'Year 20', 'Year 25', 'End of Plan', 'Average Withdrawn',
-                           'Average Return', 'Money to $0'])
+                           'Year 20', 'Year 25', 'End of Plan',
+                           'Average Withdrawn', 'Average Return',
+                           'Money to $0'])
 
     labels = summary['Trial'].values.astype(int)
     summary.drop('Trial', axis=1, inplace=True)
@@ -70,7 +71,8 @@ def _plot_summary(data_for_analysis, pdf):
     summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20',
                    'Year 25', 'End of Plan']].applymap('${:,.0f}'.format))
     summary.update(
-        summary[['Average Withdrawn', 'Average Return']].applymap('{:.2f}%'.format))
+        summary[['Average Withdrawn', 'Average Return']]
+        .applymap('{:.2f}%'.format))
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
