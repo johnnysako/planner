@@ -11,9 +11,13 @@ def rmd_applies(account_type, roth_with_rmd):
 class Account:
     def __init__(self, config):
         if "allocation" in config:
-            if config["allocation"]["bonds"] \
-             + config["allocation"]["stocks"] != 100:
-                raise TypeError
+            config["allocation"] = sorted(config["allocation"],
+                                          key=lambda x: x["year"],
+                                          reverse=True)
+
+            for item in config["allocation"]:
+                if item["bonds"] + item["stocks"] != 100:
+                    raise TypeError
 
         valid_types = ["401K", "Roth", "IRA", "Investment", "HSA"]
         for type in valid_types:
@@ -22,6 +26,19 @@ class Account:
                 return
 
         raise TypeError
+
+    def get_growth(self, year, rates):
+        if "allocation" not in self.config:
+            print(year, rates)
+            return self.config["balance"] * rates["s"]/100
+
+        growth_s = self.config["balance"] \
+            * self.get_allocation(year, "stocks")/100 \
+            * rates["s"]/100
+        growth_b = self.config["balance"] \
+            * self.get_allocation(year, "bonds")/100 \
+            * rates["b"]/100
+        return growth_s + growth_b
 
     def get_name(self):
         return self.config["name"]
@@ -38,8 +55,13 @@ class Account:
     def get_balance(self):
         return self.config["balance"]
 
-    def get_allocation(self, type):
-        return self.config["allocation"][type]
+    def get_allocation(self, year, type):
+        if "allocation" not in self.config:
+            return 100 if type == "stocks" else 0
+        for entry in self.config["allocation"]:
+            if entry["year"] <= year:
+                return entry[type]
+        return 100 if type == "stocks" else 0
 
     def withdraw_rmd(self, rate, roth_with_rmd=False):
         rmd = 0
@@ -59,18 +81,8 @@ class Account:
         else:
             return False
 
-    def process_growth(self, rates, interest_only=False):
-        growth = 0
-        if "allocation" not in self.config:
-            growth = self.config["balance"] * rates["s"]/100
-        else:
-            growth_s = self.config["balance"] \
-                * self.config["allocation"]["stocks"]/100 \
-                * rates["s"]/100
-            growth_b = self.config["balance"] \
-                * self.config["allocation"]["bonds"]/100 \
-                * rates["b"]/100
-            growth = growth_s + growth_b
+    def process_growth(self, year, rates, interest_only=False):
+        growth = self.get_growth(year, rates)
 
         if interest_only:
             new_balance = self.config["balance"] + growth

@@ -70,7 +70,7 @@ def append_accounts(data, year, self, rate, change, growth):
         retired = owner_is_retired(account, self, year)
         if growth:
             rates = {"s": rate}
-            account.process_growth(rates, retired)
+            account.process_growth(year, rates, retired)
 
         if change:
             if account.withdraw(change):

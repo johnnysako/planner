@@ -29,7 +29,7 @@ def test_apply_growth():
     }
 
     account = Account(config)
-    account.process_growth({"s": 6, "b": 5})
+    account.process_growth(2023, {"s": 6, "b": 5})
     assert account.get_balance() == 4000*1.06 + 2000
 
 
@@ -43,7 +43,7 @@ def test_different_values():
 
     account = Account(config)
     assert account.get_name() == "John's Roth"
-    account.process_growth({"s": 7, "b": 6})
+    account.process_growth(2020, {"s": 7, "b": 6})
     assert account.get_balance() == 5000*1.07 + 3000
 
 
@@ -57,7 +57,7 @@ def test_can_only_increase_by_interest():
 
     account = Account(config)
     assert account.get_name() == "John's Roth"
-    account.process_growth({"s": 7, "b": 6}, True)
+    account.process_growth(2023, {"s": 7, "b": 6}, True)
     assert account.get_balance() == 5000*1.07
 
 
@@ -247,12 +247,12 @@ def test_can_include_allocation():
     config = {
         "type": "HSA",
         "balance": 5000,
-        "allocation": {"stocks": 50, "bonds": 50}
+        "allocation": [{"year": 2000, "stocks": 50, "bonds": 50}]
     }
 
     account = Account(config)
-    assert account.get_allocation("stocks") == 50
-    assert account.get_allocation("bonds") == 50
+    assert account.get_allocation(2000, "stocks") == 50
+    assert account.get_allocation(2000, "bonds") == 50
 
 
 def test_allocation_must_total_100():
@@ -260,7 +260,7 @@ def test_allocation_must_total_100():
         config = {
             "type": "HSA",
             "balance": 5000,
-            "allocation": {"stocks": 45, "bonds": 50}
+            "allocation": [{"year": 2000, "stocks": 45, "bonds": 50}]
         }
 
         Account(config)
@@ -274,9 +274,37 @@ def test_apply_growth_with_allocation():
         "type": "Roth",
         "balance": 4000,
         "annual_additions": 2000,
-        "allocation": {"stocks": 40, "bonds": 60}
+        "allocation": [{"year": 2023, "stocks": 40, "bonds": 60}]
         }
 
     account = Account(config)
-    account.process_growth({"s": 6, "b": 5})
-    assert account.get_balance() == 1600*1.06 + 2400*1.05 + 2000
+    account.process_growth(2023, {"s": 6, "b": 5})
+    assert account.get_balance() == 4000*.4*1.06 + 4000*.6*1.05 + 2000
+
+
+def test_uses_stock_only_allocation_before_first_year():
+    config = {
+        "type": "Roth",
+        "balance": 4000,
+        "annual_additions": 2000,
+        "allocation": [{"year": 2023, "stocks": 70, "bonds": 30},
+                       {"year": 2043, "stocks": 30, "bonds": 70}]
+        }
+
+    account = Account(config)
+    account.process_growth(2001, {"s": 6, "b": 5})
+    assert account.get_balance() == 4000*1.06 + 2000
+
+
+def test_uses_allocation_between_years_from_earlier_year():
+    config = {
+        "type": "Roth",
+        "balance": 4000,
+        "annual_additions": 2000,
+        "allocation": [{"year": 2023, "stocks": 70, "bonds": 30},
+                       {"year": 2043, "stocks": 30, "bonds": 70}]
+        }
+
+    account = Account(config)
+    account.process_growth(2024, {"s": 6, "b": 5})
+    assert account.get_balance() == 4000*.7*1.06 + 4000*.3*1.05 + 2000
