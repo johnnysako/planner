@@ -55,7 +55,10 @@ This program also has two files included as "adjustable" in the event that the g
             "annual_additions": 0.0,
             "type": "401K",
             "owner": "Owner 2",
-            "trail_with_rmd": false
+            "trail_with_rmd": false,
+            "allocation": 
+                [{"year": 2023, "stocks": 100, "bonds": 0},
+                 {"year": 2045, "stocks": 25, "bonds": 75}]
         }
     ]
 }
@@ -70,6 +73,7 @@ This program also has two files included as "adjustable" in the event that the g
   - `"HSA"`: Not taxed, no RMD
 - `"owner"`: Must be in the list of `owners.json`
 - `"trial_with_rmd"`: If the account type is `"Roth"` the program will run a simulation in which this account will have RMDs
+- `"allocation"`: This is optional. If allocation between stocks and bonds is desired for an account (and how that changes over time) it can be entered here. Assumption is 100% stock allocation if not provided.
 
 ### `expenses.json`
 ```
