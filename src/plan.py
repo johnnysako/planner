@@ -47,7 +47,7 @@ def append_tax(data, self, year, rate, rmd):
     taxable = 0
     for account in self.accounts:
         growth = account.get_growth(year, rate)
-        if growth > 0:
+        if account.is_taxable() and growth > 0:
             taxable += round(growth, 2)
     tax = round(self.tax.calculate(taxable+rmd), 2)
     data.append(tax)
