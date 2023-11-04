@@ -43,11 +43,12 @@ def append_expenses(data, year, expenses):
     return value
 
 
-def append_tax(data, self, rate, rmd):
+def append_tax(data, self, year, rate, rmd):
     taxable = 0
     for account in self.accounts:
-        if account.is_taxable() and rate > 0:
-            taxable += round((account.get_balance()) * rate/100, 2)
+        growth = account.get_growth(year, rate)
+        if growth > 0:
+            taxable += round(growth, 2)
     tax = round(self.tax.calculate(taxable+rmd), 2)
     data.append(tax)
     return tax
@@ -69,8 +70,7 @@ def append_accounts(data, year, self, rate, change, growth):
     for account in self.accounts:
         retired = owner_is_retired(account, self, year)
         if growth:
-            rates = {"s": rate}
-            account.process_growth(year, rates, retired)
+            account.process_growth(year, rate, retired)
 
         if change:
             if account.withdraw(change):
@@ -118,17 +118,19 @@ class Plan:
             balances[i].append(rates["s"][i])
             balances[i].append(rates["b"][i])
 
+            rate = {"s": rates["s"][i], "b": rates["b"][i]}
+
             income = append_income(balances[i], start_year+i,
                                    self.owners, self.config['social_security'])
             rmd = append_rmd(balances[i], start_year+i,
                              self, self.config['rmd'])
             expense = append_expenses(balances[i], start_year+i, self.expenses)
-            tax = append_tax(balances[i], self, rates["s"][i], rmd)
+            tax = append_tax(balances[i], self, start_year+i, rate, rmd)
             change = append_reinvestment(balances[i], income,
                                          tax, expense, rmd)
 
             total = append_accounts(balances[i], start_year+i,
-                                    self, rates["s"][i], change, i != 0)
+                                    self, rate, change, i != 0)
             if change > 0 and total > 0:
                 balances[i].append(round(change/total*100, 2))
             else:

@@ -29,7 +29,6 @@ class Account:
 
     def get_growth(self, year, rates):
         if "allocation" not in self.config:
-            print(year, rates)
             return self.config["balance"] * rates["s"]/100
 
         growth_s = self.config["balance"] \

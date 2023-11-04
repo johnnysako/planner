@@ -14,8 +14,11 @@
             "annual_additions": 1000.0,
             "type": "Investment",
             "owner": "Jack Joe",
-            "trail_with_rmd": false
-        },
+            "trail_with_rmd": false,
+            "allocation": 
+                [{"year": 2023, "stocks": 100, "bonds": 0},
+                 {"year": 2045, "stocks": 25, "bonds": 75}]
+},
         {
             "name": "Account C",
             "balance": 67890.94,
