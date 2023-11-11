@@ -20,6 +20,9 @@ class Owner:
     def get_life(self):
         return self.config["life"]
 
+    def years_to_live(self, current_year):
+        return self.config["life"] - self.get_age(current_year) + 1
+
     def is_retired(self, year):
         return year-self.config["birth_year"] > self.config["retirement_age"]
 
