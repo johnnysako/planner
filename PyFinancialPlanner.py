@@ -172,9 +172,9 @@ def process_run(iteration,
                 average_bond_rates,
                 years_to_process,
                 personal_path):
-    stock_rates = generate_returns(trial["dist"]["stocks"], 
+    stock_rates = generate_returns(trial["dist"]["stocks"],
                                    26, 9, years_to_process)*100
-    bond_rates = generate_returns(trial["dist"]["bonds"], 
+    bond_rates = generate_returns(trial["dist"]["bonds"],
                                   6, 2, years_to_process)*100
 
     f = open(personal_path + 'accounts.json')
