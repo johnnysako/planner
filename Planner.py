@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
 from src.owner import Owner
 from src.expenses import Expenses
 from src.expense import Expense
+from src.account import Account
 
 
 class JsonTableWindow(QWidget):
@@ -81,6 +82,16 @@ class MainWindow(QMainWindow):
         except json.JSONDecodeError:
             print('Error decoding Expense JSON file', file=sys.stderr)
 
+        try:
+            with open(os.path.join(path, 'accounts.json')) as f:
+                account_data = json.load(f).get("accounts", [])
+                self.accounts = [Account(account_data)
+                                 for account_data in account_data]
+        except FileNotFoundError:
+            print('File not found', file=sys.stderr)
+        except json.JSONDecodeError:
+            print('Error decoding Owner JSON file', file=sys.stderr)
+
     def __init__(self):
         super().__init__()
 
@@ -93,12 +104,14 @@ class MainWindow(QMainWindow):
         self.entry = QLineEdit()
         self.owner_button = QPushButton('View Owner Data', self)
         self.expense_button = QPushButton('View Expense Data', self)
+        self.account_button = QPushButton('View Account Data', self)
         self.path_button = QPushButton('Update Path', self)
 
         # Connect button click event to a function
         self.path_button.clicked.connect(self.on_path_click)
         self.owner_button.clicked.connect(self.on_owner_click)
         self.expense_button.clicked.connect(self.on_expense_click)
+        self.account_button.clicked.connect(self.on_account_click)
 
         # Set up the app
         central_widget = QWidget(self)
@@ -108,6 +121,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.path_button)
         layout.addWidget(self.owner_button)
         layout.addWidget(self.expense_button)
+        layout.addWidget(self.account_button)
 
         self.setCentralWidget(central_widget)
 
@@ -129,6 +143,11 @@ class MainWindow(QMainWindow):
         self.expense_window = JsonTableWindow(self.expenses_data,
                                               "Expense Data")
         self.expense_window.show()
+
+    def on_account_click(self):
+        self.account_window = JsonTableWindow(self.accounts,
+                                              "Account Data")
+        self.account_window.show()
 
 
 if __name__ == '__main__':

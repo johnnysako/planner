@@ -44,9 +44,8 @@ def load_constants(personal_path):
     tax = Tax(json.load(f)["tax"])
 
     f = open(personal_path + 'owners.json')
-    owners = []
-    for o in json.load(f)["owners"]:
-        owners.append(Owner(o))
+    owners_data = json.load(f).get("owners", [])
+    owners = [Owner(owner_data) for owner_data in owners_data]
 
     years_to_process = 0
     for o in owners:
@@ -55,10 +54,8 @@ def load_constants(personal_path):
             years_to_process = owner_years_to_process
 
     f = open(personal_path + 'expenses.json')
-    expense = []
-    for e in json.load(f)['expenses']:
-        expense.append(Expense(e))
-    expenses = Expenses(expense)
+    expense_data = json.load(f).get("expenses", [])
+    expenses = Expenses([Expense(expense) for expense in expense_data])
 
     return rmd, tax, owners, expenses, years_to_process
 
@@ -178,9 +175,8 @@ def process_run(iteration,
                                   6, 2, years_to_process)*100
 
     f = open(personal_path + 'accounts.json')
-    accounts = []
-    for a in json.load(f)["accounts"]:
-        accounts.append(Account(a))
+    account_data = json.load(f).get("accounts", [])
+    accounts = [Account(account_data) for account_data in account_data]
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
 
