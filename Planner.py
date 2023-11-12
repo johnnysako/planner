@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import copy
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtWidgets import QVBoxLayout, QLineEdit, QPushButton
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
@@ -19,45 +20,82 @@ class JsonTableWindow(QWidget):
         self.init_ui(data, title)
 
     def init_ui(self, data, title):
-        self.owners = data
+        self.data = data
+        self.headers = list(data[0].config.keys())
+
         # Create table widget
         self.table_widget = QTableWidget(self)
         self.table_widget.setColumnCount(len(data[0].config))
         self.table_widget.setRowCount(len(data))
 
         # Set headers
-        headers = list(data[0].config.keys())
-        self.table_widget.setHorizontalHeaderLabels(headers)
+        self.table_widget.setHorizontalHeaderLabels(self.headers)
 
         # Populate the table
         for row_num, row_data in enumerate(data):
-            for col_num, col_key in enumerate(headers):
+            for col_num, col_key in enumerate(self.headers):
                 try:
                     item = QTableWidgetItem(str(row_data.config[col_key]))
                     self.table_widget.setItem(row_num, col_num, item)
                 except KeyError:
                     print('Missing Key (could be optional)', file=sys.stderr)
 
-        # Connect the itemChanged signal to a custom slot
         self.table_widget.itemChanged.connect(self.on_item_changed)
+        self.table_widget.resizeColumnsToContents()
+
+        # Add buttons for add/delete rows
+        self.add_button = QPushButton('Add Row', self)
+        self.remove_button = QPushButton('Delete Row', self)
+
+        self.add_button.clicked.connect(self.add_row)
+        self.remove_button.clicked.connect(self.delete_row)
 
         # Set up layout
-        self.table_widget.resizeColumnsToContents()
         layout = QVBoxLayout(self)
         layout.addWidget(self.table_widget)
+        layout.addWidget(self.add_button)
+        layout.addWidget(self.remove_button)
+
+        content_width = sum(self.table_widget.columnWidth(col)
+                            for col in range(self.table_widget.columnCount()))
+
+        content_height = sum(self.table_widget.rowHeight(row)
+                             for row in range(self.table_widget.rowCount()))
 
         # Set window properties
         self.setWindowTitle(title)
+        self.resize(content_width+75, content_height+75)
+    
+    def add_row(self):
+        # Add a new row with default data
+        row_position = self.table_widget.rowCount()
+        self.table_widget.insertRow(row_position)
+
+        new_data_item = copy.deepcopy(self.data[-1])
+        self.data.append(new_data_item)
+
+        for col_num, col_key in enumerate(self.headers):
+            try:
+                item = QTableWidgetItem(str(self.data[-1].config[col_key]))
+                self.table_widget.setItem(row_position, col_num, item)
+            except KeyError:
+                print('Missing Key (could be optional)', file=sys.stderr)
+
+    def delete_row(self):
+        # Delete the selected row
+        selected_row = self.table_widget.currentRow()
+        if selected_row >= 0:
+            self.table_widget.removeRow(selected_row)
+            del self.data[selected_row]
 
     def on_item_changed(self, item):
         # Get the row and column of the changed item
         row = item.row()
         col = item.column()
 
-        # Update the corresponding Owner object in the data
-        self.owner = self.owners[row]
-        self.owner.config[self.table_widget.horizontalHeaderItem(col)
-                          .text()] = item.text()
+        # Update the corresponding value in the data model
+        header = self.headers[col]
+        self.data[row].config[header] = item.text()
 
 
 class MainWindow(QMainWindow):
