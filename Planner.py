@@ -42,12 +42,12 @@ class JsonTableWindow(QWidget):
         self.table_widget.itemChanged.connect(self.on_item_changed)
 
         # Set up layout
+        self.table_widget.resizeColumnsToContents()
         layout = QVBoxLayout(self)
         layout.addWidget(self.table_widget)
 
         # Set window properties
         self.setWindowTitle(title)
-        self.setGeometry(100, 100, 800, 600)
 
     def on_item_changed(self, item):
         # Get the row and column of the changed item
@@ -106,12 +106,14 @@ class MainWindow(QMainWindow):
         self.expense_button = QPushButton('View Expense Data', self)
         self.account_button = QPushButton('View Account Data', self)
         self.path_button = QPushButton('Update Path', self)
+        self.save_button = QPushButton('Save User Data', self)
 
         # Connect button click event to a function
         self.path_button.clicked.connect(self.on_path_click)
         self.owner_button.clicked.connect(self.on_owner_click)
         self.expense_button.clicked.connect(self.on_expense_click)
         self.account_button.clicked.connect(self.on_account_click)
+        self.save_button.clicked.connect(self.save_data_to_file)
 
         # Set up the app
         central_widget = QWidget(self)
@@ -122,12 +124,13 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.owner_button)
         layout.addWidget(self.expense_button)
         layout.addWidget(self.account_button)
+        layout.addWidget(self.save_button)
 
         self.setCentralWidget(central_widget)
 
         # Set window properties
         self.setWindowTitle('Planner')
-        self.setGeometry(100, 100, 400, 200)
+        self.adjustSize()
         self.show()
 
     def on_path_click(self):
@@ -148,6 +151,20 @@ class MainWindow(QMainWindow):
         self.account_window = JsonTableWindow(self.accounts,
                                               "Account Data")
         self.account_window.show()
+
+    def save_data_to_file(self):
+        path = self.entry.text()
+        data_to_save = [owner.config for owner in self.owners]
+        with open(os.path.join(path, 'owners.json'), 'w') as f:
+            json.dump({"owners": data_to_save}, f, indent=2)
+
+        data_to_save = [expense.config for expense in self.expenses_data]
+        with open(os.path.join(path, 'expenses.json'), 'w') as f:
+            json.dump({"expenses": data_to_save}, f, indent=2)
+
+        data_to_save = [account.config for account in self.accounts]
+        with open(os.path.join(path, 'accounts.json'), 'w') as f:
+            json.dump({"accounts": data_to_save}, f, indent=2)
 
 
 if __name__ == '__main__':
