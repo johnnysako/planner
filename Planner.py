@@ -11,6 +11,7 @@ from src.owner import Owner
 from src.expenses import Expenses
 from src.expense import Expense
 from src.account import Account
+import PyFinancialPlanner as plan
 
 
 class JsonTableWindow(QWidget):
@@ -145,6 +146,7 @@ class MainWindow(QMainWindow):
         self.account_button = QPushButton('View Account Data', self)
         self.path_button = QPushButton('Update Path', self)
         self.save_button = QPushButton('Save User Data', self)
+        self.run_plan_button = QPushButton('Run Projection', self)
 
         # Connect button click event to a function
         self.path_button.clicked.connect(self.on_path_click)
@@ -152,6 +154,7 @@ class MainWindow(QMainWindow):
         self.expense_button.clicked.connect(self.on_expense_click)
         self.account_button.clicked.connect(self.on_account_click)
         self.save_button.clicked.connect(self.save_data_to_file)
+        self.run_plan_button.clicked.connect(self.run_plan)
 
         # Set up the app
         central_widget = QWidget(self)
@@ -163,6 +166,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.expense_button)
         layout.addWidget(self.account_button)
         layout.addWidget(self.save_button)
+        layout.addWidget(self.run_plan_button)
 
         self.setCentralWidget(central_widget)
 
@@ -203,6 +207,10 @@ class MainWindow(QMainWindow):
         data_to_save = [account.config for account in self.accounts]
         with open(os.path.join(path, 'accounts.json'), 'w') as f:
             json.dump({"accounts": data_to_save}, f, indent=2)
+
+    def run_plan(self):
+        self.save_data_to_file()
+        plan.main()
 
 
 if __name__ == '__main__':
