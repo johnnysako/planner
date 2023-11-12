@@ -7,37 +7,56 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
 
 # from src.account import Account
 from src.owner import Owner
+from src.expenses import Expenses
+from src.expense import Expense
 
 
-class JsonOwnersWindow(QWidget):
-    def __init__(self, owner_data):
+class JsonTableWindow(QWidget):
+    def __init__(self, data, title):
         super().__init__()
 
-        self.init_ui(owner_data)
+        self.init_ui(data, title)
 
-    def init_ui(self, owner_data):
+    def init_ui(self, data, title):
+        self.owners = data
         # Create table widget
-        table_widget = QTableWidget(self)
-        table_widget.setColumnCount(len(owner_data[0].config))
-        table_widget.setRowCount(len(owner_data))
+        self.table_widget = QTableWidget(self)
+        self.table_widget.setColumnCount(len(data[0].config))
+        self.table_widget.setRowCount(len(data))
 
         # Set headers
-        headers = list(owner_data[0].config.keys())
-        table_widget.setHorizontalHeaderLabels(headers)
+        headers = list(data[0].config.keys())
+        self.table_widget.setHorizontalHeaderLabels(headers)
 
         # Populate the table
-        for row_num, row_data in enumerate(owner_data):
+        for row_num, row_data in enumerate(data):
             for col_num, col_key in enumerate(headers):
-                item = QTableWidgetItem(str(row_data.config[col_key]))
-                table_widget.setItem(row_num, col_num, item)
+                try:
+                    item = QTableWidgetItem(str(row_data.config[col_key]))
+                    self.table_widget.setItem(row_num, col_num, item)
+                except KeyError:
+                    print('Missing Key (could be optional)', file=sys.stderr)
+
+        # Connect the itemChanged signal to a custom slot
+        self.table_widget.itemChanged.connect(self.on_item_changed)
 
         # Set up layout
         layout = QVBoxLayout(self)
-        layout.addWidget(table_widget)
+        layout.addWidget(self.table_widget)
 
         # Set window properties
-        self.setWindowTitle('Owner Data')
+        self.setWindowTitle(title)
         self.setGeometry(100, 100, 800, 600)
+
+    def on_item_changed(self, item):
+        # Get the row and column of the changed item
+        row = item.row()
+        col = item.column()
+
+        # Update the corresponding Owner object in the data
+        self.owner = self.owners[row]
+        self.owner.config[self.table_widget.horizontalHeaderItem(col)
+                          .text()] = item.text()
 
 
 class MainWindow(QMainWindow):
@@ -45,33 +64,50 @@ class MainWindow(QMainWindow):
         try:
             with open(os.path.join(path, 'owners.json')) as f:
                 owners_data = json.load(f).get("owners", [])
-                owners = [Owner(owner_data) for owner_data in owners_data]
-                return owners
+                self.owners = [Owner(owner_data) for owner_data in owners_data]
         except FileNotFoundError:
-            print('File not found')
+            print('File not found', file=sys.stderr)
         except json.JSONDecodeError:
-            print('Error decoding JSON file')
+            print('Error decoding Owner JSON file', file=sys.stderr)
+
+        try:
+            with open(os.path.join(path, 'expenses.json')) as f:
+                expense_data = json.load(f).get("expenses", [])
+                self.expenses_data = [Expense(expense)
+                                      for expense in expense_data]
+                self.expenses = Expenses(self.expenses_data)
+        except FileNotFoundError:
+            print('File not found', file=sys.stderr)
+        except json.JSONDecodeError:
+            print('Error decoding Expense JSON file', file=sys.stderr)
 
     def __init__(self):
         super().__init__()
 
+        self.load_constants('')
         self.init_ui()
 
     def init_ui(self):
         # Create widgets
         self.label = QLabel('Enter Data Path')
         self.entry = QLineEdit()
-        self.button = QPushButton('View Owner Data', self)
+        self.owner_button = QPushButton('View Owner Data', self)
+        self.expense_button = QPushButton('View Expense Data', self)
+        self.path_button = QPushButton('Update Path', self)
 
         # Connect button click event to a function
-        self.button.clicked.connect(self.on_button_click)
+        self.path_button.clicked.connect(self.on_path_click)
+        self.owner_button.clicked.connect(self.on_owner_click)
+        self.expense_button.clicked.connect(self.on_expense_click)
 
         # Set up the app
         central_widget = QWidget(self)
         layout = QVBoxLayout(central_widget)
         layout.addWidget(self.label)
         layout.addWidget(self.entry)
-        layout.addWidget(self.button)
+        layout.addWidget(self.path_button)
+        layout.addWidget(self.owner_button)
+        layout.addWidget(self.expense_button)
 
         self.setCentralWidget(central_widget)
 
@@ -80,17 +116,19 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 400, 200)
         self.show()
 
-    def on_button_click(self):
-        # Handle button click event
+    def on_path_click(self):
         path = self.entry.text()
-        if len(path) != 0:
-            path = path + '/'
-        owners = self.load_constants(path)
+        self.load_constants(path)
         self.label.setText(f'Data Loaded From:, {path}')
 
-        # Create and show the JSON table window
-        self.owner_window = JsonOwnersWindow(owners)
+    def on_owner_click(self):
+        self.owner_window = JsonTableWindow(self.owners, "Owner Data")
         self.owner_window.show()
+
+    def on_expense_click(self):
+        self.expense_window = JsonTableWindow(self.expenses_data,
+                                              "Expense Data")
+        self.expense_window.show()
 
 
 if __name__ == '__main__':
