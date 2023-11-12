@@ -65,7 +65,7 @@ class JsonTableWindow(QWidget):
         # Set window properties
         self.setWindowTitle(title)
         self.resize(content_width+75, content_height+75)
-    
+
     def add_row(self):
         # Add a new row with default data
         row_position = self.table_widget.rowCount()
