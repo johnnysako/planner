@@ -81,7 +81,6 @@ This program also has two files included as "adjustable" in the event that the g
     "expenses": [
         {
             "Description": "Living",
-            "need": true,
             "Cost": 60000,
             "Year Starts": 2023,
             "Year Ends": 2042,
@@ -89,7 +88,6 @@ This program also has two files included as "adjustable" in the event that the g
         },
         {
             "Description": "Living Jack Joe Retired",
-            "need": true,
             "Cost": 50000,
             "Year Starts": 2043,
             "Year Ends": 2049,
@@ -99,7 +97,6 @@ This program also has two files included as "adjustable" in the event that the g
 }
 ```
 - `"Description"`: Just a label
-- `"need"`: Not used yet, this is for future use in simulating plan success with wants vs needs
 - `"Cost"`: How much is the expense annually?
 - `"Year Starts"`: Year the expense starts
 - `"Year Ends"`: Year the expense ends [optional] - if not included expense will run to end of plan
@@ -115,8 +112,7 @@ This program also has two files included as "adjustable" in the event that the g
             "Retirement Age": 70,
             "Pre-retirement Take Home Pay": 90000,
             "Social Security": 20000,
-            "Age Starts Social Security": 70,
-            "trial_social_security": true
+            "Age Starts Social Security": 70
         },
         {
             "Name": "Jack Joe",
@@ -125,8 +121,7 @@ This program also has two files included as "adjustable" in the event that the g
             "Retirement Age": 68,
             "Pre-retirement Take Home Pay": 50000,
             "Social Security": 15000,
-            "Age Starts Social Security": 70,
-            "trial_social_security": true
+            "Age Starts Social Security": 70
         }
     ]
 }
@@ -138,7 +133,6 @@ This program also has two files included as "adjustable" in the event that the g
 - `"Pre-retirement Take Home Pay"`: What is the income while working?
 - `"Social Security"`: What social security is expected?
 - `"Age Starts Social Security"`: What year will this person start to pull social security?
-- `"trial_social_security"`: Future use.
 
 ## Usage
 This has been developed with unit tests for some aspects. From the root directory run `pytest` and the unit tests will run:

@@ -46,22 +46,6 @@ def test_can_get_different_social_security_benefit():
     assert owner.get_social_security() == 5678
 
 
-def test_should_trial_social_security():
-    config = {
-        "trial_social_security": True
-    }
-
-    owner = Owner(config)
-    assert owner.trial_social_security() is True
-
-    config_other = {
-        "trial_social_security": False
-    }
-
-    other_owner = Owner(config_other)
-    assert other_owner.trial_social_security() is False
-
-
 def test_get_income():
     config = {
         "Year of Birth": 1977,

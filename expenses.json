@@ -2,7 +2,6 @@
     "expenses": [
         {
             "Description": "Living",
-            "need": true,
             "Cost": 90000,
             "Year Starts": 2023,
             "Year Ends": 2042,
@@ -10,7 +9,6 @@
         },
         {
             "Description": "Living Jack Joe Retired",
-            "need": true,
             "Cost": 50000,
             "Year Starts": 2043,
             "Year Ends": 2049,
@@ -18,35 +16,30 @@
         },
         {
             "Description": "Living Both Retired",
-            "need": true,
             "Cost": 40000,
             "Year Starts": 2050,
             "Every x Year(s)": 1
         },
         {
             "Description": "Healthcare",
-            "need": true,
             "Cost": 10000,
             "Year Starts": 2040,
             "Every x Year(s)": 1
         },
         {
             "Description": "Home Maintenance",
-            "need": true,
             "Cost": 15000,
             "Year Starts": 2045,
             "Every x Year(s)": 5
         },
         {
             "Description": "Charity",
-            "need": true,
             "Cost": 1000,
             "Year Starts": 2045,
             "Every x Year(s)": 1
         },
         {
             "Description": "End of life care",
-            "need": true,
             "Cost": 60000,
             "Year Starts": 2069,
             "Every x Year(s)": 1

@@ -10,15 +10,6 @@ def test_can_initialize_expense():
     assert expense.get_name() == "Living"
 
 
-def test_need_or_want():
-    config = {
-        "need": True
-    }
-
-    expense = Expense(config)
-    assert expense.is_need() is True
-
-
 def test_can_get_expense_for_year():
     config = {
         "Year Starts": 2000,

@@ -5,9 +5,6 @@ class Expense:
     def get_name(self):
         return self.config["Description"]
 
-    def is_need(self):
-        return self.config["need"]
-
     def get_expense(self, year):
         try:
             end_year = self.config["Year Ends"]

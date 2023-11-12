@@ -97,14 +97,12 @@ def test_can_fill_table_for_one_year():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": False,
         "Cost": 2000,
         "Year Starts": 2010,
         "Every x Year(s)": 1
     }))
     expense_table.append(Expense({
         "Name": "Car",
-        "need": True,
         "Cost": 200,
         "Year Starts": 2007,
         "Every x Year(s)": 5
@@ -158,14 +156,12 @@ def test_can_fill_table_for_two_years():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": False,
         "Cost": 2000,
         "Year Starts": 2010,
         "Every x Year(s)": 1
     }))
     expense_table.append(Expense({
         "Name": "Car",
-        "need": True,
         "Cost": 200,
         "Year Starts": 2007,
         "Every x Year(s)": 5
@@ -249,14 +245,12 @@ def test_owners_match_accounts():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": False,
         "Cost": 2000,
         "Year Starts": 2010,
         "Every x Year(s)": 1
     }))
     expense_table.append(Expense({
         "Name": "Car",
-        "need": True,
         "Cost": 20000,
         "Year Starts": 2007,
         "Every x Year(s)": 5
@@ -685,7 +679,6 @@ def test_expenses_pulls_from_account():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 1000,
         "Year Starts": 2022,
         "Every x Year(s)": 1
@@ -732,7 +725,6 @@ def test_expenses_pulls_from_income():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 1000,
         "Year Starts": 2022,
         "Every x Year(s)": 1
@@ -787,7 +779,6 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 5000,
         "Year Starts": 2022,
         "Every x Year(s)": 1
@@ -842,7 +833,6 @@ def test_pulls_plan_fails_when_no_money_left():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 6000,
         "Year Starts": 2022,
         "Every x Year(s)": 1
@@ -904,7 +894,6 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 500,
         "Year Starts": 2022,
         "Every x Year(s)": 1
@@ -965,7 +954,6 @@ def test_does_not_include_social_security_when_config():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 500,
         "Year Starts": 2022,
         "Every x Year(s)": 1
@@ -1020,7 +1008,6 @@ def test_roth_has_rmd_when_config():
     expense_table = []
     expense_table.append(Expense({
         "Name": "Travel",
-        "need": True,
         "Cost": 500,
         "Year Starts": 2022,
         "Every x Year(s)": 1

@@ -14,9 +14,6 @@ class Owner:
     def get_social_security(self):
         return self.config["Social Security"]
 
-    def trial_social_security(self):
-        return self.config["trial_social_security"]
-
     def get_life(self):
         return self.config["Life Expectancy"]
 

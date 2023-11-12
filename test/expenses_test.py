@@ -4,14 +4,12 @@ from src.expense import Expense
 table = []
 table.append(Expense({
     "Description": "Travel",
-    "need": False,
     "Cost": 2000,
     "Year Starts": 2010,
     "Every x Year(s)": 1
 }))
 table.append(Expense({
     "Description": "Car",
-    "need": True,
     "Cost": 20000,
     "Year Starts": 2007,
     "Every x Year(s)": 5
@@ -21,16 +19,6 @@ table.append(Expense({
 def test_can_initialize_expenses():
     expenses = Expenses(table)
     assert expenses.get_names() == ["Travel", "Car"]
-
-
-def test_can_get_needs():
-    expenses = Expenses(table)
-    assert expenses.get_needs_names() == ["Car"]
-
-
-def test_can_get_wants():
-    expenses = Expenses(table)
-    assert expenses.get_wants_names() == ["Travel"]
 
 
 def test_can_get_expenses():
