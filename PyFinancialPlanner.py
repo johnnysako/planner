@@ -298,13 +298,13 @@ def main(personal_path=""):
     # 3. No Social Security
     # 4. No Social Security and Trial selected Roth with RMDs
     trials = [
-        {"social_security": True, "rmd": False,
+        {"Social Security": True, "rmd": False,
          "dist": returns},
-        # {"social_security": True, "rmd": True,
+        # {"Social Security": True, "rmd": True,
         #  "dist": returns},
-        {"social_security": False, "rmd": False,
+        {"Social Security": False, "rmd": False,
          "dist": returns},
-        # {"social_security": False, "rmd": True,
+        # {"Social Security": False, "rmd": True,
         #  "dist": returns}
     ]
 

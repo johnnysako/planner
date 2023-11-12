@@ -1,55 +1,55 @@
 {
     "expenses": [
         {
-            "name": "Living",
+            "Description": "Living",
             "need": true,
-            "amount": 90000,
-            "starting_year": 2023,
-            "end_year": 2042,
-            "frequency": 1
+            "Cost": 90000,
+            "Year Starts": 2023,
+            "Year Ends": 2042,
+            "Every x Year(s)": 1
         },
         {
-            "name": "Living Jack Joe Retired",
+            "Description": "Living Jack Joe Retired",
             "need": true,
-            "amount": 50000,
-            "starting_year": 2043,
-            "end_year": 2049,
-            "frequency": 1
+            "Cost": 50000,
+            "Year Starts": 2043,
+            "Year Ends": 2049,
+            "Every x Year(s)": 1
         },
         {
-            "name": "Living Both Retired",
+            "Description": "Living Both Retired",
             "need": true,
-            "amount": 40000,
-            "starting_year": 2050,
-            "frequency": 1
+            "Cost": 40000,
+            "Year Starts": 2050,
+            "Every x Year(s)": 1
         },
         {
-            "name": "Healthcare",
+            "Description": "Healthcare",
             "need": true,
-            "amount": 10000,
-            "starting_year": 2040,
-            "frequency": 1
+            "Cost": 10000,
+            "Year Starts": 2040,
+            "Every x Year(s)": 1
         },
         {
-            "name": "Home Maintenance",
+            "Description": "Home Maintenance",
             "need": true,
-            "amount": 15000,
-            "starting_year": 2045,
-            "frequency": 5
+            "Cost": 15000,
+            "Year Starts": 2045,
+            "Every x Year(s)": 5
         },
         {
-            "name": "Charity",
+            "Description": "Charity",
             "need": true,
-            "amount": 1000,
-            "starting_year": 2045,
-            "frequency": 1
+            "Cost": 1000,
+            "Year Starts": 2045,
+            "Every x Year(s)": 1
         },
         {
-            "name": "End of life care",
+            "Description": "End of life care",
             "need": true,
-            "amount": 60000,
-            "starting_year": 2069,
-            "frequency": 1
+            "Cost": 60000,
+            "Year Starts": 2069,
+            "Every x Year(s)": 1
         }
     ]
 }

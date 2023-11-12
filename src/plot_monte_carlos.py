@@ -128,7 +128,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
                        ymin=ticks[1], ymax=ticks[-2], colors='purple')
 
     trial_label = 'Include Social Security: ' + \
-        str(trial["social_security"]) + \
+        str(trial["Social Security"]) + \
         '\nSelected roths have RMDs: ' + str(trial["rmd"])
     print(trial_label)
     ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)

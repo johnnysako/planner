@@ -3,7 +3,7 @@ from src.expense import Expense
 
 def test_can_initialize_expense():
     config = {
-        "name": "Living"
+        "Description": "Living"
     }
 
     expense = Expense(config)
@@ -21,9 +21,9 @@ def test_need_or_want():
 
 def test_can_get_expense_for_year():
     config = {
-        "starting_year": 2000,
-        "frequency": 1,
-        "amount": 100
+        "Year Starts": 2000,
+        "Every x Year(s)": 1,
+        "Cost": 100
     }
 
     expense = Expense(config)
@@ -35,9 +35,9 @@ def test_can_get_expense_for_year():
 
 def test_can_get_different_expense_for_year():
     config = {
-        "starting_year": 2004,
-        "frequency": 3,
-        "amount": 200
+        "Year Starts": 2004,
+        "Every x Year(s)": 3,
+        "Cost": 200
     }
 
     expense = Expense(config)
@@ -50,10 +50,10 @@ def test_can_get_different_expense_for_year():
 
 def test_expense_expires():
     config = {
-        "starting_year": 2004,
-        "end_year": 2007,
-        "frequency": 1,
-        "amount": 200
+        "Year Starts": 2004,
+        "Year Ends": 2007,
+        "Every x Year(s)": 1,
+        "Cost": 200
     }
 
     expense = Expense(config)

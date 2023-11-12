@@ -3,7 +3,7 @@ from src.owner import Owner
 
 def test_can_initialize_owner():
     config = {
-        "name": "Bubbles"
+        "Name": "Bubbles"
     }
 
     owner = Owner(config)
@@ -12,7 +12,7 @@ def test_can_initialize_owner():
 
 def test_can_get_age():
     config = {
-        "birth_year": 1977
+        "Year of Birth": 1977
     }
 
     owner = Owner(config)
@@ -21,7 +21,7 @@ def test_can_get_age():
 
 def test_can_get_retirement_age():
     config = {
-        "retirement_age": 72
+        "Retirement Age": 72
     }
 
     owner = Owner(config)
@@ -30,7 +30,7 @@ def test_can_get_retirement_age():
 
 def test_can_get_social_security_benefit():
     config = {
-        "social_security": 1234
+        "Social Security": 1234
     }
 
     owner = Owner(config)
@@ -39,7 +39,7 @@ def test_can_get_social_security_benefit():
 
 def test_can_get_different_social_security_benefit():
     config = {
-        "social_security": 5678
+        "Social Security": 5678
     }
 
     owner = Owner(config)
@@ -64,11 +64,11 @@ def test_should_trial_social_security():
 
 def test_get_income():
     config = {
-        "birth_year": 1977,
-        "income": 56789,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 56789,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }
 
     owner = Owner(config)
@@ -81,11 +81,11 @@ def test_get_income():
 
 def test_get_income_no_social_security():
     config = {
-        "birth_year": 1977,
-        "income": 56789,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 56789,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }
 
     owner = Owner(config)
@@ -97,7 +97,7 @@ def test_get_income_no_social_security():
 
 def test_get_life():
     config = {
-        "life": 110
+        "Life Expectancy": 110
     }
 
     owner = Owner(config)
@@ -106,7 +106,7 @@ def test_get_life():
 
 def test_get_different_life():
     config = {
-        "life": 115
+        "Life Expectancy": 115
     }
 
     owner = Owner(config)
@@ -115,11 +115,11 @@ def test_get_different_life():
 
 def test_is_retired():
     config = {
-        "birth_year": 1950,
-        "income": 56789,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Year of Birth": 1950,
+        "Pre-retirement Take Home Pay": 56789,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }
 
     owner = Owner(config)
@@ -130,9 +130,9 @@ def test_is_retired():
 
 def test_get_years_to_live():
     config = {
-        "birth_year": 1950,
-        "life": 115,
-        "income": 56789,
+        "Year of Birth": 1950,
+        "Life Expectancy": 115,
+        "Pre-retirement Take Home Pay": 56789,
     }
 
     owner = Owner(config)

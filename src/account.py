@@ -21,7 +21,7 @@ class Account:
 
         valid_types = ["401K", "Roth", "IRA", "Investment", "HSA"]
         for type in valid_types:
-            if type == config["type"]:
+            if type == config["Type"]:
                 self.config = config
                 return
 
@@ -29,30 +29,30 @@ class Account:
 
     def get_growth(self, year, rates):
         if "allocation" not in self.config:
-            return self.config["balance"] * rates["s"]/100
+            return self.config["Balance"] * rates["s"]/100
 
-        growth_s = self.config["balance"] \
+        growth_s = self.config["Balance"] \
             * self.get_allocation(year, "stocks")/100 \
             * rates["s"]/100
-        growth_b = self.config["balance"] \
+        growth_b = self.config["Balance"] \
             * self.get_allocation(year, "bonds")/100 \
             * rates["b"]/100
         return growth_s + growth_b
 
     def get_name(self):
-        return self.config["name"]
+        return self.config["Name"]
 
     def get_owner(self):
-        return self.config["owner"]
+        return self.config["Owner Name"]
 
     def get_type(self):
-        return self.config["type"]
+        return self.config["Type"]
 
     def is_taxable(self):
         return self.get_type() == "Investment"
 
     def get_balance(self):
-        return self.config["balance"]
+        return self.config["Balance"]
 
     def get_allocation(self, year, type):
         if "allocation" not in self.config:
@@ -65,17 +65,17 @@ class Account:
     def withdraw_rmd(self, rate, roth_with_rmd=False):
         rmd = 0
         if rmd_applies(self.get_type(),
-                       self.config["trail_with_rmd"]
+                       self.config["Test as Tax Deferred"]
                        and roth_with_rmd) and rate != 0:
-            rmd = self.config["balance"] / rate
-        self.config["balance"] = round(self.config["balance"] - rmd, 2)
+            rmd = self.config["Balance"] / rate
+        self.config["Balance"] = round(self.config["Balance"] - rmd, 2)
         return rmd
 
     def withdraw(self, amount):
-        new_balance = self.config["balance"] - amount
+        new_balance = self.config["Balance"] - amount
 
         if new_balance >= 0:
-            self.config["balance"] = round(new_balance, 2)
+            self.config["Balance"] = round(new_balance, 2)
             return True
         else:
             return False
@@ -84,8 +84,8 @@ class Account:
         growth = self.get_growth(year, rates)
 
         if interest_only:
-            new_balance = self.config["balance"] + growth
+            new_balance = self.config["Balance"] + growth
         else:
-            new_balance = self.config["balance"] \
-                + growth + self.config["annual_additions"]
-        self.config["balance"] = round(new_balance, 2)
+            new_balance = self.config["Balance"] \
+                + growth + self.config["Annual Additions"]
+        self.config["Balance"] = round(new_balance, 2)

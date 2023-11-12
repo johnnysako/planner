@@ -3,33 +3,33 @@ class Owner:
         self.config = config
 
     def get_name(self):
-        return self.config["name"]
+        return self.config["Name"]
 
     def get_age(self, year):
-        return year - self.config["birth_year"]
+        return year - self.config["Year of Birth"]
 
     def get_retirement_age(self):
-        return self.config["retirement_age"]
+        return self.config["Retirement Age"]
 
     def get_social_security(self):
-        return self.config["social_security"]
+        return self.config["Social Security"]
 
     def trial_social_security(self):
         return self.config["trial_social_security"]
 
     def get_life(self):
-        return self.config["life"]
+        return self.config["Life Expectancy"]
 
     def years_to_live(self, current_year):
-        return self.config["life"] - self.get_age(current_year) + 1
+        return self.config["Life Expectancy"] - self.get_age(current_year) + 1
 
     def is_retired(self, year):
-        return year-self.config["birth_year"] > self.config["retirement_age"]
+        return year-self.config["Year of Birth"] > self.config["Retirement Age"]
 
     def get_income(self, include_social_security, year):
         if not self.is_retired(year):
-            return self.config["income"]
+            return self.config["Pre-retirement Take Home Pay"]
         elif include_social_security \
-                and self.get_age(year) >= self.config["start_social_security"]:
+                and self.get_age(year) >= self.config["Age Starts Social Security"]:
             return self.get_social_security()
         return 0

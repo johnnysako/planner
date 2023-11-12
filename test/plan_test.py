@@ -17,7 +17,7 @@ no_tax = Tax(empty_tax)
 
 rates = {"s": [6, 6, 6], "b": [3, 3, 3]}
 
-default_trial = {"social_security": True, "rmd": False}
+default_trial = {"Social Security": True, "rmd": False}
 
 
 def test_can_initialize_plan():
@@ -37,12 +37,12 @@ def test_can_get_header():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     owners = []
     expense_table = []
@@ -60,54 +60,54 @@ def test_can_fill_table_for_one_year():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": False,
-        "amount": 2000,
-        "starting_year": 2010,
-        "frequency": 1
+        "Cost": 2000,
+        "Year Starts": 2010,
+        "Every x Year(s)": 1
     }))
     expense_table.append(Expense({
-        "name": "Car",
+        "Name": "Car",
         "need": True,
-        "amount": 200,
-        "starting_year": 2007,
-        "frequency": 5
+        "Cost": 200,
+        "Year Starts": 2007,
+        "Every x Year(s)": 5
     }))
     expenses = Expenses(expense_table)
 
@@ -121,54 +121,54 @@ def test_can_fill_table_for_two_years():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": False,
-        "amount": 2000,
-        "starting_year": 2010,
-        "frequency": 1
+        "Cost": 2000,
+        "Year Starts": 2010,
+        "Every x Year(s)": 1
     }))
     expense_table.append(Expense({
-        "name": "Car",
+        "Name": "Car",
         "need": True,
-        "amount": 200,
-        "starting_year": 2007,
-        "frequency": 5
+        "Cost": 200,
+        "Year Starts": 2007,
+        "Every x Year(s)": 5
     }))
     expenses = Expenses(expense_table)
 
@@ -183,22 +183,22 @@ def test_owners_do_not_match_accounts():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     bad_owners = []
     bad_owners.append(Owner({
-        "name": "Babs",
-        "birth_year": 1977,
-        "income": 56789,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Babs",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 56789,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     expense_table = []
@@ -212,54 +212,54 @@ def test_owners_match_accounts():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1977,
-        "income": 2000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 2000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 1000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 1000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": False,
-        "amount": 2000,
-        "starting_year": 2010,
-        "frequency": 1
+        "Cost": 2000,
+        "Year Starts": 2010,
+        "Every x Year(s)": 1
     }))
     expense_table.append(Expense({
-        "name": "Car",
+        "Name": "Car",
         "need": True,
-        "amount": 20000,
-        "starting_year": 2007,
-        "frequency": 5
+        "Cost": 20000,
+        "Year Starts": 2007,
+        "Every x Year(s)": 5
     }))
     expenses = Expenses(expense_table)
 
@@ -272,38 +272,38 @@ def test_expenses_can_be_empty():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1977,
-        "income": 2000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 2000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 1000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 1000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
@@ -317,21 +317,21 @@ def test_account_growth_only_interest_when_owner_retired():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1950,
-        "income": 1000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1950,
+        "Pre-retirement Take Home Pay": 1000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
@@ -344,53 +344,53 @@ def test_account_growth_only_interest_when_owner_retired():
 def test_calculates_rmds_of_accounts():
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's IRA",
-        "balance": 8000,
-        "annual_additions": 2000,
-        "type": "IRA",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's IRA",
+        "Balance": 8000,
+        "Annual Additions": 2000,
+        "Type": "IRA",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's 401k",
-        "balance": 20000,
-        "annual_additions": 5000,
-        "type": "401K",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's 401k",
+        "Balance": 20000,
+        "Annual Additions": 5000,
+        "Type": "401K",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1950,
-        "income": 2000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1950,
+        "Pre-retirement Take Home Pay": 2000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1949,
-        "income": 1000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1949,
+        "Pre-retirement Take Home Pay": 1000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     rmd_table = [
@@ -412,53 +412,53 @@ def test_calculates_rmds_of_accounts():
 def test_calculates_rmds_of_accounts_several_years():
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's IRA",
-        "balance": 8000,
-        "annual_additions": 2000,
-        "type": "IRA",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's IRA",
+        "Balance": 8000,
+        "Annual Additions": 2000,
+        "Type": "IRA",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's 401k",
-        "balance": 20000,
-        "annual_additions": 5000,
-        "type": "401K",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's 401k",
+        "Balance": 20000,
+        "Annual Additions": 5000,
+        "Type": "401K",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1950,
-        "income": 2000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1950,
+        "Pre-retirement Take Home Pay": 2000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1949,
-        "income": 1000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1949,
+        "Pre-retirement Take Home Pay": 1000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     rmd_table = [
@@ -482,30 +482,30 @@ def test_can_include_tax_on_account_growth():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     tax_table = [
@@ -530,30 +530,30 @@ def test_no_tax_on_negative_growth():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 1000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 1000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     tax_table = [
@@ -578,53 +578,53 @@ def test_no_tax_on_negative_growth():
 def test_calculates_tax_including_rmds():
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's Roth",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's Roth",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's IRA",
-        "balance": 8000,
-        "annual_additions": 2000,
-        "type": "IRA",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's IRA",
+        "Balance": 8000,
+        "Annual Additions": 2000,
+        "Type": "IRA",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's Investment",
-        "balance": 10000,
-        "annual_additions": 5000,
-        "type": "Investment",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's Investment",
+        "Balance": 10000,
+        "Annual Additions": 5000,
+        "Type": "Investment",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jill's 401k",
-        "balance": 20000,
-        "annual_additions": 5000,
-        "type": "401K",
-        "owner": "Jill",
-        "trail_with_rmd": False
+        "Name": "Jill's 401k",
+        "Balance": 20000,
+        "Annual Additions": 5000,
+        "Type": "401K",
+        "Owner Name": "Jill",
+        "Test as Tax Deferred": False
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jill",
-        "birth_year": 1950,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jill",
+        "Year of Birth": 1950,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1949,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1949,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     rmd_table = [
@@ -656,22 +656,22 @@ def test_expenses_pulls_from_account():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Investment Priority 1",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Investment Priority 1",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     tax_table = [
@@ -684,11 +684,11 @@ def test_expenses_pulls_from_account():
     tax = Tax(tax_table)
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 1000,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 1000,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
@@ -703,22 +703,22 @@ def test_expenses_pulls_from_income():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Investment Priority 1",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Investment Priority 1",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 10000,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 10000,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     tax_table = [
@@ -731,11 +731,11 @@ def test_expenses_pulls_from_income():
     tax = Tax(tax_table)
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 1000,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 1000,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
@@ -750,30 +750,30 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Investment Priority 1",
-        "balance": 4000,
-        "annual_additions": 2000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Investment Priority 1",
+        "Balance": 4000,
+        "Annual Additions": 2000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Investment Priority 2",
-        "balance": 10000,
-        "annual_additions": 2000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Investment Priority 2",
+        "Balance": 10000,
+        "Annual Additions": 2000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     tax_table = [
@@ -786,11 +786,11 @@ def test_expenses_when_non_sufficient_pulls_from_next_account():
     tax = Tax(tax_table)
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 5000,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 5000,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
@@ -805,30 +805,30 @@ def test_pulls_plan_fails_when_no_money_left():
     rmd = Rmd(rmd_table)
     accounts = []
     accounts.append(Account({
-        "name": "Investment Priority 1",
-        "balance": 4000,
-        "annual_additions": 0,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Investment Priority 1",
+        "Balance": 4000,
+        "Annual Additions": 0,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Investment Priority 2",
-        "balance": 10000,
-        "annual_additions": 1000,
-        "type": "Investment",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Investment Priority 2",
+        "Balance": 10000,
+        "Annual Additions": 1000,
+        "Type": "Investment",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
 
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1977,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1977,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     tax_table = [
@@ -841,11 +841,11 @@ def test_pulls_plan_fails_when_no_money_left():
     tax = Tax(tax_table)
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 6000,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 6000,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
@@ -859,29 +859,29 @@ def test_pulls_plan_fails_when_no_money_left():
 def test_pulls_rmd_can_cover_expense_and_tax():
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's IRA",
-        "balance": 8000,
-        "annual_additions": 0,
-        "type": "IRA",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's IRA",
+        "Balance": 8000,
+        "Annual Additions": 0,
+        "Type": "IRA",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's 401k",
-        "balance": 20000,
-        "annual_additions": 0,
-        "type": "401K",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's 401k",
+        "Balance": 20000,
+        "Annual Additions": 0,
+        "Type": "401K",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1949,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 70
+        "Name": "Jerry",
+        "Year of Birth": 1949,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 70
     }))
 
     rmd_table = [
@@ -903,11 +903,11 @@ def test_pulls_rmd_can_cover_expense_and_tax():
 
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 500,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 500,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
@@ -920,29 +920,29 @@ def test_pulls_rmd_can_cover_expense_and_tax():
 def test_does_not_include_social_security_when_config():
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's IRA",
-        "balance": 8000,
-        "annual_additions": 0,
-        "type": "IRA",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's IRA",
+        "Balance": 8000,
+        "Annual Additions": 0,
+        "Type": "IRA",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     accounts.append(Account({
-        "name": "Jerry's 401k",
-        "balance": 20000,
-        "annual_additions": 0,
-        "type": "401K",
-        "owner": "Jerry",
-        "trail_with_rmd": False
+        "Name": "Jerry's 401k",
+        "Balance": 20000,
+        "Annual Additions": 0,
+        "Type": "401K",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": False
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1949,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 65
+        "Name": "Jerry",
+        "Year of Birth": 1949,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 65
     }))
 
     rmd_table = [
@@ -964,15 +964,15 @@ def test_does_not_include_social_security_when_config():
 
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 500,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 500,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
-    trial = {"social_security": False, "rmd": False}
+    trial = {"Social Security": False, "rmd": False}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
     assert plan.process_plan(2014, 1, rates) == \
@@ -983,21 +983,21 @@ def test_does_not_include_social_security_when_config():
 def test_roth_has_rmd_when_config():
     accounts = []
     accounts.append(Account({
-        "name": "Jerry's IRA",
-        "balance": 8000,
-        "annual_additions": 0,
-        "type": "Roth",
-        "owner": "Jerry",
-        "trail_with_rmd": True
+        "Name": "Jerry's IRA",
+        "Balance": 8000,
+        "Annual Additions": 0,
+        "Type": "Roth",
+        "Owner Name": "Jerry",
+        "Test as Tax Deferred": True
     }))
     owners = []
     owners.append(Owner({
-        "name": "Jerry",
-        "birth_year": 1949,
-        "income": 0,
-        "retirement_age": 65,
-        "social_security": 5678,
-        "start_social_security": 65
+        "Name": "Jerry",
+        "Year of Birth": 1949,
+        "Pre-retirement Take Home Pay": 0,
+        "Retirement Age": 65,
+        "Social Security": 5678,
+        "Age Starts Social Security": 65
     }))
 
     rmd_table = [
@@ -1019,15 +1019,15 @@ def test_roth_has_rmd_when_config():
 
     expense_table = []
     expense_table.append(Expense({
-        "name": "Travel",
+        "Name": "Travel",
         "need": True,
-        "amount": 500,
-        "starting_year": 2022,
-        "frequency": 1
+        "Cost": 500,
+        "Year Starts": 2022,
+        "Every x Year(s)": 1
     }))
     expenses = Expenses(expense_table)
 
-    trial = {"social_security": False, "rmd": True}
+    trial = {"Social Security": False, "rmd": True}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
     assert plan.process_plan(2014, 1, rates) == \

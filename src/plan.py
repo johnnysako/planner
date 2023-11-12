@@ -121,7 +121,7 @@ class Plan:
             rate = {"s": rates["s"][i], "b": rates["b"][i]}
 
             income = append_income(balances[i], start_year+i,
-                                   self.owners, self.config['social_security'])
+                                   self.owners, self.config["Social Security"])
             rmd = append_rmd(balances[i], start_year+i,
                              self, self.config['rmd'])
             expense = append_expenses(balances[i], start_year+i, self.expenses)

@@ -3,18 +3,18 @@ from src.expense import Expense
 
 table = []
 table.append(Expense({
-    "name": "Travel",
+    "Description": "Travel",
     "need": False,
-    "amount": 2000,
-    "starting_year": 2010,
-    "frequency": 1
+    "Cost": 2000,
+    "Year Starts": 2010,
+    "Every x Year(s)": 1
 }))
 table.append(Expense({
-    "name": "Car",
+    "Description": "Car",
     "need": True,
-    "amount": 20000,
-    "starting_year": 2007,
-    "frequency": 5
+    "Cost": 20000,
+    "Year Starts": 2007,
+    "Every x Year(s)": 5
 }))
 
 
