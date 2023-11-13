@@ -308,7 +308,7 @@ def main(personal_path=""):
         #  "dist": returns}
     ]
 
-    with PdfPages(os.path.join(personal_path, 
+    with PdfPages(os.path.join(personal_path,
                                'financial_analysis.pdf')) as pdf:
         plot_accounts_table(personal_path, pdf)
 
