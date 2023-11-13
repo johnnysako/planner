@@ -12,6 +12,7 @@ from src.draw_table import plot_data_table
 from src.plot_monte_carlos import plot_monte_carlos
 
 import sys
+import os
 import json
 import numpy as np
 import pandas as pd
@@ -37,15 +38,15 @@ def background(f):
 
 
 def load_constants(personal_path):
-    f = open('rmd.json')
-    rmd = Rmd(json.load(f)["rmd"])
+    with open(os.path.join(personal_path, 'rmd.json')) as f:
+        rmd = Rmd(json.load(f)["rmd"])
 
-    f = open('tax.json')
-    tax = Tax(json.load(f)["tax"])
+    with open(os.path.join(personal_path, 'tax.json')) as f:
+        tax = Tax(json.load(f)["tax"])
 
-    f = open(personal_path + 'owners.json')
-    owners_data = json.load(f).get("owners", [])
-    owners = [Owner(owner_data) for owner_data in owners_data]
+    with open(os.path.join(personal_path, 'owners.json')) as f:
+        owners_data = json.load(f).get("owners", [])
+        owners = [Owner(owner_data) for owner_data in owners_data]
 
     years_to_process = 0
     for o in owners:
@@ -53,9 +54,9 @@ def load_constants(personal_path):
         if owner_years_to_process > years_to_process:
             years_to_process = owner_years_to_process
 
-    f = open(personal_path + 'expenses.json')
-    expense_data = json.load(f).get("expenses", [])
-    expenses = Expenses([Expense(expense) for expense in expense_data])
+    with open(os.path.join(personal_path, 'expenses.json')) as f:
+        expense_data = json.load(f).get("expenses", [])
+        expenses = Expenses([Expense(expense) for expense in expense_data])
 
     return rmd, tax, owners, expenses, years_to_process
 
@@ -114,10 +115,9 @@ def plot_expense_table(expenses, years_to_process, pdf):
 
 
 def plot_accounts_table(personal_path, pdf):
-    f = open(personal_path + 'accounts.json')
-    accounts = []
-    for a in json.load(f)["accounts"]:
-        accounts.append(Account(a))
+    with open(os.path.join(personal_path, 'accounts.json')) as f:
+        account_data = json.load(f).get("accounts", [])
+        accounts = [Account(account_data) for account_data in account_data]
 
     account_table = []
     total = 0
@@ -174,9 +174,9 @@ def process_run(iteration,
     bond_rates = generate_returns(trial["dist"]["bonds"],
                                   6, 2, years_to_process)*100
 
-    f = open(personal_path + 'accounts.json')
-    account_data = json.load(f).get("accounts", [])
-    accounts = [Account(account_data) for account_data in account_data]
+    with open(os.path.join(personal_path, 'accounts.json')) as f:
+        account_data = json.load(f).get("accounts", [])
+        accounts = [Account(account_data) for account_data in account_data]
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
 
@@ -341,6 +341,6 @@ def main(personal_path=""):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        main(sys.argv[1] + '/')
+        main(sys.argv[1])
     else:
-        main()
+        main('data')
