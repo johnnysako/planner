@@ -134,13 +134,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.load_constants('')
+        self.load_constants('data')
         self.init_ui()
 
     def init_ui(self):
         # Create widgets
         self.label = QLabel('Enter Data Path')
-        self.entry = QLineEdit()
+        self.entry = QLineEdit('data')
         self.owner_button = QPushButton('View Owner Data', self)
         self.expense_button = QPushButton('View Expense Data', self)
         self.account_button = QPushButton('View Account Data', self)
@@ -210,7 +210,7 @@ class MainWindow(QMainWindow):
 
     def run_plan(self):
         self.save_data_to_file()
-        plan.main()
+        plan.main(self.entry.text())
 
 
 if __name__ == '__main__':

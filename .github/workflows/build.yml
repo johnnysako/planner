@@ -1,13 +1,12 @@
 name: Build Installer
 
 on:
-  push:
-    branches:
-      - develop
+  release:
+    types: created 
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest, macos-latest
 
     steps:
     - name: Checkout code
@@ -26,7 +25,7 @@ jobs:
     - name: Build Installer
       run: |
         python -m pip install pyinstaller
-        pyinstaller --onefile Planner.py 
+        pyinstaller --add-data "data:." Planner.py 
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
