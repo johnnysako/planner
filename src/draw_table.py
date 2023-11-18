@@ -37,7 +37,7 @@ def plot_data_table(data, pdf, rowlabels, title, display_charts=False,
                              len(data.columns))]
             fig = _draw_as_table(page, title, pagesize, pagelabels)
             pdf.savefig(fig, bbox_inches='tight')
-            
+
             if display_charts:
                 fig.show()
             fig.clear()

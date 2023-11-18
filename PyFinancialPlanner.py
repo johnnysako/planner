@@ -297,11 +297,11 @@ def main(personal_path="", with_social=False,
     trials = [
         {"Social Security": True, "rmd": False,
          "dist": returns}]
-    
+
     if with_social:
         trials.append({"Social Security": False, "rmd": False,
                        "dist": returns})
-        
+
     if with_rmd_trial:
         trials.append({"Social Security": True, "rmd": True,
                        "dist": returns})
