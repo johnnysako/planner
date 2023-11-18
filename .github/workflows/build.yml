@@ -25,7 +25,7 @@ jobs:
     - name: Build Installer
       run: |
         python -m pip install pyinstaller
-        pyinstaller --add-data "data:." Planner.py 
+        pyinstaller --add-data "_internal:." Planner.py 
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
