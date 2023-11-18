@@ -1,48 +1,48 @@
 {
-    "expenses": [
-        {
-            "Description": "Living",
-            "Cost": 90000,
-            "Year Starts": 2023,
-            "Year Ends": 2042,
-            "Every x Year(s)": 1
-        },
-        {
-            "Description": "Living Jack Joe Retired",
-            "Cost": 50000,
-            "Year Starts": 2043,
-            "Year Ends": 2049,
-            "Every x Year(s)": 1
-        },
-        {
-            "Description": "Living Both Retired",
-            "Cost": 40000,
-            "Year Starts": 2050,
-            "Every x Year(s)": 1
-        },
-        {
-            "Description": "Healthcare",
-            "Cost": 10000,
-            "Year Starts": 2040,
-            "Every x Year(s)": 1
-        },
-        {
-            "Description": "Home Maintenance",
-            "Cost": 15000,
-            "Year Starts": 2045,
-            "Every x Year(s)": 5
-        },
-        {
-            "Description": "Charity",
-            "Cost": 1000,
-            "Year Starts": 2045,
-            "Every x Year(s)": 1
-        },
-        {
-            "Description": "End of life care",
-            "Cost": 60000,
-            "Year Starts": 2069,
-            "Every x Year(s)": 1
-        }
-    ]
+  "expenses": [
+    {
+      "Description": "Living",
+      "Cost": 90000,
+      "Year Starts": 2023,
+      "Year Ends": 2042,
+      "Every x Year(s)": 1
+    },
+    {
+      "Description": "Living Jack Joe Retired",
+      "Cost": 50000,
+      "Year Starts": 2043,
+      "Year Ends": 2049,
+      "Every x Year(s)": 1
+    },
+    {
+      "Description": "Living Both Retired",
+      "Cost": 40000,
+      "Year Starts": 2050,
+      "Every x Year(s)": 1
+    },
+    {
+      "Description": "Healthcare",
+      "Cost": 10000,
+      "Year Starts": 2040,
+      "Every x Year(s)": 1
+    },
+    {
+      "Description": "Home Maintenance",
+      "Cost": 15000,
+      "Year Starts": 2045,
+      "Every x Year(s)": 5
+    },
+    {
+      "Description": "Charity",
+      "Cost": 1000,
+      "Year Starts": 2045,
+      "Every x Year(s)": 1
+    },
+    {
+      "Description": "End of life care",
+      "Cost": 60000,
+      "Year Starts": 2069,
+      "Every x Year(s)": 1
+    }
+  ]
 }

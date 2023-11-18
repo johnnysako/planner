@@ -1,39 +1,48 @@
 {
-    "accounts": [
+  "accounts": [
+    {
+      "Name": "Account A",
+      "Balance": 12345.0,
+      "Annual Additions": 0.0,
+      "Type": "Investment",
+      "Owner Name": "Jane Doe",
+      "Test as Tax Deferred": false
+    },
+    {
+      "Name": "Account B",
+      "Balance": 54321.44,
+      "Annual Additions": 1000.0,
+      "Type": "Investment",
+      "Owner Name": "Jack Joe",
+      "Test as Tax Deferred": false,
+      "allocation": [
         {
-            "Name": "Account A",
-            "Balance": 12345.00,
-            "Annual Additions": 0.0,
-            "Type": "Investment",
-            "Owner Name": "Jane Doe",
-            "Test as Tax Deferred": false
+          "year": 2045,
+          "stocks": 25,
+          "bonds": 75
         },
         {
-            "Name": "Account B",
-            "Balance": 54321.44,
-            "Annual Additions": 1000.0,
-            "Type": "Investment",
-            "Owner Name": "Jack Joe",
-            "Test as Tax Deferred": false,
-            "allocation": 
-                [{"year": 2023, "stocks": 100, "bonds": 0},
-                 {"year": 2045, "stocks": 25, "bonds": 75}]
-        },
-        {
-            "Name": "Account C",
-            "Balance": 67890.94,
-            "Annual Additions": 5000.0,
-            "Type": "Roth",
-            "Owner Name": "Jane Doe",
-            "Test as Tax Deferred": false
-        },
-        {
-            "Name": "Account D",
-            "Balance": 98765.50,
-            "Annual Additions": 6000.0,
-            "Type": "401K",
-            "Owner Name": "Jack Joe",
-            "Test as Tax Deferred": false
+          "year": 2023,
+          "stocks": 100,
+          "bonds": 0
         }
-    ]
+      ]
+    },
+    {
+      "Name": "Account C",
+      "Balance": 67890.94,
+      "Annual Additions": 5000.0,
+      "Type": "Roth",
+      "Owner Name": "Jane Doe",
+      "Test as Tax Deferred": false
+    },
+    {
+      "Name": "Account D",
+      "Balance": 98765.5,
+      "Annual Additions": 6000.0,
+      "Type": "401K",
+      "Owner Name": "Jack Joe",
+      "Test as Tax Deferred": false
+    }
+  ]
 }

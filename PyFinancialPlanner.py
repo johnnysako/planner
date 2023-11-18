@@ -91,7 +91,7 @@ def sort_data(data_for_analysis):
     return sorted_data, failed_plans
 
 
-def plot_expense_table(expenses, years_to_process, pdf):
+def plot_expense_table(expenses, years_to_process, pdf, display_charts):
     expense_table = []
     for year in range(start_year, start_year+years_to_process):
         expense_table.append([year] + expenses.get_year(year))
@@ -111,10 +111,11 @@ def plot_expense_table(expenses, years_to_process, pdf):
     data.drop('Year', axis=1, inplace=True)
     data.update(data.astype(float))
     data.update(data.applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, "Expense Table", numpages=(2, 2))
+    plot_data_table(data, pdf, labels, "Expense Table",
+                    display_charts, numpages=(2, 2))
 
 
-def plot_accounts_table(personal_path, pdf):
+def plot_accounts_table(personal_path, pdf, display_charts):
     with open(os.path.join(personal_path, 'accounts.json')) as f:
         account_data = json.load(f).get("accounts", [])
         accounts = [Account(account_data) for account_data in account_data]
@@ -135,7 +136,7 @@ def plot_accounts_table(personal_path, pdf):
     data.drop('Account', axis=1, inplace=True)
     data.update(data[['Balance']].astype(float))
     data.update(data[['Balance']].applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, "Account Summary")
+    plot_data_table(data, pdf, labels, "Account Summary", display_charts)
 
 
 def generate_returns(data_distribution, mean, std, years_to_process):
@@ -259,7 +260,8 @@ def run_monte_carlos(data_for_analysis,
     loop.run_until_complete(all_groups)
 
 
-def main(personal_path=""):
+def main(personal_path="", with_social=False,
+         with_rmd_trial=False, display_charts=False):
     rmd, tax, owners, expenses, years_to_process = \
         load_constants(personal_path)
 
@@ -292,25 +294,21 @@ def main(personal_path=""):
     returns = {"stocks": sorted_stock_annual_returns,
                "bonds": sorted_bond_annual_returns}
 
-    # Scenarios:
-    # 1. As is
-    # 2. Trial selected Roth with RMDs (aka 401K)
-    # 3. No Social Security
-    # 4. No Social Security and Trial selected Roth with RMDs
     trials = [
         {"Social Security": True, "rmd": False,
-         "dist": returns},
-        # {"Social Security": True, "rmd": True,
-        #  "dist": returns},
-        {"Social Security": False, "rmd": False,
-         "dist": returns},
-        # {"Social Security": False, "rmd": True,
-        #  "dist": returns}
-    ]
+         "dist": returns}]
+    
+    if with_social:
+        trials.append({"Social Security": False, "rmd": False,
+                       "dist": returns})
+        
+    if with_rmd_trial:
+        trials.append({"Social Security": True, "rmd": True,
+                       "dist": returns})
 
     with PdfPages(os.path.join(personal_path,
                                'financial_analysis.pdf')) as pdf:
-        plot_accounts_table(personal_path, pdf)
+        plot_accounts_table(personal_path, pdf, False)
 
         for trial in trials:
             data_for_analysis = []
@@ -328,9 +326,10 @@ def main(personal_path=""):
                 np.average(average_stock_rates)))
             print('Average Rate of Return (Bonds): {:0.2f}%'.format(
                 np.average(average_bond_rates)))
-            plot_monte_carlos(sorted_data, failed_plans, pdf, owners, trial)
+            plot_monte_carlos(sorted_data, failed_plans, pdf,
+                              owners, trial, display_charts)
 
-        plot_expense_table(expenses, years_to_process, pdf)
+        plot_expense_table(expenses, years_to_process, pdf, False)
 
         d = pdf.infodict()
         d['Title'] = 'Financial Projection'

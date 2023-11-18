@@ -97,12 +97,12 @@ def _plot_summary(data_for_analysis, pdf):
                         math.ceil(num_rows / 33), math.ceil(num_columns / 10)))
 
 
-def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
+def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
+                      owners, trial, display_charts):
     iterations = len(data_for_analysis)
     start_year = data_for_analysis[0]['Year'][0]
     years_to_process = len(data_for_analysis[0].index)
     analysis = np.empty([iterations, years_to_process])
-    fig = plt.figure(figsize=(10, 6), dpi=300)
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
         if i % 20 == 0:
@@ -149,8 +149,9 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf, owners, trial):
     plt.text(0.025, 0.9, results_to_include,
              transform=plt.gca().transAxes, fontsize=8, bbox=box_props)
 
+    if display_charts:
+        plt.show()
     pdf.savefig()
-    plt.close(fig)
 
     _plot_summary(data_for_analysis, pdf)
 

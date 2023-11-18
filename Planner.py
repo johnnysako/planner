@@ -5,6 +5,7 @@ import copy
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtWidgets import QVBoxLayout, QLineEdit, QPushButton
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
+from PyQt5.QtWidgets import QHBoxLayout, QCheckBox
 
 # from src.account import Account
 from src.owner import Owner
@@ -45,27 +46,25 @@ class JsonTableWindow(QWidget):
         self.table_widget.resizeColumnsToContents()
 
         # Add buttons for add/delete rows
-        self.add_button = QPushButton('Add Row', self)
-        self.remove_button = QPushButton('Delete Row', self)
+        add_button = QPushButton('Add Row', self)
+        remove_button = QPushButton('Delete Row', self)
 
-        self.add_button.clicked.connect(self.add_row)
-        self.remove_button.clicked.connect(self.delete_row)
+        add_button.clicked.connect(self.add_row)
+        remove_button.clicked.connect(self.delete_row)
+
+        # Set up button layout
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(add_button)
+        button_layout.addWidget(remove_button)
 
         # Set up layout
         layout = QVBoxLayout(self)
         layout.addWidget(self.table_widget)
-        layout.addWidget(self.add_button)
-        layout.addWidget(self.remove_button)
-
-        content_width = sum(self.table_widget.columnWidth(col)
-                            for col in range(self.table_widget.columnCount()))
-
-        content_height = sum(self.table_widget.rowHeight(row)
-                             for row in range(self.table_widget.rowCount()))
+        layout.addLayout(button_layout)
 
         # Set window properties
         self.setWindowTitle(title)
-        self.resize(content_width+75, content_height+75)
+        self.resize(1000, 500)
 
     def add_row(self):
         # Add a new row with default data
@@ -139,14 +138,17 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         # Create widgets
-        self.label = QLabel('Enter Data Path')
+        self.label = QLabel('Data Loaded From Directory:')
         self.entry = QLineEdit('_internal')
         self.owner_button = QPushButton('View Owner Data', self)
         self.expense_button = QPushButton('View Expense Data', self)
         self.account_button = QPushButton('View Account Data', self)
-        self.path_button = QPushButton('Update Path', self)
+        self.path_button = QPushButton('Load User Data', self)
         self.save_button = QPushButton('Save User Data', self)
         self.run_plan_button = QPushButton('Run Projection', self)
+        self.inc_social_security = \
+            QCheckBox('Test Without Social Security', self)
+        self.test_rmd = QCheckBox('Test With RMD on Select Accounts', self)
 
         # Connect button click event to a function
         self.path_button.clicked.connect(self.on_path_click)
@@ -158,15 +160,27 @@ class MainWindow(QMainWindow):
 
         # Set up the app
         central_widget = QWidget(self)
+
+        path_layout = QHBoxLayout()
+        path_layout.addWidget(self.label)
+        path_layout.addWidget(self.entry)
+
+        save_load_layout = QHBoxLayout()
+        save_load_layout.addWidget(self.path_button)
+        save_load_layout.addWidget(self.save_button)
+
+        data_layout = QHBoxLayout()
+        data_layout.addWidget(self.owner_button)
+        data_layout.addWidget(self.expense_button)
+        data_layout.addWidget(self.account_button)
+
         layout = QVBoxLayout(central_widget)
-        layout.addWidget(self.label)
-        layout.addWidget(self.entry)
-        layout.addWidget(self.path_button)
-        layout.addWidget(self.owner_button)
-        layout.addWidget(self.expense_button)
-        layout.addWidget(self.account_button)
-        layout.addWidget(self.save_button)
+        layout.addLayout(data_layout)
+        layout.addWidget(self.inc_social_security)
+        layout.addWidget(self.test_rmd)
         layout.addWidget(self.run_plan_button)
+        layout.addLayout(path_layout)
+        layout.addLayout(save_load_layout)
 
         self.setCentralWidget(central_widget)
 
@@ -178,7 +192,6 @@ class MainWindow(QMainWindow):
     def on_path_click(self):
         path = self.entry.text()
         self.load_constants(path)
-        self.label.setText(f'Data Loaded From:, {path}')
 
     def on_owner_click(self):
         self.owner_window = JsonTableWindow(self.owners, "Owner Data")
@@ -213,7 +226,10 @@ class MainWindow(QMainWindow):
 
     def run_plan(self):
         self.save_data_to_file()
-        plan.main(self.entry.text())
+        plan.main(personal_path=self.entry.text(),
+                  with_social=self.inc_social_security.isChecked(),
+                  with_rmd_trial=self.test_rmd.isChecked(),
+                  display_charts=True)
 
 
 if __name__ == '__main__':

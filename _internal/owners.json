@@ -1,22 +1,22 @@
 {
-    "owners": [
-        {
-            "Name": "Jane Doe",
-            "Year of Birth": 1980,
-            "Life Expectancy": 99,
-            "Retirement Age": 70,
-            "Pre-retirement Take Home Pay": 60000,
-            "Social Security": 20000,
-            "Age Starts Social Security": 70
-        },
-        {
-            "Name": "Jack Joe",
-            "Year of Birth": 1975,
-            "Life Expectancy": 99,
-            "Retirement Age": 68,
-            "Pre-retirement Take Home Pay": 35000,
-            "Social Security": 15000,
-            "Age Starts Social Security": 70
-        }
-    ]
+  "owners": [
+    {
+      "Name": "Jane Doe",
+      "Year of Birth": 1980,
+      "Life Expectancy": 99,
+      "Retirement Age": 70,
+      "Pre-retirement Take Home Pay": 60000,
+      "Social Security": 20000,
+      "Age Starts Social Security": 70
+    },
+    {
+      "Name": "Jack Joe",
+      "Year of Birth": 1975,
+      "Life Expectancy": 99,
+      "Retirement Age": 68,
+      "Pre-retirement Take Home Pay": 35000,
+      "Social Security": 15000,
+      "Age Starts Social Security": 70
+    }
+  ]
 }
