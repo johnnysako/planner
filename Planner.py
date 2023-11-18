@@ -134,13 +134,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.load_constants('data')
+        self.load_constants('_internal')
         self.init_ui()
 
     def init_ui(self):
         # Create widgets
         self.label = QLabel('Enter Data Path')
-        self.entry = QLineEdit('data')
+        self.entry = QLineEdit('_internal')
         self.owner_button = QPushButton('View Owner Data', self)
         self.expense_button = QPushButton('View Expense Data', self)
         self.account_button = QPushButton('View Account Data', self)
@@ -196,6 +196,9 @@ class MainWindow(QMainWindow):
 
     def save_data_to_file(self):
         path = self.entry.text()
+        os_path = os.path.dirname(os.path.join(path, 'owners.json'))
+        os.makedirs(os_path, exist_ok=True)
+
         data_to_save = [owner.config for owner in self.owners]
         with open(os.path.join(path, 'owners.json'), 'w') as f:
             json.dump({"owners": data_to_save}, f, indent=2)

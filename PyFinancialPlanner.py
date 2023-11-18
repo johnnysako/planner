@@ -38,10 +38,10 @@ def background(f):
 
 
 def load_constants(personal_path):
-    with open(os.path.join(personal_path, 'rmd.json')) as f:
+    with open(os.path.join('_Internal', 'rmd.json')) as f:
         rmd = Rmd(json.load(f)["rmd"])
 
-    with open(os.path.join(personal_path, 'tax.json')) as f:
+    with open(os.path.join('_Internal', 'tax.json')) as f:
         tax = Tax(json.load(f)["tax"])
 
     with open(os.path.join(personal_path, 'owners.json')) as f:
