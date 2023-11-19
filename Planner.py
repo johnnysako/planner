@@ -231,7 +231,7 @@ class MainWindow(QMainWindow):
         plan.main(personal_path=self.path,
                   with_social=self.inc_social_security.isChecked(),
                   with_rmd_trial=self.test_rmd.isChecked(),
-                  display_charts=False)
+                  display_charts=True)
 
 
 if __name__ == '__main__':

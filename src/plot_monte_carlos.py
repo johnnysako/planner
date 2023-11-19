@@ -32,7 +32,7 @@ def _plot_failed_plans(failed_plans, pdf):
             data.update(data.astype(float))
             data.update(data.applymap('{:,.0f}'.format))
             plot_data_table(data, pdf, labels,
-                            'Failed Plan Data Table', False, numpages=(2, 1))
+                            'Failed Plan Data Table', numpages=(2, 1))
 
 
 def _plot_summary(data_for_analysis, pdf):
@@ -76,7 +76,7 @@ def _plot_summary(data_for_analysis, pdf):
         summary[['Average Withdrawn', 'Stock Returns', 'Bond Returns']]
         .applymap('{:.2f}%'.format))
     print(summary)
-    plot_data_table(summary, pdf, labels, "Monte Carlos Summary", False)
+    plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
     median_result = pd.DataFrame(data_for_analysis[int(iterations/2)])
     labels = median_result['Year'].values.astype(int)
@@ -93,12 +93,13 @@ def _plot_summary(data_for_analysis, pdf):
 
     num_rows, num_columns = median_result.shape
     plot_data_table(median_result, pdf, labels,
-                    'Median Data Table', False, numpages=(
+                    'Median Data Table', numpages=(
                         math.ceil(num_rows / 33), math.ceil(num_columns / 10)))
 
 
 def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
                       owners, trial, display_charts):
+    plt.figure()
     iterations = len(data_for_analysis)
     start_year = data_for_analysis[0]['Year'][0]
     years_to_process = len(data_for_analysis[0].index)
@@ -114,7 +115,6 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
     print('Median EoP: ${:,.0f}'.format(median))
     print('Mean EoP: ${:,.0f}'.format(average_plot[-1]))
     ax = plt.gca()
-    plt.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
     ticks, _ = plt.yticks()
     for owner in owners:
@@ -149,8 +149,6 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
     plt.text(0.025, 0.9, results_to_include,
              transform=plt.gca().transAxes, fontsize=8, bbox=box_props)
 
-    if display_charts:
-        plt.show()
     pdf.savefig()
 
     _plot_summary(data_for_analysis, pdf)

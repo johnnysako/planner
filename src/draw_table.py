@@ -22,7 +22,7 @@ def _draw_as_table(df, title, pagesize, rowlabels):
     return fig
 
 
-def plot_data_table(data, pdf, rowlabels, title, display_charts=False,
+def plot_data_table(data, pdf, rowlabels, title,
                     numpages=(1, 1), pagesize=(11, 8.5)):
     nh, nv = numpages
     rows_per_page = len(data) // nh
@@ -36,7 +36,6 @@ def plot_data_table(data, pdf, rowlabels, title, display_charts=False,
                              (j*cols_per_page):min((j+1)*cols_per_page,
                              len(data.columns))]
             fig = _draw_as_table(page, title, pagesize, pagelabels)
+            current_figure = plt.gcf().number
             pdf.savefig(fig, bbox_inches='tight')
-
-            if display_charts:
-                fig.show()
+            plt.close(current_figure)

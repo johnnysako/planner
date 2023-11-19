@@ -104,15 +104,15 @@ def plot_expense_table(expenses, years_to_process, pdf, display_charts):
     plt.yticks(fontsize=10)
     plt.title('Expenses over Time')
     plt.legend(prop={'size': 6})
+    current_figure = plt.gcf().number
     pdf.savefig()
-    plt.close()
+    plt.close(current_figure)
 
     labels = data['Year'].values.astype(int)
     data.drop('Year', axis=1, inplace=True)
     data.update(data.astype(float))
     data.update(data.applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, "Expense Table",
-                    display_charts, numpages=(2, 2))
+    plot_data_table(data, pdf, labels, "Expense Table", numpages=(2, 2))
 
 
 def plot_accounts_table(personal_path, pdf, display_charts):
@@ -136,7 +136,7 @@ def plot_accounts_table(personal_path, pdf, display_charts):
     data.drop('Account', axis=1, inplace=True)
     data.update(data[['Balance']].astype(float))
     data.update(data[['Balance']].applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, "Account Summary", display_charts)
+    plot_data_table(data, pdf, labels, "Account Summary")
 
 
 def generate_returns(data_distribution, mean, std, years_to_process):
@@ -330,6 +330,9 @@ def main(personal_path="", with_social=False,
                               owners, trial, display_charts)
 
         plot_expense_table(expenses, years_to_process, pdf, False)
+
+        if display_charts:
+            plt.show()
 
         d = pdf.infodict()
         d['Title'] = 'Financial Projection'
