@@ -32,7 +32,7 @@ def _plot_failed_plans(failed_plans, pdf):
             data.update(data.astype(float))
             data.update(data.applymap('{:,.0f}'.format))
             plot_data_table(data, pdf, labels,
-                            'Failed Plan Data Table', numpages=(2, 1))
+                            'Failed Plan Data Table', False, numpages=(2, 1))
 
 
 def _plot_summary(data_for_analysis, pdf):
@@ -76,7 +76,7 @@ def _plot_summary(data_for_analysis, pdf):
         summary[['Average Withdrawn', 'Stock Returns', 'Bond Returns']]
         .applymap('{:.2f}%'.format))
     print(summary)
-    plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
+    plot_data_table(summary, pdf, labels, "Monte Carlos Summary", False)
 
     median_result = pd.DataFrame(data_for_analysis[int(iterations/2)])
     labels = median_result['Year'].values.astype(int)
@@ -93,7 +93,7 @@ def _plot_summary(data_for_analysis, pdf):
 
     num_rows, num_columns = median_result.shape
     plot_data_table(median_result, pdf, labels,
-                    'Median Data Table', numpages=(
+                    'Median Data Table', False, numpages=(
                         math.ceil(num_rows / 33), math.ceil(num_columns / 10)))
 
 

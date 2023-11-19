@@ -2,8 +2,8 @@ import sys
 import os
 import json
 import copy
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-from PyQt5.QtWidgets import QVBoxLayout, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QVBoxLayout, QFileDialog, QPushButton
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
 from PyQt5.QtWidgets import QHBoxLayout, QCheckBox
 
@@ -99,51 +99,43 @@ class JsonTableWindow(QWidget):
 
 
 class MainWindow(QMainWindow):
-    def load_constants(self, path):
+    def load_json(self, path, file_name, field):
         try:
-            with open(os.path.join(path, 'owners.json')) as f:
-                owners_data = json.load(f).get("owners", [])
-                self.owners = [Owner(owner_data) for owner_data in owners_data]
+            f = open(os.path.join(path, file_name))
         except FileNotFoundError:
-            print('File not found', file=sys.stderr)
-        except json.JSONDecodeError:
-            print('Error decoding Owner JSON file', file=sys.stderr)
+            print('File not found, loading default example', file=sys.stderr)
+            f = open(os.path.join('_internal', file_name))
 
         try:
-            with open(os.path.join(path, 'expenses.json')) as f:
-                expense_data = json.load(f).get("expenses", [])
-                self.expenses_data = [Expense(expense)
-                                      for expense in expense_data]
-                self.expenses = Expenses(self.expenses_data)
-        except FileNotFoundError:
-            print('File not found', file=sys.stderr)
-        except json.JSONDecodeError:
-            print('Error decoding Expense JSON file', file=sys.stderr)
+            return json.load(f).get(field, [])
 
-        try:
-            with open(os.path.join(path, 'accounts.json')) as f:
-                account_data = json.load(f).get("accounts", [])
-                self.accounts = [Account(account_data)
-                                 for account_data in account_data]
-        except FileNotFoundError:
-            print('File not found', file=sys.stderr)
         except json.JSONDecodeError:
             print('Error decoding Owner JSON file', file=sys.stderr)
+            f = open(os.path.join('_internal', file_name))
+            return json.load(f).get(field, [])
+
+    def load_constants(self):
+        owners_data = self.load_json(self.path, 'owners.json', "owners")
+        self.owners = [Owner(owner_data) for owner_data in owners_data]
+
+        expense_data = self.load_json(self.path, 'expenses.json', "expenses")
+        self.expenses_data = [Expense(expense) for expense in expense_data]
+        self.expenses = Expenses(self.expenses_data)
+
+        account_data = self.load_json(self.path, 'accounts.json', "accounts")
+        self.accounts = [Account(account_data)
+                         for account_data in account_data]
 
     def __init__(self):
         super().__init__()
-
-        self.load_constants('_internal')
         self.init_ui()
 
     def init_ui(self):
         # Create widgets
-        self.label = QLabel('Data Loaded From Directory:')
-        self.entry = QLineEdit('_internal')
         self.owner_button = QPushButton('View Owner Data', self)
         self.expense_button = QPushButton('View Expense Data', self)
         self.account_button = QPushButton('View Account Data', self)
-        self.path_button = QPushButton('Load User Data', self)
+        self.load_data = QPushButton('Load User Data', self)
         self.save_button = QPushButton('Save User Data', self)
         self.run_plan_button = QPushButton('Run Projection', self)
         self.inc_social_security = \
@@ -151,22 +143,25 @@ class MainWindow(QMainWindow):
         self.test_rmd = QCheckBox('Test With RMD on Select Accounts', self)
 
         # Connect button click event to a function
-        self.path_button.clicked.connect(self.on_path_click)
+        self.load_data.clicked.connect(self.on_load_data)
         self.owner_button.clicked.connect(self.on_owner_click)
         self.expense_button.clicked.connect(self.on_expense_click)
         self.account_button.clicked.connect(self.on_account_click)
         self.save_button.clicked.connect(self.save_data_to_file)
         self.run_plan_button.clicked.connect(self.run_plan)
 
+        # Disable buttons until data is loaded
+        self.owner_button.setEnabled(False)
+        self.expense_button.setEnabled(False)
+        self.account_button.setEnabled(False)
+        self.save_button.setEnabled(False)
+        self.run_plan_button.setEnabled(False)
+
         # Set up the app
         central_widget = QWidget(self)
 
-        path_layout = QHBoxLayout()
-        path_layout.addWidget(self.label)
-        path_layout.addWidget(self.entry)
-
         save_load_layout = QHBoxLayout()
-        save_load_layout.addWidget(self.path_button)
+        save_load_layout.addWidget(self.load_data)
         save_load_layout.addWidget(self.save_button)
 
         data_layout = QHBoxLayout()
@@ -179,7 +174,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.inc_social_security)
         layout.addWidget(self.test_rmd)
         layout.addWidget(self.run_plan_button)
-        layout.addLayout(path_layout)
         layout.addLayout(save_load_layout)
 
         self.setCentralWidget(central_widget)
@@ -189,9 +183,21 @@ class MainWindow(QMainWindow):
         self.adjustSize()
         self.show()
 
-    def on_path_click(self):
-        path = self.entry.text()
-        self.load_constants(path)
+    def on_load_data(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
+
+        self.path = QFileDialog.getExistingDirectory(self, "Select Folder",
+                                                     options=options)
+        self.load_constants()
+        self.save_data_to_file()
+
+        # Enable buttons since data is loaded
+        self.owner_button.setEnabled(True)
+        self.expense_button.setEnabled(True)
+        self.account_button.setEnabled(True)
+        self.save_button.setEnabled(True)
+        self.run_plan_button.setEnabled(True)
 
     def on_owner_click(self):
         self.owner_window = JsonTableWindow(self.owners, "Owner Data")
@@ -208,28 +214,24 @@ class MainWindow(QMainWindow):
         self.account_window.show()
 
     def save_data_to_file(self):
-        path = self.entry.text()
-        os_path = os.path.dirname(os.path.join(path, 'owners.json'))
-        os.makedirs(os_path, exist_ok=True)
-
         data_to_save = [owner.config for owner in self.owners]
-        with open(os.path.join(path, 'owners.json'), 'w') as f:
+        with open(os.path.join(self.path, 'owners.json'), 'w') as f:
             json.dump({"owners": data_to_save}, f, indent=2)
 
         data_to_save = [expense.config for expense in self.expenses_data]
-        with open(os.path.join(path, 'expenses.json'), 'w') as f:
+        with open(os.path.join(self.path, 'expenses.json'), 'w') as f:
             json.dump({"expenses": data_to_save}, f, indent=2)
 
         data_to_save = [account.config for account in self.accounts]
-        with open(os.path.join(path, 'accounts.json'), 'w') as f:
+        with open(os.path.join(self.path, 'accounts.json'), 'w') as f:
             json.dump({"accounts": data_to_save}, f, indent=2)
 
     def run_plan(self):
         self.save_data_to_file()
-        plan.main(personal_path=self.entry.text(),
+        plan.main(personal_path=self.path,
                   with_social=self.inc_social_security.isChecked(),
                   with_rmd_trial=self.test_rmd.isChecked(),
-                  display_charts=True)
+                  display_charts=False)
 
 
 if __name__ == '__main__':

@@ -40,4 +40,3 @@ def plot_data_table(data, pdf, rowlabels, title, display_charts=False,
 
             if display_charts:
                 fig.show()
-            fig.clear()
