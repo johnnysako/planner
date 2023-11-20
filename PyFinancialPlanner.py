@@ -23,6 +23,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import asyncio
 
+basedir = os.path.dirname(__file__)
+
 start_year = 2023
 iterations = 1000
 iterations_per_thread = int(iterations/10)
@@ -38,10 +40,10 @@ def background(f):
 
 
 def load_constants(personal_path):
-    with open(os.path.join('_Internal', 'rmd.json')) as f:
+    with open(os.path.join(basedir, '_internal', 'rmd.json')) as f:
         rmd = Rmd(json.load(f)["rmd"])
 
-    with open(os.path.join('_Internal', 'tax.json')) as f:
+    with open(os.path.join(basedir, '_internal', 'tax.json')) as f:
         tax = Tax(json.load(f)["tax"])
 
     with open(os.path.join(personal_path, 'owners.json')) as f:

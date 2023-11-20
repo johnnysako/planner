@@ -17,6 +17,8 @@ import PyFinancialPlanner as plan
 import matplotlib
 matplotlib.use('Qt5Agg')
 
+basedir = os.path.dirname(__file__)
+
 
 class JsonTableWindow(QWidget):
     def __init__(self, data, title):
@@ -107,14 +109,14 @@ class MainWindow(QMainWindow):
             f = open(os.path.join(path, file_name))
         except FileNotFoundError:
             print('File not found, loading default example', file=sys.stderr)
-            f = open(os.path.join('_internal', file_name))
+            f = open(os.path.join(basedir, '_internal', file_name))
 
         try:
             return json.load(f).get(field, [])
 
         except json.JSONDecodeError:
             print('Error decoding Owner JSON file', file=sys.stderr)
-            f = open(os.path.join('_internal', file_name))
+            f = open(os.path.join(basedir, '_internal', file_name))
             return json.load(f).get(field, [])
 
     def load_constants(self):
