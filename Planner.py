@@ -14,6 +14,9 @@ from src.expense import Expense
 from src.account import Account
 import PyFinancialPlanner as plan
 
+import matplotlib
+matplotlib.use('Qt5Agg')
+
 
 class JsonTableWindow(QWidget):
     def __init__(self, data, title):
