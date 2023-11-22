@@ -20,6 +20,21 @@ matplotlib.use('Qt5Agg')
 basedir = os.path.dirname(__file__)
 
 
+def convert_numeric_strings_to_numbers(data):
+    if isinstance(data, dict):
+        for key, value in data.items():
+            data[key] = convert_numeric_strings_to_numbers(value)
+    elif isinstance(data, list):
+        for i, item in enumerate(data):
+            data[i] = convert_numeric_strings_to_numbers(item)
+    elif isinstance(data, str):
+        if data.isdigit():
+            return int(data)
+        elif data.replace(".", "").isdigit():
+            return float(data)
+    return data
+
+
 class JsonTableWindow(QWidget):
     def __init__(self, data, title):
         super().__init__()
@@ -220,16 +235,19 @@ class MainWindow(QMainWindow):
 
     def save_data_to_file(self):
         data_to_save = [owner.config for owner in self.owners]
+        converted_data = convert_numeric_strings_to_numbers(data_to_save)
         with open(os.path.join(self.path, 'owners.json'), 'w') as f:
-            json.dump({"owners": data_to_save}, f, indent=2)
+            json.dump({"owners": converted_data}, f, indent=2)
 
         data_to_save = [expense.config for expense in self.expenses_data]
+        converted_data = convert_numeric_strings_to_numbers(data_to_save)
         with open(os.path.join(self.path, 'expenses.json'), 'w') as f:
-            json.dump({"expenses": data_to_save}, f, indent=2)
+            json.dump({"expenses": converted_data}, f, indent=2)
 
         data_to_save = [account.config for account in self.accounts]
+        converted_data = convert_numeric_strings_to_numbers(data_to_save)
         with open(os.path.join(self.path, 'accounts.json'), 'w') as f:
-            json.dump({"accounts": data_to_save}, f, indent=2)
+            json.dump({"accounts": converted_data}, f, indent=2)
 
     def run_plan(self):
         self.save_data_to_file()

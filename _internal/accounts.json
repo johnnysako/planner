@@ -39,7 +39,7 @@
     {
       "Name": "Account D",
       "Balance": 98765.5,
-      "Annual Additions": 6000.0,
+      "Annual Additions": 6001.0,
       "Type": "401K",
       "Owner Name": "Jack Joe",
       "Test as Tax Deferred": false
