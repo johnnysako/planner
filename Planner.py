@@ -5,7 +5,7 @@ import copy
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtWidgets import QVBoxLayout, QFileDialog, QPushButton
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
-from PyQt5.QtWidgets import QHBoxLayout, QCheckBox
+from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QMessageBox
 
 # from src.account import Account
 from src.owner import Owner
@@ -28,10 +28,12 @@ def convert_numeric_strings_to_numbers(data):
         for i, item in enumerate(data):
             data[i] = convert_numeric_strings_to_numbers(item)
     elif isinstance(data, str):
-        if data.isdigit():
-            return int(data)
-        elif data.replace(".", "").isdigit():
-            return float(data)
+        # Remove commas and convert to numbers
+        cleaned_data = data.replace(",", "")
+        if cleaned_data.isdigit():
+            return int(cleaned_data)
+        elif cleaned_data.replace(".", "").isdigit():
+            return float(cleaned_data)
     return data
 
 
@@ -251,11 +253,30 @@ class MainWindow(QMainWindow):
 
     def run_plan(self):
         self.save_data_to_file()
-        plan.main(personal_path=self.path,
-                  with_social=self.inc_social_security.isChecked(),
-                  with_rmd_trial=self.test_rmd.isChecked(),
-                  display_charts=True)
 
+        try:
+            plan.main(personal_path=self.path,
+                      with_social=self.inc_social_security.isChecked(),
+                      with_rmd_trial=self.test_rmd.isChecked(),
+                      display_charts=True)
+        except TypeError:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setWindowTitle("Error")
+            msg_box.setText("There was an issue running the financial plan. "
+                            "Sometimes this is related to failure to download "
+                            "from yFinance. Please try again later.")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec_()
+
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Finished!")
+        msg_box.setText("Your plan has completed and pdf with the results "
+                        "has been saved in the same folder as your data "
+                        "named financial_analysis.pdf")
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec_()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
