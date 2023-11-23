@@ -6,16 +6,14 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtWidgets import QVBoxLayout, QFileDialog, QPushButton
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMainWindow
 from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QMessageBox
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 # from src.account import Account
 from src.owner import Owner
 from src.expenses import Expenses
 from src.expense import Expense
 from src.account import Account
-import PyFinancialPlanner as plan
-
-import matplotlib
-matplotlib.use('Qt5Agg')
+from PyFinancialPlanner import FinancialAnalysis
 
 basedir = os.path.dirname(__file__)
 
@@ -120,7 +118,48 @@ class JsonTableWindow(QWidget):
         self.data[row].config[header] = item.text()
 
 
-class MainWindow(QMainWindow):
+class FinancialPlannerThread(QThread):
+    progress_update = pyqtSignal(int)
+
+    def __init__(self, path, without_social, with_rmd_trial):
+        super().__init__()
+        self.path = path
+        self.trial_without_ss = without_social
+        self.trial_rms = with_rmd_trial
+
+    def run(self):
+        plan_analysis = FinancialAnalysis()
+        plan_analysis.progress_update.connect(self.progress_update.emit)
+        try:
+            plan_analysis.run(personal_path=self.path,
+                              with_social=self.trial_without_ss,
+                              with_rmd_trial=self.trial_rms,
+                              display_charts=False)
+
+        except TypeError:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setWindowTitle("Error")
+            msg_box.setText("There was an issue running the financial plan. "
+                            "Sometimes this is related to failure to download "
+                            "from yFinance. Please try again later.")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec_()
+
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Finished!")
+        msg_box.setText("Your plan has completed and pdf with the results "
+                        "has been saved in the same folder as your data "
+                        "named financial_analysis.pdf")
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec_()
+
+
+class MainWindow(QMainWindow, QObject):
+    # Define a signal for progress updates
+    progress_update = pyqtSignal(int)
+
     def load_json(self, path, file_name, field):
         try:
             f = open(os.path.join(path, file_name))
@@ -160,7 +199,7 @@ class MainWindow(QMainWindow):
         self.load_data = QPushButton('Load User Data', self)
         self.save_button = QPushButton('Save User Data', self)
         self.run_plan_button = QPushButton('Run Projection', self)
-        self.inc_social_security = \
+        self.trial_without_ss = \
             QCheckBox('Test Without Social Security', self)
         self.test_rmd = QCheckBox('Test With RMD on Select Accounts', self)
 
@@ -193,7 +232,7 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout(central_widget)
         layout.addLayout(data_layout)
-        layout.addWidget(self.inc_social_security)
+        layout.addWidget(self.trial_without_ss)
         layout.addWidget(self.test_rmd)
         layout.addWidget(self.run_plan_button)
         layout.addLayout(save_load_layout)
@@ -253,30 +292,17 @@ class MainWindow(QMainWindow):
 
     def run_plan(self):
         self.save_data_to_file()
+        thread = FinancialPlannerThread(self.path,
+                                        self.trial_without_ss.isChecked(),
+                                        self.test_rmd.isChecked())
+        thread.progress_update.connect(self.handle_progress_update)
+        thread.start()
 
-        try:
-            plan.main(personal_path=self.path,
-                      with_social=self.inc_social_security.isChecked(),
-                      with_rmd_trial=self.test_rmd.isChecked(),
-                      display_charts=True)
-        except TypeError:
-            msg_box = QMessageBox()
-            msg_box.setIcon(QMessageBox.Information)
-            msg_box.setWindowTitle("Error")
-            msg_box.setText("There was an issue running the financial plan. "
-                            "Sometimes this is related to failure to download "
-                            "from yFinance. Please try again later.")
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.exec_()
+    @pyqtSlot(int)
+    def handle_progress_update(self, progress):
+        # This slot is called when the financial planner emits an update
+        print(f"Progress update: {progress}%")
 
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Information)
-        msg_box.setWindowTitle("Finished!")
-        msg_box.setText("Your plan has completed and pdf with the results "
-                        "has been saved in the same folder as your data "
-                        "named financial_analysis.pdf")
-        msg_box.setStandardButtons(QMessageBox.Ok)
-        msg_box.exec_()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

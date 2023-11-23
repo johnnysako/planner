@@ -22,6 +22,10 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import asyncio
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
+
+import matplotlib
+matplotlib.use('agg')
 
 basedir = os.path.dirname(__file__)
 
@@ -148,7 +152,7 @@ def generate_returns(data_distribution, mean, std, years_to_process):
                                                 std,
                                                 years_to_process+1))]
     randoms = np.clip(randoms, 0, len(data_distribution)-1)
-    # print(randoms)
+
     returns = []
     for random in randoms:
         if random <= 0:
@@ -193,159 +197,159 @@ def process_run(iteration,
     average_bond_rates.append(np.average(bond_rates))
 
 
-def run_monte_carlos(data_for_analysis,
-                     rmd,
-                     tax,
-                     owners,
-                     expenses,
-                     trial,
-                     average_stock_rates,
-                     average_bond_rates,
-                     years_to_process,
-                     personal_path):
-    loop = asyncio.get_event_loop()
+class MonteCarloThread(QThread):
+    finished_signal = pyqtSignal(list, list, list)
 
-    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates,  average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates,  average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates,  average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                             expenses, trial, data_for_analysis,
-                             average_stock_rates, average_bond_rates,
-                             years_to_process, personal_path)
-                             for i in range(iterations_per_thread)])
+    def __init__(self, iterations_per_thread, rmd, tax, owners, expenses,
+                 trial, years_to_process, personal_path, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.iterations_per_thread = iterations_per_thread
+        self.rmd = rmd
+        self.tax = tax
+        self.owners = owners
+        self.expenses = expenses
+        self.trial = trial
+        self.years_to_process = years_to_process
+        self.personal_path = personal_path
 
-    all_groups = asyncio.gather(
-        group1, group2, group3, group4, group5,
-        group6, group7, group8, group9, group10)
-    loop.run_until_complete(all_groups)
+    def run(self):
+        data_for_analysis = []
+        average_stock_rates = []
+        average_bond_rates = []
+
+        for i in range(self.iterations_per_thread):
+            process_run(i, self.rmd, self.tax, self.owners, self.expenses,
+                        self.trial, data_for_analysis, average_stock_rates,
+                        average_bond_rates, self.years_to_process,
+                        self.personal_path)
+
+        self.finished_signal.emit(data_for_analysis, average_stock_rates,
+                                  average_bond_rates)
 
 
-def main(personal_path="", with_social=False,
-         with_rmd_trial=False, display_charts=False):
-    rmd, tax, owners, expenses, years_to_process = \
-        load_constants(personal_path)
+class FinancialAnalysis(QObject):
+    # Define a signal for progress updates
+    progress_update = pyqtSignal(int)
 
-    # Define the S&P 500 symbol and time period for historical data
-    symbol = "^GSPC"
-    start_date = "1950-01-01"
-    end_date = "2021-12-31"
+    def __init__(self):
+        super().__init__()
 
-    # Download historical S&P 500 data using Yahoo Finance
-    data = yf.download(symbol, start=start_date, end=end_date)
+    def run_monte_carlos(self, data_for_analysis, rmd, tax, owners, expenses,
+                         trial, average_stock_rates, average_bond_rates,
+                         years_to_process, personal_path):
+        threads = []
+        thread_count = 10  # Number of threads, adjust as needed
 
-    # Calculate annual returns from historical data
-    stock_annual_returns = data['Adj Close'].resample(
-        'Y').ffill().pct_change().dropna()
-    sorted_stock_annual_returns = sorted(stock_annual_returns)
+        for _ in range(thread_count):
+            monte_carlo_thread = MonteCarloThread(iterations_per_thread, rmd,
+                                                  tax, owners, expenses, trial,
+                                                  average_stock_rates,
+                                                  average_bond_rates,
+                                                  years_to_process,
+                                                  personal_path)
+            monte_carlo_thread.finished_signal.connect(self.on_thread_finished)
+            threads.append(monte_carlo_thread)
 
-    # Define the S&P 500 symbol and time period for historical data
-    symbol = "LQD"
-    start_date = "2002-07-29"
-    end_date = "2021-12-31"
+        for thread in threads:
+            thread.start()
 
-    # Download historical S&P 500 data using Yahoo Finance
-    data = yf.download(symbol, start=start_date, end=end_date)
+        for thread in threads:
+            thread.wait()
 
-    # Calculate annual returns from historical data
-    bond_annual_returns = data['Adj Close'].resample(
-        'Y').ffill().pct_change().dropna()
-    sorted_bond_annual_returns = sorted(bond_annual_returns)
+    def on_thread_finished(self, data_for_analysis, average_stock_rates,
+                           average_bond_rates):
+        self.data_for_analysis.append(data_for_analysis)
+        self.average_bond_rates.append(average_bond_rates)
+        self.average_stock_rates.append(average_stock_rates)
 
-    returns = {"stocks": sorted_stock_annual_returns,
-               "bonds": sorted_bond_annual_returns}
+    def run(self, personal_path="", with_social=False,
+            with_rmd_trial=False, display_charts=False):
+        rmd, tax, owners, expenses, years_to_process = \
+            load_constants(personal_path)
 
-    trials = [
-        {"Social Security": True, "rmd": False,
-         "dist": returns}]
+        self.progress_update.emit(5)  # Emit progress update signal
 
-    if with_social:
-        trials.append({"Social Security": False, "rmd": False,
-                       "dist": returns})
+        # Define the S&P 500 symbol and time period for historical data
+        symbol = "^GSPC"
+        start_date = "1950-01-01"
+        end_date = "2021-12-31"
 
-    if with_rmd_trial:
-        trials.append({"Social Security": True, "rmd": True,
-                       "dist": returns})
+        # Download historical S&P 500 data using Yahoo Finance
+        data = yf.download(symbol, start=start_date, end=end_date)
 
-    with PdfPages(os.path.join(personal_path,
-                               'financial_analysis.pdf')) as pdf:
-        plot_accounts_table(personal_path, pdf, False)
+        # Calculate annual returns from historical data
+        stock_annual_returns = data['Adj Close'].resample(
+            'Y').ffill().pct_change().dropna()
+        sorted_stock_annual_returns = sorted(stock_annual_returns)
 
-        for trial in trials:
-            data_for_analysis = []
-            average_stock_rates = []
-            average_bond_rates = []
+        # Define the S&P 500 symbol and time period for historical data
+        symbol = "LQD"
+        start_date = "2002-07-29"
+        end_date = "2021-12-31"
 
-            run_monte_carlos(data_for_analysis, rmd, tax, owners,
-                             expenses, trial, average_stock_rates,
-                             average_bond_rates, years_to_process,
-                             personal_path)
+        # Download historical S&P 500 data using Yahoo Finance
+        data = yf.download(symbol, start=start_date, end=end_date)
 
-            sorted_data, failed_plans = sort_data(data_for_analysis)
+        # Calculate annual returns from historical data
+        bond_annual_returns = data['Adj Close'].resample(
+            'Y').ffill().pct_change().dropna()
+        sorted_bond_annual_returns = sorted(bond_annual_returns)
 
-            print('Average Rate of Return (Stocks): {:0.2f}%'.format(
-                np.average(average_stock_rates)))
-            print('Average Rate of Return (Bonds): {:0.2f}%'.format(
-                np.average(average_bond_rates)))
-            plot_monte_carlos(sorted_data, failed_plans, pdf,
-                              owners, trial, display_charts)
+        returns = {"stocks": sorted_stock_annual_returns,
+                   "bonds": sorted_bond_annual_returns}
 
-        plot_expense_table(expenses, years_to_process, pdf, False)
+        trials = [
+            {"Social Security": True, "rmd": False,
+             "dist": returns}]
 
-        if display_charts:
-            plt.show()
+        if with_social:
+            trials.append({"Social Security": False, "rmd": False,
+                           "dist": returns})
 
-        d = pdf.infodict()
-        d['Title'] = 'Financial Projection'
-        d['Author'] = u'John Chapman'
-        d['CreationDate'] = datetime.datetime.today()
+        if with_rmd_trial:
+            trials.append({"Social Security": True, "rmd": True,
+                           "dist": returns})
 
-    return 0
+        with PdfPages(os.path.join(personal_path,
+                                   'financial_analysis.pdf')) as pdf:
+            plot_accounts_table(personal_path, pdf, False)
+
+            for trial in trials:
+                self.data_for_analysis = []
+                self.average_stock_rates = []
+                self.average_bond_rates = []
+
+                self.run_monte_carlos(self.data_for_analysis, rmd, tax, owners,
+                                      expenses, trial,
+                                      self.average_stock_rates,
+                                      self.average_bond_rates,
+                                      years_to_process, personal_path)
+
+                sorted_data, failed_plans = sort_data(self.data_for_analysis)
+
+                print('Average Rate of Return (Stocks): {:0.2f}%'.format(
+                    np.average(self.average_stock_rates)))
+                print('Average Rate of Return (Bonds): {:0.2f}%'.format(
+                    np.average(self.average_bond_rates)))
+                plot_monte_carlos(sorted_data, failed_plans, pdf,
+                                  owners, trial, display_charts)
+
+            plot_expense_table(expenses, years_to_process, pdf, False)
+
+            if display_charts:
+                plt.show()
+
+            d = pdf.infodict()
+            d['Title'] = 'Financial Projection'
+            d['Author'] = u'John Chapman'
+            d['CreationDate'] = datetime.datetime.today()
+
+        return 0
 
 
 if __name__ == "__main__":
+    analysis = FinancialAnalysis()
     if len(sys.argv) > 1:
-        main(sys.argv[1])
+        analysis.run(sys.argv[1])
     else:
-        main('data')
+        analysis.run('_internal')
