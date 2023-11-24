@@ -350,7 +350,7 @@ def main(personal_path="", with_social=False,
         print('Average Rate of Return (Bonds): {:0.2f}%'.format(
             np.average(average_bond)))
 
-        trial_data = {'sorted_data': sorted_data, 
+        trial_data = {'sorted_data': sorted_data,
                       'failed_plans': failed_plans,
                       'trial': trial}
         trials_data.append(trial_data)
