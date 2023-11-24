@@ -25,12 +25,12 @@ def _draw_as_table(df, title, pagesize, rowlabels):
 
 def get_data_table_canvas(data, title, rowlabels):
     fig = _draw_as_table(data, title, (11, 8.5), rowlabels)
-    canvas = FigureCanvasQTAgg(fig)  # Create a FigureCanvas instance
+    canvas = FigureCanvasQTAgg(fig)
     return canvas
 
 
 def plot_data_table(data, pdf, rowlabels, title,
-                    numpages=(1, 1), pagesize=(11, 4)):
+                    numpages=(1, 1), pagesize=(11, 8.5)):
     nh, nv = numpages
     rows_per_page = len(data) // nh
     cols_per_page = len(data.columns) // nv + 1
