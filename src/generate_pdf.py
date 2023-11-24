@@ -7,7 +7,7 @@ import os
 import json
 
 from src.draw_table import plot_data_table
-from src.plot_monte_carlos import plot_monte_carlos
+from src.plot_monte_carlos import pdf_monte_carlos
 from src.expenses import generate_expense_over_time
 from src.account import Account
 
@@ -63,9 +63,9 @@ def plot_pdf(trials_data, owners, expenses, start_year, years_to_process,
         plot_accounts_table(personal_path, pdf)
 
         for trial_data in trials_data:
-            plot_monte_carlos(trial_data['sorted_data'],
-                              trial_data['failed_plans'], pdf,
-                              owners, trial_data['trial'])
+            pdf_monte_carlos(trial_data['sorted_data'],
+                             trial_data['failed_plans'], pdf,
+                             owners, trial_data['trial'])
 
         plot_expense_table(expenses, start_year, years_to_process, pdf)
 

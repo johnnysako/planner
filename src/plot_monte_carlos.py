@@ -5,6 +5,7 @@ import pandas as pd
 import math
 
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.ticker import StrMethodFormatter
 
 include_failed_plans = False
@@ -119,21 +120,18 @@ def process_average(data_for_analysis, failed_plans):
     return analysis, average_plot, median
 
 
-def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
-                      owners, trial):
-    plt.figure()
+def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
+    fig, ax = plt.subplots(figsize=(11, 8.5))
     start_year = data_for_analysis[0]['Year'][0]
-    _, average_plot, median = process_average(data_for_analysis,
-                                              failed_plans)
+    _, average_plot, median = process_average(data_for_analysis, failed_plans)
 
     for i, data in enumerate(data_for_analysis):
         if i % 20 == 0:
-            plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
+            ax.plot(data['Year'], data['Sum of Accounts'], color='lavender')
 
-    plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
+    ax.plot(data_for_analysis[0]['Year'], average_plot, color='black')
     print('Median EoP: ${:,.0f}'.format(median))
     print('Mean EoP: ${:,.0f}'.format(average_plot[-1]))
-    ax = plt.gca()
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
     ticks, _ = plt.yticks()
     for owner in owners:
@@ -143,8 +141,8 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
             label = owner.get_name() + ' Retires\n' + \
                 '{:.0f}'.format(retire_year)
             ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
-            plt.vlines(x=retire_year,
-                       ymin=ticks[1], ymax=ticks[-2], colors='purple')
+            ax.vlines(x=retire_year,
+                      ymin=ticks[1], ymax=ticks[-2], colors='purple')
 
     trial_label = 'Include Social Security: ' + \
         str(trial["Social Security"]) + \
@@ -152,24 +150,35 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
     print(trial_label)
     ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
 
-    plt.xlabel('Year', fontsize=12)
-    plt.xticks(fontsize=6)
-    plt.ylabel('Net Worth', fontsize=12)
-    plt.yticks(fontsize=6)
-    plt.title('Monte Carlo Analysis', fontsize=14)
+    ax.set_xlabel('Year', fontsize=12)
+    ax.tick_params(axis='x', labelsize=6)
+    ax.set_ylabel('Net Worth', fontsize=12)
+    ax.tick_params(axis='y', labelsize=6)
+    ax.set_title('Monte Carlo Analysis', fontsize=14)
 
     iterations = len(data_for_analysis)
     results_to_include = 'Average EoP: ' \
-                         + '${:,.0f}\n'.format(average_plot[-1]) \
-                         + "Median EoP: " \
-                         + '${:,.0f}\n'.format(median) \
-                         + '{:.1f}%'.format(len(failed_plans)/iterations*100) \
-                         + ' Plans failed'
+        + '${:,.0f}\n'.format(average_plot[-1]) \
+        + "Median EoP: " \
+        + '${:,.0f}\n'.format(median) \
+        + '{:.1f}%'.format(len(failed_plans)/iterations*100) \
+        + ' Plans failed'
     box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
-    plt.text(0.025, 0.9, results_to_include,
-             transform=plt.gca().transAxes, fontsize=8, bbox=box_props)
+    ax.annotate(results_to_include, xy=(0.025, 0.9), xycoords='axes fraction',
+                fontsize=8, bbox=box_props, ha='left', va='top', color='black')
 
-    pdf.savefig()
+    plt.tight_layout()
+
+    canvas = FigureCanvasQTAgg(fig)  # Create a FigureCanvas instance
+
+    return canvas
+
+
+def pdf_monte_carlos(data_for_analysis, failed_plans, pdf,
+                     owners, trial):
+    canvas = plot_monte_carlos(data_for_analysis, failed_plans, owners, trial)
+
+    pdf.savefig(canvas.figure, orientation='landscape')
 
     _plot_summary(data_for_analysis, pdf)
 

@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QFileDialog
 from PyQt5.QtWidgets import QWidget, QPushButton
 
 from src.generate_pdf import plot_pdf
+from src.plot_monte_carlos import plot_monte_carlos
 
 
 class ExploreResults(QWidget):
@@ -18,9 +19,17 @@ class ExploreResults(QWidget):
         self.save_pdf_button = QPushButton('Save Result PDF', self)
 
         self.save_pdf_button.clicked.connect(self.save_pdf)
+        self.canvas = plot_monte_carlos(self.results['trials_data'][0]
+                                        ['sorted_data'],
+                                        self.results['trials_data'][0]
+                                        ['failed_plans'],
+                                        self.results['owners'],
+                                        self.results['trials_data'][0]
+                                        ['trial'])
 
         # Set up layout
         layout = QVBoxLayout(self)
+        layout.addWidget(self.canvas)
         layout.addWidget(self.save_pdf_button)
 
         self.setWindowTitle('Explore Data')
