@@ -9,18 +9,13 @@ import json
 from src.draw_table import plot_data_table
 from src.plot_monte_carlos import pdf_monte_carlos
 from src.expenses import generate_expense_over_time
+from src.expenses import plot_expenses_summary
 from src.account import Account
 
 
 def plot_expense_table(expenses, start_year, years_to_process, pdf):
     data = generate_expense_over_time(expenses, start_year, years_to_process)
-    data.plot.bar(x='Year', stacked=True, figsize=(10, 6))
-    plt.xlabel('Year', fontsize=10)
-    plt.xticks(fontsize=6)
-    plt.ylabel('Expenses', fontsize=10)
-    plt.yticks(fontsize=10)
-    plt.title('Expenses over Time')
-    plt.legend(prop={'size': 6})
+    plot_expenses_summary(data)
     current_figure = plt.gcf().number
     pdf.savefig()
     plt.close(current_figure)

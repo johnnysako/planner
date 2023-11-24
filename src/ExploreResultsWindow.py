@@ -1,11 +1,12 @@
-# from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
-from PyQt5.QtWidgets import QVBoxLayout, QFileDialog
+from PyQt5.QtWidgets import QVBoxLayout, QFileDialog, QHBoxLayout
 from PyQt5.QtWidgets import QWidget, QPushButton
 
 from src.generate_pdf import plot_pdf
 from src.plot_monte_carlos import plot_monte_carlos
 from src.plot_monte_carlos import summarize_data
 from src.draw_table import get_data_table_canvas
+from src.expenses import generate_expense_over_time
+from src.expenses import plot_expenses_summary
 
 
 class ExploreResults(QWidget):
@@ -36,9 +37,18 @@ class ExploreResults(QWidget):
                                                 "Monte Carlos Summary",
                                                 labels)
 
+        data = generate_expense_over_time(self.results['expenses'],
+                                          self.results['start_year'],
+                                          self.results['years_to_process'])
+        self.expense_summary = plot_expenses_summary(data)
+
         # Set up layout
+        graph_layout = QHBoxLayout()
+        graph_layout.addWidget(self.mc_canvas)
+        graph_layout.addWidget(self.expense_summary)
+
         layout = QVBoxLayout(self)
-        layout.addWidget(self.mc_canvas)
+        layout.addLayout(graph_layout)
         layout.addWidget(self.mc_summary)
         layout.addWidget(self.save_pdf_button)
 

@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 
 
 class Expenses:
@@ -38,3 +40,17 @@ def generate_expense_over_time(expenses, start_year, years_to_process):
     data = pd.DataFrame(expense_table, columns=['Year'] + expenses.get_names())
 
     return data
+
+
+def plot_expenses_summary(data):
+    fig, ax = plt.subplots(figsize=(11, 8.5))
+
+    data.plot.bar(x='Year', stacked=True, ax=ax)
+
+    ax.set_xlabel('Year', fontsize=10)
+    ax.set_ylabel('Expenses', fontsize=10)
+    ax.tick_params(axis='both', which='both', labelsize=6)
+    ax.set_title('Expenses over Time')
+    ax.legend(prop={'size': 6})
+
+    return FigureCanvasQTAgg(fig)
