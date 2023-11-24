@@ -6,11 +6,12 @@ from src.generate_pdf import plot_pdf
 
 
 class ExploreResults(QWidget):
-    def __init__(self, results, path):
+    def __init__(self, main_window, results, path):
         super().__init__()
 
         self.results = results
         self.path = path
+        self.main_window = main_window
         self.init_ui()
 
     def init_ui(self):
@@ -36,3 +37,7 @@ class ExploreResults(QWidget):
         plot_pdf(self.results['trials_data'], self.results['owners'],
                  self.results['expenses'], self.results['start_year'],
                  self.results['years_to_process'], self.path, path)
+
+    def closeEvent(self, event):
+        self.main_window.show()
+        event.accept()  # Accept the close event

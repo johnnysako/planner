@@ -7,9 +7,10 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 
 class JsonTableWindow(QWidget):
-    def __init__(self, data, title):
+    def __init__(self, main_window, data, title):
         super().__init__()
 
+        self.main_window = main_window
         self.init_ui(data, title)
 
     def init_ui(self, data, title):
@@ -87,3 +88,7 @@ class JsonTableWindow(QWidget):
         # Update the corresponding value in the data model
         header = self.headers[col]
         self.data[row].config[header] = item.text()
+
+    def closeEvent(self, event):
+        self.main_window.show()
+        event.accept()  # Accept the close event

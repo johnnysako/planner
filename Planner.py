@@ -140,17 +140,20 @@ class MainWindow(QMainWindow):
         self.run_plan_button.setEnabled(True)
 
     def on_owner_click(self):
-        self.owner_window = JsonTableWindow(self.owners, "Owner Data")
+        self.owner_window = JsonTableWindow(self, self.owners, "Owner Data")
+        self.hide()
         self.owner_window.show()
 
     def on_expense_click(self):
-        self.expense_window = JsonTableWindow(self.expenses_data,
+        self.expense_window = JsonTableWindow(self, self.expenses_data,
                                               "Expense Data")
+        self.hide()
         self.expense_window.show()
 
     def on_account_click(self):
-        self.account_window = JsonTableWindow(self.accounts,
+        self.account_window = JsonTableWindow(self, self.accounts,
                                               "Account Data")
+        self.hide()
         self.account_window.show()
 
     def save_data_to_file(self):
@@ -188,7 +191,8 @@ class MainWindow(QMainWindow):
             msg_box.setStandardButtons(QMessageBox.Ok)
             msg_box.exec_()
 
-        self.results = ExploreResults(results, self.path)
+        self.results = ExploreResults(self, results, self.path)
+        self.hide()
         self.results.show()
 
 
