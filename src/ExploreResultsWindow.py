@@ -43,7 +43,6 @@ class ExploreResults(QWidget):
         layout.addWidget(self.save_pdf_button)
 
         self.setWindowTitle('Explore Data')
-        self.resize(1000, 500)
 
     def save_pdf(self):
         options = QFileDialog.Options()

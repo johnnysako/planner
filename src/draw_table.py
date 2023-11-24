@@ -7,7 +7,6 @@ def _draw_as_table(df, title, pagesize, rowlabels):
         ['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
     alternating_colors = alternating_colors[:len(df)]
     fig, ax = plt.subplots(figsize=pagesize)
-    ax.axis('tight')
     ax.axis('off')
     ax.set_title(title)
     the_table = ax.table(cellText=df.values,
@@ -19,7 +18,8 @@ def _draw_as_table(df, title, pagesize, rowlabels):
                          cellLoc='center',
                          loc='center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(6)
+    the_table.set_fontsize(7)
+    the_table.scale(1.2, 2.5)
     return fig
 
 
