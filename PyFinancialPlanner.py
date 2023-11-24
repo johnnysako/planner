@@ -192,11 +192,7 @@ def run_monte_carlos(data_for_analysis,
     loop.run_until_complete(all_groups)
 
 
-def main(personal_path="", with_social=False,
-         with_rmd_trial=False):
-    rmd, tax, owners, expenses, years_to_process = \
-        load_constants(personal_path)
-
+def load_stock_data():
     # Define the S&P 500 symbol and time period for historical data
     symbol = "^GSPC"
     start_date = "1950-01-01"
@@ -225,6 +221,16 @@ def main(personal_path="", with_social=False,
 
     returns = {"stocks": sorted_stock_annual_returns,
                "bonds": sorted_bond_annual_returns}
+
+    return returns
+
+
+def main(personal_path="", with_social=False,
+         with_rmd_trial=False):
+    rmd, tax, owners, expenses, years_to_process = \
+        load_constants(personal_path)
+
+    returns = load_stock_data()
 
     trials = [
         {"Social Security": True, "rmd": False,
