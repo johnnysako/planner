@@ -278,6 +278,7 @@ class MainWindow(QMainWindow):
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec_()
 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
