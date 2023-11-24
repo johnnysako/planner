@@ -258,7 +258,7 @@ class MainWindow(QMainWindow):
             plan.main(personal_path=self.path,
                       with_social=self.inc_social_security.isChecked(),
                       with_rmd_trial=self.test_rmd.isChecked(),
-                      display_charts=True)
+                      display_charts=False)
         except TypeError:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Information)

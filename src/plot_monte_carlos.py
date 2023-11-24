@@ -35,7 +35,7 @@ def _plot_failed_plans(failed_plans, pdf):
                             'Failed Plan Data Table', numpages=(2, 1))
 
 
-def _plot_summary(data_for_analysis, pdf):
+def summarize_data(data_for_analysis):
     data = []
     iterations = len(data_for_analysis)
     range = [int(iterations/100), int(iterations/4), int(iterations/2),
@@ -75,6 +75,13 @@ def _plot_summary(data_for_analysis, pdf):
     summary.update(
         summary[['Average Withdrawn', 'Stock Returns', 'Bond Returns']]
         .applymap('{:.2f}%'.format))
+
+    return iterations, summary, labels
+
+
+def _plot_summary(data_for_analysis, pdf):
+    iterations, summary, labels = summarize_data(data_for_analysis)
+
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
@@ -97,21 +104,33 @@ def _plot_summary(data_for_analysis, pdf):
                         math.ceil(num_rows / 33), math.ceil(num_columns / 10)))
 
 
-def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
-                      owners, trial, display_charts):
+def process_average(data_for_analysis, failed_plans):
     plt.figure()
     iterations = len(data_for_analysis)
-    start_year = data_for_analysis[0]['Year'][0]
     years_to_process = len(data_for_analysis[0].index)
     analysis = np.empty([iterations, years_to_process])
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
         if i % 20 == 0:
             plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
-
     average_plot = analysis.mean(axis=0)
-    plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
     median = round(np.median(analysis, axis=0)[-1], 2)
+
+    return analysis, average_plot, median
+
+
+def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
+                      owners, trial):
+    plt.figure()
+    start_year = data_for_analysis[0]['Year'][0]
+    _, average_plot, median = process_average(data_for_analysis,
+                                              failed_plans)
+
+    for i, data in enumerate(data_for_analysis):
+        if i % 20 == 0:
+            plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
+
+    plt.plot(data_for_analysis[0]['Year'], average_plot, color='black')
     print('Median EoP: ${:,.0f}'.format(median))
     print('Mean EoP: ${:,.0f}'.format(average_plot[-1]))
     ax = plt.gca()
@@ -139,6 +158,7 @@ def plot_monte_carlos(data_for_analysis, failed_plans, pdf,
     plt.yticks(fontsize=6)
     plt.title('Monte Carlo Analysis', fontsize=14)
 
+    iterations = len(data_for_analysis)
     results_to_include = 'Average EoP: ' \
                          + '${:,.0f}\n'.format(average_plot[-1]) \
                          + "Median EoP: " \

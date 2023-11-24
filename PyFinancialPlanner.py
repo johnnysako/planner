@@ -93,12 +93,17 @@ def sort_data(data_for_analysis):
     return sorted_data, failed_plans
 
 
-def plot_expense_table(expenses, years_to_process, pdf, display_charts):
+def generate_expense_over_time(expenses, years_to_process):
     expense_table = []
     for year in range(start_year, start_year+years_to_process):
         expense_table.append([year] + expenses.get_year(year))
     data = pd.DataFrame(expense_table, columns=['Year'] + expenses.get_names())
 
+    return data
+
+
+def plot_expense_table(expenses, years_to_process, pdf):
+    data = generate_expense_over_time(expenses, years_to_process)
     data.plot.bar(x='Year', stacked=True, figsize=(10, 6))
     plt.xlabel('Year', fontsize=10)
     plt.xticks(fontsize=6)
@@ -117,7 +122,7 @@ def plot_expense_table(expenses, years_to_process, pdf, display_charts):
     plot_data_table(data, pdf, labels, "Expense Table", numpages=(2, 2))
 
 
-def plot_accounts_table(personal_path, pdf, display_charts):
+def plot_accounts_table(personal_path, pdf):
     with open(os.path.join(personal_path, 'accounts.json')) as f:
         account_data = json.load(f).get("accounts", [])
         accounts = [Account(account_data) for account_data in account_data]
@@ -262,6 +267,24 @@ def run_monte_carlos(data_for_analysis,
     loop.run_until_complete(all_groups)
 
 
+def plot_pdf(trials_data, owners, expenses, years_to_process, personal_path):
+    with PdfPages(os.path.join(personal_path,
+                               'financial_analysis.pdf')) as pdf:
+        plot_accounts_table(personal_path, pdf)
+
+        for trial_data in trials_data:
+            plot_monte_carlos(trial_data['sorted_data'],
+                              trial_data['failed_plans'], pdf,
+                              owners, trial_data['trial'])
+
+        plot_expense_table(expenses, years_to_process, pdf)
+
+        d = pdf.infodict()
+        d['Title'] = 'Financial Projection'
+        d['Author'] = u'John Chapman'
+        d['CreationDate'] = datetime.datetime.today()
+
+
 def main(personal_path="", with_social=False,
          with_rmd_trial=False, display_charts=False):
     rmd, tax, owners, expenses, years_to_process = \
@@ -308,38 +331,31 @@ def main(personal_path="", with_social=False,
         trials.append({"Social Security": True, "rmd": True,
                        "dist": returns})
 
-    with PdfPages(os.path.join(personal_path,
-                               'financial_analysis.pdf')) as pdf:
-        plot_accounts_table(personal_path, pdf, False)
+    trials_data = []
 
-        for trial in trials:
-            data_for_analysis = []
-            average_stock_rates = []
-            average_bond_rates = []
+    for trial in trials:
+        data_for_analysis = []
+        average_stock = []
+        average_bond = []
 
-            run_monte_carlos(data_for_analysis, rmd, tax, owners,
-                             expenses, trial, average_stock_rates,
-                             average_bond_rates, years_to_process,
-                             personal_path)
+        run_monte_carlos(data_for_analysis, rmd, tax, owners,
+                         expenses, trial, average_stock,
+                         average_bond, years_to_process,
+                         personal_path)
 
-            sorted_data, failed_plans = sort_data(data_for_analysis)
+        sorted_data, failed_plans = sort_data(data_for_analysis)
 
-            print('Average Rate of Return (Stocks): {:0.2f}%'.format(
-                np.average(average_stock_rates)))
-            print('Average Rate of Return (Bonds): {:0.2f}%'.format(
-                np.average(average_bond_rates)))
-            plot_monte_carlos(sorted_data, failed_plans, pdf,
-                              owners, trial, display_charts)
+        print('Average Rate of Return (Stocks): {:0.2f}%'.format(
+            np.average(average_stock)))
+        print('Average Rate of Return (Bonds): {:0.2f}%'.format(
+            np.average(average_bond)))
 
-        plot_expense_table(expenses, years_to_process, pdf, False)
+        trial_data = {'sorted_data': sorted_data, 
+                      'failed_plans': failed_plans,
+                      'trial': trial}
+        trials_data.append(trial_data)
 
-        if display_charts:
-            plt.show()
-
-        d = pdf.infodict()
-        d['Title'] = 'Financial Projection'
-        d['Author'] = u'John Chapman'
-        d['CreationDate'] = datetime.datetime.today()
+    plot_pdf(trials_data, owners, expenses, years_to_process, personal_path)
 
     return 0
 
