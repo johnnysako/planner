@@ -174,7 +174,8 @@ class MainWindow(QMainWindow):
 
         try:
             results = plan.main(personal_path=self.path,
-                                with_social=self.inc_social_security.isChecked(),
+                                with_social=self.inc_social_security
+                                .isChecked(),
                                 with_rmd_trial=self.test_rmd.isChecked())
 
         except TypeError:

@@ -30,9 +30,9 @@ class ExploreResults(QWidget):
         options |= QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
 
         path = QFileDialog.getExistingDirectory(self, "Select Folder "
-                                                     "to Save",
-                                                     options=options)
+                                                      "to Save",
+                                                options=options)
 
         plot_pdf(self.results['trials_data'], self.results['owners'],
                  self.results['expenses'], self.results['start_year'],
-                 self.results['years_to_process'], path)
+                 self.results['years_to_process'], self.path, path)

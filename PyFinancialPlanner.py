@@ -276,4 +276,4 @@ if __name__ == "__main__":
     results = main(personal_path, True, True)
     plot_pdf(results['trials_data'], results['owners'], results['expenses'],
              results['start_year'], results['years_to_process'],
-             personal_path)
+             personal_path, personal_path)

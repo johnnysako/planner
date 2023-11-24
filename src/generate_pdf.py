@@ -57,8 +57,8 @@ def plot_accounts_table(personal_path, pdf):
 
 
 def plot_pdf(trials_data, owners, expenses, start_year, years_to_process,
-             personal_path):
-    with PdfPages(os.path.join(personal_path,
+             personal_path, save_path):
+    with PdfPages(os.path.join(save_path,
                                'financial_analysis.pdf')) as pdf:
         plot_accounts_table(personal_path, pdf)
 
