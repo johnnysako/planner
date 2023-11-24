@@ -4,3 +4,5 @@ __pycache__
 OurData
 build
 dist
+Planner.spec
+.vscode/settings.json
