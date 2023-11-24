@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from src.plan import Plan
 from src.rmd import Rmd
 from src.tax import Tax
@@ -115,8 +114,6 @@ def process_run(iteration,
                 expenses,
                 trial,
                 data_for_analysis,
-                average_stock_rates,
-                average_bond_rates,
                 years_to_process,
                 personal_path):
     stock_rates = generate_returns(trial["dist"]["stocks"],
@@ -136,8 +133,6 @@ def process_run(iteration,
                           years_to_process,
                           combined_rates)), columns=plan.get_header())
     data_for_analysis.append(data)
-    average_stock_rates.append(np.average(stock_rates))
-    average_bond_rates.append(np.average(bond_rates))
 
 
 def run_monte_carlos(data_for_analysis,
@@ -146,60 +141,48 @@ def run_monte_carlos(data_for_analysis,
                      owners,
                      expenses,
                      trial,
-                     average_stock_rates,
-                     average_bond_rates,
                      years_to_process,
                      personal_path):
     loop = asyncio.get_event_loop()
 
     group1 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group2 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates,  average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group3 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates,  average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group4 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates,  average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group5 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group6 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group7 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group8 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group9 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                             expenses, trial, data_for_analysis,
-                            average_stock_rates, average_bond_rates,
                             years_to_process, personal_path)
                             for i in range(iterations_per_thread)])
     group10 = asyncio.gather(*[process_run(i, rmd, tax, owners,
                              expenses, trial, data_for_analysis,
-                             average_stock_rates, average_bond_rates,
                              years_to_process, personal_path)
                              for i in range(iterations_per_thread)])
 
@@ -210,7 +193,7 @@ def run_monte_carlos(data_for_analysis,
 
 
 def main(personal_path="", with_social=False,
-         with_rmd_trial=False, display_charts=False):
+         with_rmd_trial=False):
     rmd, tax, owners, expenses, years_to_process = \
         load_constants(personal_path)
 
@@ -259,34 +242,32 @@ def main(personal_path="", with_social=False,
 
     for trial in trials:
         data_for_analysis = []
-        average_stock = []
-        average_bond = []
 
         run_monte_carlos(data_for_analysis, rmd, tax, owners,
-                         expenses, trial, average_stock,
-                         average_bond, years_to_process,
+                         expenses, trial, years_to_process,
                          personal_path)
 
         sorted_data, failed_plans = sort_data(data_for_analysis)
-
-        print('Average Rate of Return (Stocks): {:0.2f}%'.format(
-            np.average(average_stock)))
-        print('Average Rate of Return (Bonds): {:0.2f}%'.format(
-            np.average(average_bond)))
 
         trial_data = {'sorted_data': sorted_data,
                       'failed_plans': failed_plans,
                       'trial': trial}
         trials_data.append(trial_data)
 
-    plot_pdf(trials_data, owners, expenses, start_year, years_to_process,
-             personal_path)
-
-    return 0
+    data_to_return = {'trials_data': trials_data,
+                      'owners': owners,
+                      'expenses': expenses,
+                      'start_year': start_year,
+                      'years_to_process': years_to_process}
+    return data_to_return
 
 
 if __name__ == "__main__":
+    personal_path = '_internal'
     if len(sys.argv) > 1:
-        main(sys.argv[1])
-    else:
-        main('data')
+        personal_path = sys.argv[1]
+
+    results = main(personal_path, True, True)
+    plot_pdf(results['trials_data'], results['owners'], results['expenses'],
+             results['start_year'], results['years_to_process'],
+             personal_path)
