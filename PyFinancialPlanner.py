@@ -8,19 +8,15 @@ from src.expenses import Expenses
 from src.expense import Expense
 from src.account import Account
 from src.owner import Owner
-from src.draw_table import plot_data_table
-from src.plot_monte_carlos import plot_monte_carlos
+from src.generate_pdf import plot_pdf
 
 import sys
 import os
 import json
 import numpy as np
 import pandas as pd
-import datetime
 import yfinance as yf
 
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
 import asyncio
 
 basedir = os.path.dirname(__file__)
@@ -30,7 +26,6 @@ iterations = 1000
 iterations_per_thread = int(iterations/10)
 
 
-# Place holders. Values will be generated based on S&P performance
 def background(f):
     def wrapped(*args, **kwargs):
         return asyncio.get_event_loop().run_in_executor(
@@ -91,59 +86,6 @@ def sort_data(data_for_analysis):
         sorted_data.append(data)
 
     return sorted_data, failed_plans
-
-
-def generate_expense_over_time(expenses, years_to_process):
-    expense_table = []
-    for year in range(start_year, start_year+years_to_process):
-        expense_table.append([year] + expenses.get_year(year))
-    data = pd.DataFrame(expense_table, columns=['Year'] + expenses.get_names())
-
-    return data
-
-
-def plot_expense_table(expenses, years_to_process, pdf):
-    data = generate_expense_over_time(expenses, years_to_process)
-    data.plot.bar(x='Year', stacked=True, figsize=(10, 6))
-    plt.xlabel('Year', fontsize=10)
-    plt.xticks(fontsize=6)
-    plt.ylabel('Expenses', fontsize=10)
-    plt.yticks(fontsize=10)
-    plt.title('Expenses over Time')
-    plt.legend(prop={'size': 6})
-    current_figure = plt.gcf().number
-    pdf.savefig()
-    plt.close(current_figure)
-
-    labels = data['Year'].values.astype(int)
-    data.drop('Year', axis=1, inplace=True)
-    data.update(data.astype(float))
-    data.update(data.applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, "Expense Table", numpages=(2, 2))
-
-
-def plot_accounts_table(personal_path, pdf):
-    with open(os.path.join(personal_path, 'accounts.json')) as f:
-        account_data = json.load(f).get("accounts", [])
-        accounts = [Account(account_data) for account_data in account_data]
-
-    account_table = []
-    total = 0
-    for account in accounts:
-        total = total + account.get_balance()
-        account_table.append([account.get_name(),
-                              account.get_balance(),
-                              account.get_type(),
-                              account.get_owner()])
-    account_table.append(['Total', total, ''])
-    data = pd.DataFrame(account_table,
-                        columns=['Account', 'Balance', 'Type', 'Owner'])
-
-    labels = data['Account']
-    data.drop('Account', axis=1, inplace=True)
-    data.update(data[['Balance']].astype(float))
-    data.update(data[['Balance']].applymap('{:,.0f}'.format))
-    plot_data_table(data, pdf, labels, "Account Summary")
 
 
 def generate_returns(data_distribution, mean, std, years_to_process):
@@ -267,24 +209,6 @@ def run_monte_carlos(data_for_analysis,
     loop.run_until_complete(all_groups)
 
 
-def plot_pdf(trials_data, owners, expenses, years_to_process, personal_path):
-    with PdfPages(os.path.join(personal_path,
-                               'financial_analysis.pdf')) as pdf:
-        plot_accounts_table(personal_path, pdf)
-
-        for trial_data in trials_data:
-            plot_monte_carlos(trial_data['sorted_data'],
-                              trial_data['failed_plans'], pdf,
-                              owners, trial_data['trial'])
-
-        plot_expense_table(expenses, years_to_process, pdf)
-
-        d = pdf.infodict()
-        d['Title'] = 'Financial Projection'
-        d['Author'] = u'John Chapman'
-        d['CreationDate'] = datetime.datetime.today()
-
-
 def main(personal_path="", with_social=False,
          with_rmd_trial=False, display_charts=False):
     rmd, tax, owners, expenses, years_to_process = \
@@ -355,7 +279,8 @@ def main(personal_path="", with_social=False,
                       'trial': trial}
         trials_data.append(trial_data)
 
-    plot_pdf(trials_data, owners, expenses, years_to_process, personal_path)
+    plot_pdf(trials_data, owners, expenses, start_year, years_to_process,
+             personal_path)
 
     return 0
 

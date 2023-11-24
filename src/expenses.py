@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 class Expenses:
     def __init__(self, config):
         self.config = config
@@ -26,3 +29,12 @@ class Expenses:
         for expense in self.config:
             expenses.append(expense.get_expense(year))
         return expenses
+
+
+def generate_expense_over_time(expenses, start_year, years_to_process):
+    expense_table = []
+    for year in range(start_year, start_year+years_to_process):
+        expense_table.append([year] + expenses.get_year(year))
+    data = pd.DataFrame(expense_table, columns=['Year'] + expenses.get_names())
+
+    return data
