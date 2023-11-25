@@ -54,16 +54,16 @@ class ExploreResults(QWidget):
 
         # Set up layout
         graph_layout = QHBoxLayout()
-        graph_layout.addWidget(self.mc_plot_stacked_widget)
-        graph_layout.addWidget(self.expense_summary)
+        graph_layout.addWidget(self.mc_plot_stacked_widget, 1)
+        graph_layout.addWidget(self.expense_summary, 1)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.combo_box)
         button_layout.addWidget(self.save_pdf_button)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(graph_layout)
-        layout.addWidget(self.mc_summary_stacked_widget)
+        layout.addLayout(graph_layout, 2)
+        layout.addWidget(self.mc_summary_stacked_widget, 1)
         layout.addLayout(button_layout)
 
         self.setWindowTitle('Explore Data')
