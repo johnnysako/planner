@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 
 
-def _draw_as_table(df, title, pagesize, rowlabels):
+def _draw_as_table(df, title, pagesize, rowlabels, scale=False):
     alternating_colors = [
         ['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
     alternating_colors = alternating_colors[:len(df)]
@@ -18,13 +18,15 @@ def _draw_as_table(df, title, pagesize, rowlabels):
                          cellLoc='center',
                          loc='center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(7)
-    the_table.scale(1.2, 2.5)
+    the_table.set_fontsize(6)
+    if scale:
+        the_table.scale(1.2, 2.5)
+
     return fig
 
 
 def get_data_table_canvas(data, title, rowlabels):
-    fig = _draw_as_table(data, title, (11, 8.5), rowlabels)
+    fig = _draw_as_table(data, title, (11, 8.5), rowlabels, True)
     canvas = FigureCanvasQTAgg(fig)
     return canvas
 

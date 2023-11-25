@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QFileDialog, QHBoxLayout
-from PyQt5.QtWidgets import QWidget, QPushButton
+from PyQt5.QtWidgets import QWidget, QPushButton, QStackedWidget
+from PyQt5.QtWidgets import QComboBox
 
 from src.generate_pdf import plot_pdf
 from src.plot_monte_carlos import plot_monte_carlos
@@ -22,20 +23,29 @@ class ExploreResults(QWidget):
         self.save_pdf_button = QPushButton('Save Result PDF', self)
         self.save_pdf_button.clicked.connect(self.save_pdf)
 
-        self.mc_canvas = plot_monte_carlos(self.results['trials_data'][0]
-                                           ['sorted_data'],
-                                           self.results['trials_data'][0]
-                                           ['failed_plans'],
-                                           self.results['owners'],
-                                           self.results['trials_data'][0]
-                                           ['trial'])
+        self.mc_plot_stacked_widget = QStackedWidget()
+        self.mc_summary_stacked_widget = QStackedWidget()
 
-        _, summary, labels = summarize_data(self.results['trials_data']
-                                            [0]
-                                            ['sorted_data'])
-        self.mc_summary = get_data_table_canvas(summary,
-                                                "Monte Carlos Summary",
-                                                labels)
+        self.combo_box = QComboBox(self)
+        self.combo_box.currentIndexChanged.connect(self.update_trial)
+
+        trial_labels = ['Base Projection',
+                        'Without Social Security',
+                        'With RMD on Select Accounts']
+
+        for i, trial_data in enumerate(self.results['trials_data']):
+            self.combo_box.addItem(trial_labels[i])
+            self.mc_plot_stacked_widget.addWidget(
+                plot_monte_carlos(trial_data['sorted_data'],
+                                  trial_data['failed_plans'],
+                                  self.results['owners'],
+                                  trial_data['trial']))
+
+            _, summary, labels = summarize_data(trial_data['sorted_data'])
+            self.mc_summary_stacked_widget.addWidget(
+                get_data_table_canvas(summary,
+                                      "Monte Carlos Summary",
+                                      labels))
 
         data = generate_expense_over_time(self.results['expenses'],
                                           self.results['start_year'],
@@ -44,15 +54,26 @@ class ExploreResults(QWidget):
 
         # Set up layout
         graph_layout = QHBoxLayout()
-        graph_layout.addWidget(self.mc_canvas)
+        graph_layout.addWidget(self.mc_plot_stacked_widget)
         graph_layout.addWidget(self.expense_summary)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.combo_box)
+        button_layout.addWidget(self.save_pdf_button)
 
         layout = QVBoxLayout(self)
         layout.addLayout(graph_layout)
-        layout.addWidget(self.mc_summary)
-        layout.addWidget(self.save_pdf_button)
+        layout.addWidget(self.mc_summary_stacked_widget)
+        layout.addLayout(button_layout)
 
         self.setWindowTitle('Explore Data')
+        self.showMaximized()
+
+    def update_trial(self):
+        self.mc_summary_stacked_widget.setCurrentIndex(
+            self.combo_box.currentIndex())
+        self.mc_plot_stacked_widget.setCurrentIndex(
+            self.combo_box.currentIndex())
 
     def save_pdf(self):
         options = QFileDialog.Options()

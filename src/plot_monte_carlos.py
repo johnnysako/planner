@@ -2,7 +2,6 @@ from src.draw_table import plot_data_table
 
 import numpy as np
 import pandas as pd
-import math
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
