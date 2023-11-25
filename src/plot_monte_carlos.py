@@ -81,28 +81,10 @@ def summarize_data(data_for_analysis):
 
 
 def _plot_summary(data_for_analysis, pdf):
-    iterations, summary, labels = summarize_data(data_for_analysis)
+    _, summary, labels = summarize_data(data_for_analysis)
 
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
-
-    median_result = pd.DataFrame(data_for_analysis[int(iterations/2)])
-    labels = median_result['Year'].values.astype(int)
-    median_result.drop('Year', axis=1, inplace=True)
-    median_result.update(median_result.astype(float))
-
-    cols = median_result.columns.tolist()
-    for col in cols:
-        if col == '% Withdrawn' or col == 'Stock Returns' \
-           or col == 'Bond Returns':
-            median_result[col] = median_result[col].map('{:,.2f}%'.format)
-        else:
-            median_result[col] = median_result[col].map('${:,.0f}'.format)
-
-    num_rows, num_columns = median_result.shape
-    plot_data_table(median_result, pdf, labels,
-                    'Median Data Table', numpages=(
-                        math.ceil(num_rows / 33), math.ceil(num_columns / 10)))
 
 
 def process_average(data_for_analysis, failed_plans):
