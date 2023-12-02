@@ -1,4 +1,4 @@
-name: Build Linux Executable
+name: Build Windows Exe
 
 on:
   release:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -27,9 +27,9 @@ jobs:
       run: |
         python -m pip install pyinstaller
         pyinstaller --onefile --add-data="_internal:_internal" Planner.py
-        
+      
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
         name: installer
-        path: dist
+        path: dist/Planner.dmg
