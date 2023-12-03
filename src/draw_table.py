@@ -28,6 +28,7 @@ def _draw_as_table(df, title, pagesize, rowlabels, scale=False):
 def get_data_table_canvas(data, title, rowlabels):
     fig = _draw_as_table(data, title, (11, 8.5), rowlabels, True)
     canvas = FigureCanvasQTAgg(fig)
+    plt.close(fig)
     return canvas
 
 

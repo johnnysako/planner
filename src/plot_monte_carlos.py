@@ -152,6 +152,9 @@ def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
 
     canvas = FigureCanvasQTAgg(fig)  # Create a FigureCanvas instance
 
+    current_figure = plt.gcf().number
+    plt.close(current_figure)
+
     return canvas
 
 

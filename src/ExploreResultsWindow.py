@@ -29,12 +29,15 @@ class ExploreResults(QWidget):
         self.combo_box = QComboBox(self)
         self.combo_box.currentIndexChanged.connect(self.update_trial)
 
-        trial_labels = ['Base Projection',
-                        'Without Social Security',
-                        'With RMD on Select Accounts']
+        self.combo_box.addItem('Base Projection')
 
-        for i, trial_data in enumerate(self.results['trials_data']):
-            self.combo_box.addItem(trial_labels[i])
+        for trial_data in self.results['trials_data']:
+            if trial_data['trial']['rmd']:
+                self.combo_box.addItem('With RMD on Select Accounts')
+
+            if not trial_data['trial']['Social Security']:
+                self.combo_box.addItem('Without Social Security')
+
             self.mc_plot_stacked_widget.addWidget(
                 plot_monte_carlos(trial_data['sorted_data'],
                                   trial_data['failed_plans'],
