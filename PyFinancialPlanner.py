@@ -20,7 +20,7 @@ import asyncio
 
 basedir = os.path.dirname(__file__)
 
-start_year = 2023
+start_year = 2024
 iterations = 1000
 iterations_per_thread = int(iterations/10)
 

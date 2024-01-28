@@ -1,18 +1,17 @@
 ## Retirement Projection
 ![Tests](https://github.com/johnnysako/planner/actions/workflows/python-app.yml/badge.svg)
 ![](images/example_result.jpg)
-This tool was built to be able to run comparisons of a few different scenarios for retirement. First and foremost it was built to understand the impact on a plan of using a Roth 401K vs a Traditional 401K. Most financial projections make this comparison difficult at best. Second, the plan will run with and without social security.
+This tool was built to be able to run comparisons of a few different scenarios for retirement. First and foremost it was built to understand the impact on a plan of using a Roth 401K vs a Traditional 401K. Most financial projections make this comparison difficult at best. The tool was then expanded to understand impact of not including social security and the impact of a great recession type event the year of retirement.
 
 This has been built to be very configurable (probably too configurable) on expenses and timing of those expenses and will generate a graph and table of the expenses over the course of the plan.
 ![](images/example_expense.jpg)
 
-This does run a Monte Carlos simulation of 4 different scenarios:
-- With Social Security, Selected Roth do NOT have RMDs
-- With Social Security, Selected Roths DO have RMDs
-- Without Social Security, Selected Roth do NOT have RMDs
-- Without Social Security, Selected Roths DO have RMDs
+This runs a Monte Carlos simulation of 4 the selected scenarios:
+- Selected Roth HAVE RMDs
+- Without Social Security
+- Bad timing
 
-This simulation does NOT adjust or account for inflation, so all numbers are in the dollar amount for the simulation start year (set to 2023 in `PyFinancialPlanner.py`). For each of the 1000 iterations, a random number is generated based on the S&P 500 average rate of return and standard deviation with a normal distribution for each year of the financial plan duration as the growth for that year.
+This simulation does NOT adjust or account for inflation, so all numbers are in the dollar amount for the simulation start year (set to 2024 in `PyFinancialPlanner.py`). For each of the 1000 iterations, a random number is generated based on the S&P 500 average rate of return and standard deviation with a normal distribution for each year of the financial plan duration as the growth for that year.
 
 Some notes: 
 - When it comes time to withdraw funds to cover expenses (i.e. income from sources such as RMD, income, social security) the program will pull funds from the first account it finds in `accounts.json` until it reaches 0 and then move to the next account. Once an account is at 0 it is effectively "closed". A plan fails when all accounts are 0.
