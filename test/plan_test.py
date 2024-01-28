@@ -903,7 +903,7 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     plan = Plan(owners, accounts, expenses, rmd, tax, default_trial)
     assert plan.process_plan(2014, 1, rates) == \
         [[2014, 6, 3, 0, 2800.0, 0, 280.0, 2520.0, 9720.0, 18000.0, 0.0, 27720.0],
-         [2015, 6, 3, 0, 2310.0, 0, 231.0, 2079.0, 11523.6, 17490.0, 0.0, 29013.6]]
+         [2015, 6, 3, 0, 2310.0, 0, 231.0, 0.0, 9444.6, 17490.0, 0.0, 26934.6]]
 
 
 def test_does_not_include_social_security_when_config():
@@ -965,7 +965,7 @@ def test_does_not_include_social_security_when_config():
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
     assert plan.process_plan(2014, 1, rates) == \
         [[2014, 6, 3, 0, 2800.0, 0, 280.0, 2520.0, 9720.0, 18000.0, 0.0, 27720.0],
-         [2015, 6, 3, 0, 2310.0, 0, 231.0, 2079.0, 11523.6, 17490.0, 0.0, 29013.6]]
+         [2015, 6, 3, 0, 2310.0, 0, 231.0, 0.0, 9444.6, 17490.0, 0.0, 26934.6]]
 
 
 def test_roth_has_rmd_when_config():
@@ -1019,4 +1019,4 @@ def test_roth_has_rmd_when_config():
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
     assert plan.process_plan(2014, 1, rates) == \
         [[2014, 6, 3, 0, 800.0, 0, 80.0, 720.0, 7920.0, 0.0, 7920.0],
-         [2015, 6, 3, 0, 660.0, 0, 66.0, 594.0, 8289.6, 0.0, 8289.6]]
+         [2015, 6, 3, 0, 660.0, 0, 66.0, 0.0, 7695.6, 0.0, 7695.6]]

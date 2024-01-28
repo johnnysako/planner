@@ -18,6 +18,15 @@ def owner_is_retired(account, self, year):
     return owner.is_retired(year)
 
 
+def all_owners_retired(owners, year):
+    retired = True
+    for o in owners:
+        if not o.is_retired(year):
+            retired = False
+
+    return retired
+
+
 def append_income(data, year, owners, social_security):
     income = 0
     for owner in owners:
@@ -54,8 +63,11 @@ def append_tax(data, self, year, rate, rmd):
     return tax
 
 
-def append_reinvestment(data, income, tax, expense, rmd):
+def append_reinvestment(data, income, tax, expense, rmd, owners, year):
     change = expense + tax - income - rmd
+
+    if change < 0 and all_owners_retired(owners, year):
+        change = 0.0
 
     if change < 0:
         data.append(-change)
@@ -139,7 +151,8 @@ class Plan:
             expense = append_expenses(balances[i], start_year+i, self.expenses)
             tax = append_tax(balances[i], self, start_year+i, rate, rmd)
             change = append_reinvestment(balances[i], income,
-                                         tax, expense, rmd)
+                                         tax, expense, rmd, self.owners,
+                                         start_year+i)
 
             total = append_accounts(balances[i], start_year+i,
                                     self, rate, change, i != 0)
