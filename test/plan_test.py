@@ -17,7 +17,7 @@ no_tax = Tax(empty_tax)
 
 rates = {"s": [6, 6, 6], "b": [3, 3, 3]}
 
-default_trial = {"Social Security": True, "rmd": False}
+default_trial = {"Social Security": True, "rmd": False, "bad_timing": False}
 
 
 def test_can_initialize_plan():
@@ -960,7 +960,7 @@ def test_does_not_include_social_security_when_config():
     }))
     expenses = Expenses(expense_table)
 
-    trial = {"Social Security": False, "rmd": False}
+    trial = {"Social Security": False, "rmd": False, "bad_timing": False}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
     assert plan.process_plan(2014, 1, rates) == \
@@ -1014,7 +1014,7 @@ def test_roth_has_rmd_when_config():
     }))
     expenses = Expenses(expense_table)
 
-    trial = {"Social Security": False, "rmd": True}
+    trial = {"Social Security": False, "rmd": True, "bad_timing": False}
 
     plan = Plan(owners, accounts, expenses, rmd, tax, trial)
     assert plan.process_plan(2014, 1, rates) == \

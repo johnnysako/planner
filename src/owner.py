@@ -23,6 +23,9 @@ class Owner:
     def is_retired(self, year):
         return year-self.config["Year of Birth"] > self.config["Retirement Age"]
 
+    def retired_year(self):
+        return self.config["Year of Birth"] + self.config["Retirement Age"]+1
+
     def get_income(self, include_social_security, year):
         if not self.is_retired(year):
             return self.config["Pre-retirement Take Home Pay"]

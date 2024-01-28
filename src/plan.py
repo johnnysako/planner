@@ -85,6 +85,15 @@ def append_accounts(data, year, self, rate, change, growth):
     return round(total, 2)
 
 
+def bad_timing(self, year):
+    retirement_year = 65535
+    for owner in self.owners:
+        if owner.retired_year() < retirement_year:
+            retirement_year = owner.retired_year()
+
+    return year == retirement_year and self.config["bad_timing"]
+
+
 class Plan:
     def __init__(self, owners, accounts, expenses, rmd, tax, config):
         self.accounts = accounts
@@ -119,6 +128,9 @@ class Plan:
             balances[i].append(rates["b"][i])
 
             rate = {"s": rates["s"][i], "b": rates["b"][i]}
+
+            if bad_timing(self, start_year+i):
+                rate = {"s": -37, "b": 13.4}
 
             income = append_income(balances[i], start_year+i,
                                    self.owners, self.config["Social Security"])

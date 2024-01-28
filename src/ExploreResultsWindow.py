@@ -38,6 +38,9 @@ class ExploreResults(QWidget):
             if not trial_data['trial']['Social Security']:
                 self.combo_box.addItem('Without Social Security')
 
+            if trial_data['trial']['bad_timing']:
+                self.combo_box.addItem("Bad Timing")
+
             self.mc_plot_stacked_widget.addWidget(
                 plot_monte_carlos(trial_data['sorted_data'],
                                   trial_data['failed_plans'],

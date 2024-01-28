@@ -226,23 +226,27 @@ def load_stock_data():
 
 
 def main(personal_path="", with_social=False,
-         with_rmd_trial=False):
+         with_rmd_trial=False, with_bad_timing=False):
     rmd, tax, owners, expenses, years_to_process = \
         load_constants(personal_path)
 
     returns = load_stock_data()
 
     trials = [
-        {"Social Security": True, "rmd": False,
+        {"Social Security": True, "rmd": False, "bad_timing": False,
          "dist": returns}]
 
     if with_social:
         trials.append({"Social Security": False, "rmd": False,
-                       "dist": returns})
+                       "bad_timing": False, "dist": returns})
 
     if with_rmd_trial:
         trials.append({"Social Security": True, "rmd": True,
-                       "dist": returns})
+                       "bad_timing": False, "dist": returns})
+
+    if with_bad_timing:
+        trials.append({"Social Security": True, "rmd": False,
+                       "bad_timing": True, "dist": returns})
 
     trials_data = []
 

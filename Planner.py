@@ -81,6 +81,7 @@ class MainWindow(QMainWindow):
         self.inc_social_security = \
             QCheckBox('Test Without Social Security', self)
         self.test_rmd = QCheckBox('Test With RMD on Select Accounts', self)
+        self.bad_timing = QCheckBox('Test Bad Timing', self)
 
         # Connect button click event to a function
         self.load_data.clicked.connect(self.on_load_data)
@@ -113,6 +114,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(data_layout)
         layout.addWidget(self.inc_social_security)
         layout.addWidget(self.test_rmd)
+        layout.addWidget(self.bad_timing)
         layout.addWidget(self.run_plan_button)
         layout.addLayout(save_load_layout)
 
@@ -179,7 +181,8 @@ class MainWindow(QMainWindow):
             results = plan.main(personal_path=self.path,
                                 with_social=self.inc_social_security
                                 .isChecked(),
-                                with_rmd_trial=self.test_rmd.isChecked())
+                                with_rmd_trial=self.test_rmd.isChecked(),
+                                with_bad_timing=self.bad_timing.isChecked())
 
         except TypeError:
             msg_box = QMessageBox()
