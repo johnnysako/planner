@@ -641,7 +641,7 @@ def test_calculates_tax_including_rmds():
     empty_expenses = Expenses(empty_expense_table)
     plan = Plan(owners, accounts, empty_expenses, rmd, tax, default_trial)
     assert plan.process_plan(2014, 1, rates) == \
-        [[2014, 6, 3, 0, 800.0, 0, 0, 800.0, 4800.0, 7200.0, 10000, 20000, 0.0, 42000.0] ,
+        [[2014, 6, 3, 0, 800.0, 0, 0, 800.0, 4800.0, 7200.0, 10000, 20000, 0.0, 42000.0],
          [2015, 6, 3, 0, 2600.0, 0, 0, 2600.0, 7688.0, 6996.0, 15600.0, 24080.0, 0.0, 54364.0]]
 
 
