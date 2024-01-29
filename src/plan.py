@@ -53,12 +53,15 @@ def append_expenses(data, year, expenses):
 
 
 def append_tax(data, self, year, rate, rmd):
-    taxable = 0
-    for account in self.accounts:
-        growth = account.get_growth(year, rate)
-        if account.is_taxable() and growth > 0:
-            taxable += round(growth, 2)
-    tax = round(self.tax.calculate(taxable+rmd), 2)
+    tax = 0
+    # assume taxes are managed out of income before retirement
+    if all_owners_retired(self.owners, year):
+        taxable = 0
+        for account in self.accounts:
+            growth = account.get_growth(year, rate)
+            if account.is_taxable() and growth > 0:
+                taxable += round(growth, 2)
+        tax = round(self.tax.calculate(taxable+rmd), 2)
     data.append(tax)
     return tax
 
@@ -66,6 +69,7 @@ def append_tax(data, self, year, rate, rmd):
 def append_reinvestment(data, income, tax, expense, rmd, owners, year):
     change = expense + tax - income - rmd
 
+    # assume re-investments are included in account additions before retirement
     if change < 0 and all_owners_retired(owners, year):
         change = 0.0
 
