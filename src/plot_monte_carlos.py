@@ -86,25 +86,47 @@ def _plot_summary(data_for_analysis, pdf):
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
 
-def process_average(data_for_analysis, failed_plans):
+def process_average(data_for_analysis):
     plt.figure()
     iterations = len(data_for_analysis)
     years_to_process = len(data_for_analysis[0].index)
     analysis = np.empty([iterations, years_to_process])
+    analysis_stock = np.empty([iterations, years_to_process])
+    analysis_bond = np.empty([iterations, years_to_process])
     for i, data in enumerate(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
+        analysis_stock[i] = data['Stock Returns'].values
+        analysis_bond[i] = data['Bond Returns'].values
         if i % 20 == 0:
             plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
     average_plot = analysis.mean(axis=0)
+    average_stock_plot = analysis_stock.mean(axis=0)
+    average_bond_plot = analysis_stock.mean(axis=0)
     median = round(np.median(analysis, axis=0)[-1], 2)
 
-    return analysis, average_plot, median
+    return average_plot, average_stock_plot, average_bond_plot, median
+
+
+def plot_gains_losses(x_label, stock, bond):
+    positive_values = [val if val > 0 else 0 for val in stock]
+    negative_values = [val if val < 0 else 0 for val in stock]
+
+    fig, ax = plt.subplots()
+    ax.bar(x_label, positive_values, color='green')
+    ax.bar(x_label, negative_values, color='red')
+
+    ax.set_ylabel('% Gain/Loss')
+    ax.set_xticks([])
+
+    canvas = FigureCanvasQTAgg(fig)
+    plt.close(fig)
+    return canvas
 
 
 def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
     fig, ax = plt.subplots(figsize=(11, 8.5))
     start_year = data_for_analysis[0]['Year'][0]
-    _, average_plot, median = process_average(data_for_analysis, failed_plans)
+    average_plot, _, _, median = process_average(data_for_analysis)
 
     for i, data in enumerate(data_for_analysis):
         if i % 20 == 0:
@@ -127,7 +149,8 @@ def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
 
     trial_label = 'Include Social Security: ' + \
         str(trial["Social Security"]) + \
-        '\nSelected roths have RMDs: ' + str(trial["rmd"])
+        '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
+        '\nBad Timing: ' + str(trial["bad_timing"])
     print(trial_label)
     ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
 

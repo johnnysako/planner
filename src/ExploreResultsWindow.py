@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QComboBox
 from src.generate_pdf import plot_pdf
 from src.plot_monte_carlos import plot_monte_carlos
 from src.plot_monte_carlos import summarize_data
+from src.plot_monte_carlos import process_average
+from src.plot_monte_carlos import plot_gains_losses
 from src.draw_table import get_data_table_canvas
 from src.expenses import generate_expense_over_time
 from src.expenses import plot_expenses_summary
@@ -24,6 +26,7 @@ class ExploreResults(QWidget):
         self.save_pdf_button.clicked.connect(self.save_pdf)
 
         self.mc_plot_stacked_widget = QStackedWidget()
+        self.gain_loss_chart = QStackedWidget()
         self.mc_summary_stacked_widget = QStackedWidget()
 
         self.combo_box = QComboBox(self)
@@ -47,6 +50,13 @@ class ExploreResults(QWidget):
                                   self.results['owners'],
                                   trial_data['trial']))
 
+            _, average_stock, average_bond, _ = \
+                process_average(trial_data['sorted_data'])
+            self.gain_loss_chart.addWidget(plot_gains_losses(
+                trial_data['sorted_data'][0]['Year'],
+                average_stock,
+                average_bond))
+
             _, summary, labels = summarize_data(trial_data['sorted_data'])
             self.mc_summary_stacked_widget.addWidget(
                 get_data_table_canvas(summary,
@@ -59,16 +69,20 @@ class ExploreResults(QWidget):
         self.expense_summary = plot_expenses_summary(data)
 
         # Set up layout
+        graph_expense_rates = QVBoxLayout()
+        graph_expense_rates.addWidget(self.mc_plot_stacked_widget, 4)
+        graph_expense_rates.addWidget(self.gain_loss_chart, 1)
+
         graph_layout = QHBoxLayout()
-        graph_layout.addWidget(self.mc_plot_stacked_widget, 1)
-        graph_layout.addWidget(self.expense_summary, 1)
+        graph_layout.addLayout(graph_expense_rates, 2)
+        graph_layout.addWidget(self.expense_summary, 2)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.combo_box)
         button_layout.addWidget(self.save_pdf_button)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(graph_layout, 2)
+        layout.addLayout(graph_layout, 3)
         layout.addWidget(self.mc_summary_stacked_widget, 1)
         layout.addLayout(button_layout)
 
@@ -79,6 +93,8 @@ class ExploreResults(QWidget):
         self.mc_summary_stacked_widget.setCurrentIndex(
             self.combo_box.currentIndex())
         self.mc_plot_stacked_widget.setCurrentIndex(
+            self.combo_box.currentIndex())
+        self.gain_loss_chart.setCurrentIndex(
             self.combo_box.currentIndex())
 
     def save_pdf(self):

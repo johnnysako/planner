@@ -140,13 +140,15 @@ class Plan:
         for i in range(years+1):
             balances.append([])
             balances[i].append(start_year+i)
+
+            if bad_timing(self, start_year+i):
+                rates["s"][i] = -37
+                rates["b"][i] = 13.4
+
             balances[i].append(rates["s"][i])
             balances[i].append(rates["b"][i])
 
             rate = {"s": rates["s"][i], "b": rates["b"][i]}
-
-            if bad_timing(self, start_year+i):
-                rate = {"s": -37, "b": 13.4}
 
             income = append_income(balances[i], start_year+i,
                                    self.owners, self.config["Social Security"])
