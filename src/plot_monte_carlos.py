@@ -123,6 +123,52 @@ def plot_gains_losses(x_label, stock, bond):
     return canvas
 
 
+def plot_single(data, owners, trial, index):
+    fig, ax = plt.subplots(figsize=(11, 8.5))
+    start_year = data['Year'][0]
+
+    ax.plot(data['Year'], data['Sum of Accounts'])
+    ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+    ticks, _ = plt.yticks()
+    for owner in owners:
+        if not owner.is_retired(start_year):
+            retire_year = start_year + owner.get_retirement_age() \
+                - owner.get_age(start_year)
+            label = owner.get_name() + ' Retires\n' + \
+                '{:.0f}'.format(retire_year)
+            ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
+            ax.vlines(x=retire_year,
+                      ymin=ticks[1], ymax=ticks[-2], colors='purple')
+
+    trial_label = 'Include Social Security: ' + \
+        str(trial["Social Security"]) + \
+        '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
+        '\nBad Timing: ' + str(trial["bad_timing"])
+    print(trial_label)
+    ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
+
+    ax.set_xlabel('Year', fontsize=12)
+    ax.tick_params(axis='x', labelsize=6)
+    ax.set_ylabel('Net Worth', fontsize=12)
+    ax.tick_params(axis='y', labelsize=6)
+    ax.set_title('Index ' + str(index), fontsize=14)
+
+    results_to_include = 'EoP: ' \
+        + '${:,.0f}\n'.format(data['Sum of Accounts'][-1])
+    box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
+    ax.annotate(results_to_include, xy=(0.025, 0.9), xycoords='axes fraction',
+                fontsize=8, bbox=box_props, ha='left', va='top', color='black')
+
+    plt.tight_layout()
+
+    canvas = FigureCanvasQTAgg(fig)  # Create a FigureCanvas instance
+
+    current_figure = plt.gcf().number
+    plt.close(current_figure)
+
+    return canvas
+
+
 def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
     fig, ax = plt.subplots(figsize=(11, 8.5))
     start_year = data_for_analysis[0]['Year'][0]

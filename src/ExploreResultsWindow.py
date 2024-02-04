@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QFileDialog, QHBoxLayout
 from PyQt5.QtWidgets import QWidget, QPushButton, QStackedWidget
-from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QComboBox, QCheckBox, QSpinBox
 
 from src.generate_pdf import plot_pdf
 from src.plot_monte_carlos import plot_monte_carlos
@@ -24,6 +24,17 @@ class ExploreResults(QWidget):
     def init_ui(self):
         self.save_pdf_button = QPushButton('Save Result PDF', self)
         self.save_pdf_button.clicked.connect(self.save_pdf)
+
+        self.average_button = QCheckBox('Average Results', self)
+        self.average_button.clicked.connect(self.average_clicked)
+        self.average_button.setChecked()
+
+        self.index_select = QSpinBox(self)
+        self.index_select.setMaximum(999)
+        self.index_select.setMinimum(0)
+        self.index_select.setValue(0)
+        self.index_select.valueChanged.connect(self.index_changed)
+        self.index_select.setEnabled(False)
 
         self.mc_plot_stacked_widget = QStackedWidget()
         self.gain_loss_chart = QStackedWidget()
@@ -79,6 +90,8 @@ class ExploreResults(QWidget):
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.combo_box)
+        button_layout.addWidget(self.average_button)
+        button_layout.addWidget(self.index_select)
         button_layout.addWidget(self.save_pdf_button)
 
         layout = QVBoxLayout(self)
@@ -112,3 +125,9 @@ class ExploreResults(QWidget):
     def closeEvent(self, event):
         self.main_window.show()
         event.accept()  # Accept the close event
+
+    def average_clicked(self, event):
+        self.index_select.setEnabled(not self.average_button.isChecked())
+
+    def index_changed(self, event):
+        return
