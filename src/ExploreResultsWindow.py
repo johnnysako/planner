@@ -77,7 +77,7 @@ class ExploreResults(QWidget):
             self.add_mc_plot_widget(trial_data)
             self.add_gain_loss_widget(trial_data)
             self.add_mc_summary_widget(trial_data)
-        
+
         self.add_single_plot()
         self.add_single_rates()
 
