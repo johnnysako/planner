@@ -107,24 +107,24 @@ def process_average(data_for_analysis):
     return average_plot, average_stock_plot, average_bond_plot, median
 
 
-def plot_gains_losses(x_label, stock, bond):
+def plot_gains_losses(x_label, stock, bond, canvas):
     positive_values = [val if val > 0 else 0 for val in stock]
     negative_values = [val if val < 0 else 0 for val in stock]
 
-    fig, ax = plt.subplots()
+    canvas.figure.clear()
+    ax = canvas.figure.subplots()
     ax.bar(x_label, positive_values, color='green')
     ax.bar(x_label, negative_values, color='red')
 
     ax.set_ylabel('% Gain/Loss')
     ax.set_xticks([])
 
-    canvas = FigureCanvasQTAgg(fig)
-    plt.close(fig)
-    return canvas
+    canvas.draw()
 
 
-def plot_single(data, owners, trial, index):
-    fig, ax = plt.subplots(figsize=(11, 8.5))
+def plot_single(data, owners, trial, index, canvas):
+    canvas.figure.clear()
+    ax = canvas.figure.subplots()
     start_year = data['Year'][0]
 
     ax.plot(data['Year'], data['Sum of Accounts'])
@@ -152,21 +152,15 @@ def plot_single(data, owners, trial, index):
     ax.set_ylabel('Net Worth', fontsize=12)
     ax.tick_params(axis='y', labelsize=6)
     ax.set_title('Index ' + str(index), fontsize=14)
-
     results_to_include = 'EoP: ' \
-        + '${:,.0f}\n'.format(data['Sum of Accounts'][-1])
+        + '${:,.0f}'.format(data['Sum of Accounts'].iloc[-1])
     box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
     ax.annotate(results_to_include, xy=(0.025, 0.9), xycoords='axes fraction',
                 fontsize=8, bbox=box_props, ha='left', va='top', color='black')
 
     plt.tight_layout()
 
-    canvas = FigureCanvasQTAgg(fig)  # Create a FigureCanvas instance
-
-    current_figure = plt.gcf().number
-    plt.close(current_figure)
-
-    return canvas
+    canvas.draw()
 
 
 def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):

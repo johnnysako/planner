@@ -6,10 +6,7 @@ class Expense:
         return self.config["Description"]
 
     def get_expense(self, year):
-        try:
-            end_year = self.config["Year Ends"]
-        except KeyError:
-            end_year = 9999
+        end_year = self.config.get("Year Ends", 9999)
 
         if year < self.config["Year Starts"] or year > end_year:
             return 0
