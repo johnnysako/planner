@@ -140,7 +140,7 @@ class ExploreResults(QWidget):
         self.single_gain_loss_chart.setLayout(single_gain_loss_layout)
 
     def add_mc_summary_widget(self, trial_data):
-        _, summary, labels = summarize_data(trial_data['sorted_data'])
+        summary, labels = summarize_data(trial_data['sorted_data'])
         canvas = get_data_table_canvas(summary, "Monte Carlos Summary", labels)
         self.mc_summary_stacked_widget.addWidget(canvas)
 

@@ -76,18 +76,16 @@ def summarize_data(data_for_analysis):
         summary[['Average Withdrawn', 'Stock Returns', 'Bond Returns']]
         .applymap('{:.2f}%'.format))
 
-    return iterations, summary, labels
+    return summary, labels
 
 
 def _plot_summary(data_for_analysis, pdf):
-    _, summary, labels = summarize_data(data_for_analysis)
-
+    summary, labels = summarize_data(data_for_analysis)
     print(summary)
     plot_data_table(summary, pdf, labels, "Monte Carlos Summary")
 
 
 def process_average(data_for_analysis):
-    plt.figure()
     iterations = len(data_for_analysis)
     years_to_process = len(data_for_analysis[0].index)
     analysis = np.empty([iterations, years_to_process])
@@ -97,8 +95,6 @@ def process_average(data_for_analysis):
         analysis[i] = data['Sum of Accounts'].values
         analysis_stock[i] = data['Stock Returns'].values
         analysis_bond[i] = data['Bond Returns'].values
-        if i % 20 == 0:
-            plt.plot(data['Year'], data['Sum of Accounts'], color='lavender')
     average_plot = analysis.mean(axis=0)
     average_stock_plot = analysis_stock.mean(axis=0)
     average_bond_plot = analysis_stock.mean(axis=0)
