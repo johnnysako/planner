@@ -125,12 +125,11 @@ def process_run(iteration,
         account_data = json.load(f).get("accounts", [])
         accounts = [Account(account_data) for account_data in account_data]
 
-    plan = Plan(owners, accounts, expenses, rmd, tax, trial)
+    plan = Plan(start_year, owners, accounts, expenses, rmd, tax, trial)
 
     combined_rates = {"s": stock_rates, "b": bond_rates}
     data = pd.DataFrame(np.array(
-        plan.process_plan(start_year,
-                          years_to_process,
+        plan.process_plan(years_to_process,
                           combined_rates)), columns=plan.get_header())
     data_for_analysis.append(data)
 
@@ -225,8 +224,8 @@ def load_stock_data():
     return returns
 
 
-def main(personal_path="", with_social=False,
-         with_rmd_trial=False, with_bad_timing=False):
+def run_trials(personal_path="", with_social=False,
+               with_rmd_trial=False, with_bad_timing=False):
     rmd, tax, owners, expenses, years_to_process = \
         load_constants(personal_path)
 
@@ -277,7 +276,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         personal_path = sys.argv[1]
 
-    results = main(personal_path, True, True)
+    results = run_trials(personal_path, True, True, True)
     plot_pdf(results['trials_data'], results['owners'], results['expenses'],
              results['start_year'], results['years_to_process'],
              personal_path, personal_path)

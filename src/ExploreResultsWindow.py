@@ -59,11 +59,11 @@ class ExploreResults(QWidget):
         for trial_data in self.results['trials_data']:
             trial_desc = ''
             if trial_data['trial']['rmd']:
-                trial_desc += 'With RMD on Select Accounts'
+                trial_desc = 'With RMD on Select Accounts'
             if not trial_data['trial']['Social Security']:
-                trial_desc += 'Without Social Security'
+                trial_desc = 'Without Social Security'
             if trial_data['trial']['bad_timing']:
-                trial_desc += 'Bad Timing'
+                trial_desc = 'Bad Timing'
             if trial_desc:
                 self.combo_box.addItem(trial_desc)
 

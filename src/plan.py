@@ -1,5 +1,6 @@
 class Plan:
-    def __init__(self, start_year, owners, accounts, expenses, rmd, tax, config):
+    def __init__(self, start_year, owners, accounts,
+                 expenses, rmd, tax, config):
         self.start_year = start_year
         self.accounts = accounts
         self.owners = owners
@@ -133,8 +134,8 @@ class Plan:
 
     def process_plan(self, years, rates):
 
-        for plan_iteration, year in enumerate(range(self.start_year, 
-                                       self.start_year + years + 1)):
+        for plan_iteration, year in enumerate(range(self.start_year,
+                                              self.start_year + years + 1)):
             self.balances.append([])
             self.balances[plan_iteration].append(year)
 

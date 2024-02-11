@@ -178,11 +178,13 @@ class MainWindow(QMainWindow):
         self.save_data_to_file()
 
         try:
-            results = plan.main(personal_path=self.path,
-                                with_social=self.inc_social_security
-                                .isChecked(),
-                                with_rmd_trial=self.test_rmd.isChecked(),
-                                with_bad_timing=self.bad_timing.isChecked())
+            results = plan.run_trials(personal_path=self.path,
+                                      with_social=self.inc_social_security
+                                      .isChecked(),
+                                      with_rmd_trial=self.test_rmd
+                                      .isChecked(),
+                                      with_bad_timing=self.bad_timing
+                                      .isChecked())
 
         except TypeError:
             msg_box = QMessageBox()
