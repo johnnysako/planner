@@ -44,7 +44,7 @@ def load_constants(personal_path):
         owners_data = json.load(f).get("owners", [])
         if len(owners_data) > 2:
             raise ValueError("Owners exceeds two")
-        
+
         owners = [Owner(owner_data) for owner_data in owners_data]
 
     years_to_process = max(o.years_to_live(start_year) for o in owners)
