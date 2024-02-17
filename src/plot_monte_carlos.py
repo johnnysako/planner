@@ -118,6 +118,34 @@ def plot_gains_losses(x_label, stock, bond, canvas):
     canvas.draw()
 
 
+def plot_trial_box(trial, ax, box_props):
+    trial_label = 'Include Social Security: ' + \
+        str(trial["Social Security"]) + \
+        '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
+        '\nBad Timing: ' + str(trial["bad_timing"])
+    ax.annotate(trial_label, xy=(0.025, .15), xycoords='axes fraction',
+                fontsize=5, bbox=box_props, ha='left', va='top', color='black')
+
+
+def plot_owner_lines(ax, start_year, max_y, min_y,
+                     y_coordinate, box_props, owner):
+    if not owner.is_retired(start_year):
+        retire_year = owner.retired_year()
+        label = owner.get_name() + ' Retires:\n' + \
+            '{:.0f}'.format(retire_year)
+
+        ax.annotate(label, xy=(retire_year+.5, y_coordinate), fontsize=5,
+                    bbox=box_props, ha='left', va='top', color='black')
+        ax.vlines(x=retire_year, ymin=min_y, ymax=max_y, colors='purple')
+
+    death_year = owner.dies_in()
+    label = owner.get_name() + ' EoP\n' + '{:.0f}'.format(death_year)
+    ax.annotate(label, xy=(death_year+.5, y_coordinate), fontsize=5,
+                bbox=box_props, ha='left', va='top', color='black')
+    ax.vlines(x=death_year, ymin=min_y, ymax=max_y, colors='red')
+    return max_y*0.1
+
+
 def plot_single(data, owners, trial, index, canvas):
     canvas.figure.clear()
     ax = canvas.figure.subplots()
@@ -133,29 +161,10 @@ def plot_single(data, owners, trial, index, canvas):
     box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
 
     for owner in owners:
-        if not owner.is_retired(start_year):
-            retire_year = owner.retired_year()
-            label = owner.get_name() + ' Retires:\n' + \
-                '{:.0f}'.format(retire_year)
+        y_coordinate = plot_owner_lines(ax, start_year, max_y,
+                                        min_y, y_coordinate, box_props, owner)
 
-            ax.annotate(label, xy=(retire_year+.5, y_coordinate), fontsize=5,
-                        bbox=box_props, ha='left', va='top', color='black')
-            ax.vlines(x=retire_year, ymin=min_y, ymax=max_y,
-                      colors='purple')
-
-        death_year = owner.dies_in()
-        label = owner.get_name() + ' Dies\n' + '{:.0f}'.format(death_year)
-        ax.annotate(label, xy=(death_year+.5, y_coordinate), fontsize=5,
-                    bbox=box_props, ha='left', va='top', color='black')
-        y_coordinate = max_y*0.1
-        ax.vlines(x=death_year, ymin=min_y, ymax=max_y, colors='red')
-
-    trial_label = 'Include Social Security: ' + \
-        str(trial["Social Security"]) + \
-        '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
-        '\nBad Timing: ' + str(trial["bad_timing"])
-    ax.annotate(trial_label, xy=(0.025, .15), xycoords='axes fraction',
-                fontsize=5, bbox=box_props, ha='left', va='top', color='black')
+    plot_trial_box(trial, ax, box_props)
 
     ax.set_xlabel('Year', fontsize=12)
     ax.tick_params(axis='x', labelsize=6)
@@ -194,29 +203,10 @@ def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial, canvas):
     box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
 
     for owner in owners:
-        if not owner.is_retired(start_year):
-            retire_year = owner.retired_year()
-            label = owner.get_name() + ' Retires:\n' + \
-                '{:.0f}'.format(retire_year)
+        y_coordinate = plot_owner_lines(ax, start_year, max_y,
+                                        min_y, y_coordinate, box_props, owner)
 
-            ax.annotate(label, xy=(retire_year+.5, y_coordinate), fontsize=5,
-                        bbox=box_props, ha='left', va='top', color='black')
-            ax.vlines(x=retire_year, ymin=min_y, ymax=max_y,
-                      colors='purple')
-
-        death_year = owner.dies_in()
-        label = owner.get_name() + ' Dies\n' + '{:.0f}'.format(death_year)
-        ax.annotate(label, xy=(death_year+.5, y_coordinate), fontsize=5,
-                    bbox=box_props, ha='left', va='top', color='black')
-        y_coordinate = max_y*0.1
-        ax.vlines(x=death_year, ymin=min_y, ymax=max_y, colors='red')
-
-    trial_label = 'Include Social Security: ' + \
-        str(trial["Social Security"]) + \
-        '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
-        '\nBad Timing: ' + str(trial["bad_timing"])
-    ax.annotate(trial_label, xy=(0.025, .15), xycoords='axes fraction',
-                fontsize=5, bbox=box_props, ha='left', va='top', color='black')
+    plot_trial_box(trial, ax, box_props)
 
     ax.set_xlabel('Year', fontsize=12)
     ax.tick_params(axis='x', labelsize=6)
