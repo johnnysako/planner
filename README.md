@@ -153,7 +153,5 @@ include_tables = False
 ```
 
 ## To Do List
-- [ ] Run plan until all owners have passed, add graphical element to indicate death of owner of before plan ends?
-- [ ] Only 2 owners
 - [ ] Add different filing status and tax tables (married file joint, married, file single, single)
 - [ ] Add a report table that shows assets by category (taxable, tax deferred, tax free) at: Current, Retirement of owners, death of owners 

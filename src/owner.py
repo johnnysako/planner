@@ -21,15 +21,20 @@ class Owner:
         return self.config["Life Expectancy"] - self.get_age(current_year) + 1
 
     def is_retired(self, year):
-        return year-self.config["Year of Birth"] > self.config["Retirement Age"]
+        return year-self.config["Year of Birth"] > self.config[
+            "Retirement Age"]
 
     def retired_year(self):
         return self.config["Year of Birth"] + self.config["Retirement Age"]+1
+
+    def dies_in(self):
+        return self.config["Year of Birth"] + self.config["Life Expectancy"]+1
 
     def get_income(self, include_social_security, year):
         if not self.is_retired(year):
             return self.config["Pre-retirement Take Home Pay"]
         elif include_social_security \
-                and self.get_age(year) >= self.config["Age Starts Social Security"]:
+                and self.get_age(year) >= self.config[
+                    "Age Starts Social Security"]:
             return self.get_social_security()
         return 0

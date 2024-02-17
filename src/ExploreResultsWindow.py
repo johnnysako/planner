@@ -82,12 +82,16 @@ class ExploreResults(QWidget):
         self.add_single_rates()
 
     def add_mc_plot_widget(self, trial_data):
+        monte_carlos_figure = Figure()
+        self.monte_carlos_canvas = FigureCanvas(monte_carlos_figure)
         mc_plot_widget = QWidget()
         mc_plot_layout = QVBoxLayout()
-        mc_plot_layout.addWidget(plot_monte_carlos(trial_data['sorted_data'],
-                                                   trial_data['failed_plans'],
-                                                   self.results['owners'],
-                                                   trial_data['trial']))
+        plot_monte_carlos(trial_data['sorted_data'],
+                          trial_data['failed_plans'],
+                          self.results['owners'],
+                          trial_data['trial'],
+                          self.monte_carlos_canvas)
+        mc_plot_layout.addWidget(self.monte_carlos_canvas)
         mc_plot_widget.setLayout(mc_plot_layout)
         self.mc_plot_stacked_widget.addWidget(mc_plot_widget)
 

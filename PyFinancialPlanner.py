@@ -42,13 +42,12 @@ def load_constants(personal_path):
 
     with open(os.path.join(personal_path, 'owners.json')) as f:
         owners_data = json.load(f).get("owners", [])
+        if len(owners_data) > 2:
+            raise ValueError("Owners exceeds two")
+        
         owners = [Owner(owner_data) for owner_data in owners_data]
 
-    years_to_process = 0
-    for o in owners:
-        owner_years_to_process = o.years_to_live(start_year)
-        if owner_years_to_process > years_to_process:
-            years_to_process = owner_years_to_process
+    years_to_process = max(o.years_to_live(start_year) for o in owners)
 
     with open(os.path.join(personal_path, 'expenses.json')) as f:
         expense_data = json.load(f).get("expenses", [])
@@ -94,7 +93,6 @@ def generate_returns(data_distribution, mean, std, years_to_process):
                                                 std,
                                                 years_to_process+1))]
     randoms = np.clip(randoms, 0, len(data_distribution)-1)
-    # print(randoms)
     returns = []
     for random in randoms:
         if random <= 0:

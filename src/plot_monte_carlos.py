@@ -123,25 +123,39 @@ def plot_single(data, owners, trial, index, canvas):
     ax = canvas.figure.subplots()
     start_year = data['Year'][0]
 
+    max_y = data.values.max()
+    min_y = data['Sum of Accounts'].values.min()
+
     ax.plot(data['Year'], data['Sum of Accounts'])
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
-    ticks, _ = plt.yticks()
+
+    y_coordinate = max_y*0.05
+    box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
+
     for owner in owners:
         if not owner.is_retired(start_year):
-            retire_year = start_year + owner.get_retirement_age() \
-                - owner.get_age(start_year)
-            label = owner.get_name() + ' Retires\n' + \
+            retire_year = owner.retired_year()
+            label = owner.get_name() + ' Retires:\n' + \
                 '{:.0f}'.format(retire_year)
-            ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
-            ax.vlines(x=retire_year,
-                      ymin=ticks[1], ymax=ticks[-2], colors='purple')
+
+            ax.annotate(label, xy=(retire_year+.5, y_coordinate), fontsize=5,
+                        bbox=box_props, ha='left', va='top', color='black')
+            ax.vlines(x=retire_year, ymin=min_y, ymax=max_y,
+                      colors='purple')
+
+        death_year = owner.dies_in()
+        label = owner.get_name() + ' Dies\n' + '{:.0f}'.format(death_year)
+        ax.annotate(label, xy=(death_year+.5, y_coordinate), fontsize=5,
+                    bbox=box_props, ha='left', va='top', color='black')
+        y_coordinate = max_y*0.1
+        ax.vlines(x=death_year, ymin=min_y, ymax=max_y, colors='red')
 
     trial_label = 'Include Social Security: ' + \
         str(trial["Social Security"]) + \
         '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
         '\nBad Timing: ' + str(trial["bad_timing"])
-    print(trial_label)
-    ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
+    ax.annotate(trial_label, xy=(0.025, .15), xycoords='axes fraction',
+                fontsize=5, bbox=box_props, ha='left', va='top', color='black')
 
     ax.set_xlabel('Year', fontsize=12)
     ax.tick_params(axis='x', labelsize=6)
@@ -150,8 +164,7 @@ def plot_single(data, owners, trial, index, canvas):
     ax.set_title('Index ' + str(index), fontsize=14)
     results_to_include = 'EoP: ' \
         + '${:,.0f}'.format(data['Sum of Accounts'].iloc[-1])
-    box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
-    ax.annotate(results_to_include, xy=(0.025, 0.9), xycoords='axes fraction',
+    ax.annotate(results_to_include, xy=(0.025, 0.95), xycoords='axes fraction',
                 fontsize=8, bbox=box_props, ha='left', va='top', color='black')
 
     plt.tight_layout()
@@ -159,36 +172,51 @@ def plot_single(data, owners, trial, index, canvas):
     canvas.draw()
 
 
-def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
-    fig, ax = plt.subplots(figsize=(11, 8.5))
+def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial, canvas):
+    canvas.figure.clear()
+    ax = canvas.figure.subplots()
     start_year = data_for_analysis[0]['Year'][0]
     average_plot, _, _, median = process_average(data_for_analysis)
 
+    max_y = float('-inf')
+    min_y = float('+inf')
+
     for i, data in enumerate(data_for_analysis):
+        max_y = max(max_y, max(data['Sum of Accounts']))
+        min_y = min(min_y, min(data['Sum of Accounts']))
         if i % 20 == 0:
             ax.plot(data['Year'], data['Sum of Accounts'], color='lavender')
 
     ax.plot(data_for_analysis[0]['Year'], average_plot, color='black')
-    print('Median EoP: ${:,.0f}'.format(median))
-    print('Mean EoP: ${:,.0f}'.format(average_plot[-1]))
     ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
-    ticks, _ = plt.yticks()
+
+    y_coordinate = max_y*0.05
+    box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
+
     for owner in owners:
         if not owner.is_retired(start_year):
-            retire_year = start_year + owner.get_retirement_age() \
-                - owner.get_age(start_year)
-            label = owner.get_name() + ' Retires\n' + \
+            retire_year = owner.retired_year()
+            label = owner.get_name() + ' Retires:\n' + \
                 '{:.0f}'.format(retire_year)
-            ax.annotate(label, xy=(retire_year, ticks[-2]*1.01), fontsize=5)
-            ax.vlines(x=retire_year,
-                      ymin=ticks[1], ymax=ticks[-2], colors='purple')
+
+            ax.annotate(label, xy=(retire_year+.5, y_coordinate), fontsize=5,
+                        bbox=box_props, ha='left', va='top', color='black')
+            ax.vlines(x=retire_year, ymin=min_y, ymax=max_y,
+                      colors='purple')
+
+        death_year = owner.dies_in()
+        label = owner.get_name() + ' Dies\n' + '{:.0f}'.format(death_year)
+        ax.annotate(label, xy=(death_year+.5, y_coordinate), fontsize=5,
+                    bbox=box_props, ha='left', va='top', color='black')
+        y_coordinate = max_y*0.1
+        ax.vlines(x=death_year, ymin=min_y, ymax=max_y, colors='red')
 
     trial_label = 'Include Social Security: ' + \
         str(trial["Social Security"]) + \
         '\nSelected Roths have RMDs: ' + str(trial["rmd"]) + \
         '\nBad Timing: ' + str(trial["bad_timing"])
-    print(trial_label)
-    ax.annotate(trial_label, xy=(start_year, ticks[0]/5), fontsize=5)
+    ax.annotate(trial_label, xy=(0.025, .15), xycoords='axes fraction',
+                fontsize=5, bbox=box_props, ha='left', va='top', color='black')
 
     ax.set_xlabel('Year', fontsize=12)
     ax.tick_params(axis='x', labelsize=6)
@@ -203,25 +231,23 @@ def plot_monte_carlos(data_for_analysis, failed_plans, owners, trial):
         + '${:,.0f}\n'.format(median) \
         + '{:.1f}%'.format(len(failed_plans)/iterations*100) \
         + ' Plans failed'
-    box_props = dict(boxstyle='round', facecolor='white', edgecolor='blue')
-    ax.annotate(results_to_include, xy=(0.025, 0.9), xycoords='axes fraction',
+    ax.annotate(results_to_include, xy=(0.025, 0.95), xycoords='axes fraction',
                 fontsize=8, bbox=box_props, ha='left', va='top', color='black')
 
     plt.tight_layout()
 
-    canvas = FigureCanvasQTAgg(fig)  # Create a FigureCanvas instance
-
-    current_figure = plt.gcf().number
-    plt.close(current_figure)
-
-    return canvas
+    canvas.draw()
 
 
 def pdf_monte_carlos(data_for_analysis, failed_plans, pdf,
                      owners, trial):
-    canvas = plot_monte_carlos(data_for_analysis, failed_plans, owners, trial)
+    plt.clf()
+    fig, _ = plt.subplots(figsize=(11, 8.5))
+    canvas = FigureCanvasQTAgg(fig)
+    plot_monte_carlos(data_for_analysis, failed_plans, owners, trial, canvas)
 
     pdf.savefig(canvas.figure, orientation='landscape')
+    plt.close(canvas.figure)
 
     _plot_summary(data_for_analysis, pdf)
 

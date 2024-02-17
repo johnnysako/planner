@@ -133,3 +133,14 @@ def test_get_year_retired():
     owner = Owner(config)
 
     assert owner.retired_year() == 2016
+
+
+def test_get_year_dies():
+    config = {
+        "Life Expectancy": 115,
+        "Year of Birth": 1950
+    }
+
+    owner = Owner(config)
+
+    assert owner.dies_in() == 2066
