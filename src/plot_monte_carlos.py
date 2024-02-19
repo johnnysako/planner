@@ -35,6 +35,67 @@ def _plot_failed_plans(failed_plans, pdf):
                             'Failed Plan Data Table', numpages=(2, 1))
 
 
+def get_years_to_process(start_year, owners):
+    years_to_process = [start_year]
+    for o in owners:
+        years_to_process.append(o.retired_year())
+        years_to_process.append(o.dies_in())
+    return sorted(set(years_to_process))
+
+
+def get_taxable_breakdown(year, data, accounts):
+    taxable = 0
+    tax_deferred = 0
+    tax_free = 0
+    index = int(year - data['Year'][0])
+    for account in accounts:
+        column_name = account.get_name()
+        if account.is_taxable():
+            taxable += data[column_name][index]
+        if account.is_taxable_deferred():
+            tax_deferred += data[column_name][index]
+        if account.is_taxable_free():
+            tax_free += data[column_name][index]
+    return taxable, tax_deferred, tax_free
+
+
+def summarize_tax_data(data, owners, accounts):
+    summary_list = []
+
+    start_year = data['Year'].iloc[0]
+    years_to_process = get_years_to_process(start_year, owners)
+
+    for year in years_to_process:
+        taxable, tax_deferred, tax_free = get_taxable_breakdown(year, data,
+                                                                accounts)
+        total = taxable + tax_deferred + tax_free
+        summary_dict = {'Year': year,
+                        'Taxable': taxable,
+                        'Tax Deferred': tax_deferred,
+                        'Tax Sheltered': tax_free,
+                        'Total': total}
+        summary_list.append(pd.DataFrame([summary_dict]))
+
+    summary = pd.concat(summary_list, ignore_index=True)
+    summary = summary.round(2)
+    return summary
+
+
+def average_tax_data(data_for_analysis, owners, accounts):
+    data = []
+
+    for df in data_for_analysis:
+        data.append(summarize_tax_data(df, owners, accounts))
+
+    concatenated_data = pd.concat(data, ignore_index=True)
+
+    averaged_data = concatenated_data.groupby('Year').mean().reset_index()
+    averaged_data = averaged_data.round(2)
+    print(averaged_data)
+
+    return averaged_data
+
+
 def summarize_data(data_for_analysis):
     data = []
     iterations = len(data_for_analysis)

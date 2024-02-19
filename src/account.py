@@ -51,6 +51,12 @@ class Account:
     def is_taxable(self):
         return self.get_type() == "Investment"
 
+    def is_taxable_deferred(self):
+        return self.get_type() == "401K" or self.get_type() == "IRA"
+
+    def is_taxable_free(self):
+        return self.get_type() == "HSA" or self.get_type() == "Roth"
+
     def get_balance(self):
         return self.config["Balance"]
 

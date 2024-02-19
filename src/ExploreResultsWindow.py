@@ -12,6 +12,7 @@ from src.plot_monte_carlos import summarize_data
 from src.plot_monte_carlos import process_average
 from src.plot_monte_carlos import plot_gains_losses
 from src.plot_monte_carlos import plot_single
+from src.plot_monte_carlos import average_tax_data
 from src.draw_table import get_data_table_canvas
 from src.expenses import generate_expense_over_time
 from src.expenses import plot_expenses_summary
@@ -24,6 +25,11 @@ class ExploreResults(QWidget):
         self.results = results
         self.path = path
         self.main_window = main_window
+
+        for trial_data in self.results['trials_data']:
+            average_tax_data(trial_data['sorted_data'],
+                             self.results['owners'],
+                             self.results['account_base'])
         self.init_ui()
 
     def init_ui(self):

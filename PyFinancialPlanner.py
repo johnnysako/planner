@@ -53,7 +53,11 @@ def load_constants(personal_path):
         expense_data = json.load(f).get("expenses", [])
         expenses = Expenses([Expense(expense) for expense in expense_data])
 
-    return rmd, tax, owners, expenses, years_to_process
+    with open(os.path.join(personal_path, 'accounts.json')) as f:
+        account_data = json.load(f).get("accounts", [])
+        account_base = [Account(account_data) for account_data in account_data]
+
+    return rmd, tax, owners, expenses, years_to_process, account_base
 
 
 def sort_failed(failed_plans):
@@ -224,7 +228,7 @@ def load_stock_data():
 
 def run_trials(personal_path="", with_social=False,
                with_rmd_trial=False, with_bad_timing=False):
-    rmd, tax, owners, expenses, years_to_process = \
+    rmd, tax, owners, expenses, years_to_process, account_base = \
         load_constants(personal_path)
 
     returns = load_stock_data()
@@ -264,6 +268,7 @@ def run_trials(personal_path="", with_social=False,
     data_to_return = {'trials_data': trials_data,
                       'owners': owners,
                       'expenses': expenses,
+                      'account_base': account_base,
                       'start_year': start_year,
                       'years_to_process': years_to_process}
     return data_to_return

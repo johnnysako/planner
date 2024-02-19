@@ -308,3 +308,37 @@ def test_uses_allocation_between_years_from_earlier_year():
     account = Account(config)
     account.process_growth(2024, {"s": 6, "b": 5})
     assert account.get_balance() == 4000*.7*1.06 + 4000*.3*1.05 + 2000
+
+
+def test_is_tax_deferred():
+    config_401K = {
+        "Type": "401K",
+        "Balance": 5000,
+    }
+    config_IRA = {
+        "Type": "IRA",
+        "Balance": 5000,
+    }
+
+    account_401k = Account(config_401K)
+    account_ira = Account(config_IRA)
+
+    assert account_401k.is_taxable_deferred() is True
+    assert account_ira.is_taxable_deferred() is True
+
+
+def test_is_tax_free():
+    config_hsa = {
+        "Type": "HSA",
+        "Balance": 5000,
+    }
+    config_roth = {
+        "Type": "HSA",
+        "Balance": 5000,
+    }
+
+    account_hsa = Account(config_hsa)
+    account_roth = Account(config_roth)
+
+    assert account_hsa.is_taxable_free() is True
+    assert account_roth.is_taxable_free() is True
