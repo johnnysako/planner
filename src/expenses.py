@@ -42,8 +42,9 @@ def generate_expense_over_time(expenses, start_year, years_to_process):
     return data
 
 
-def plot_expenses_summary(data):
-    fig, ax = plt.subplots(figsize=(11, 8.5))
+def plot_expenses_summary(data, canvas):
+    canvas.figure.clear()
+    ax = canvas.figure.subplots()
 
     data.plot.bar(x='Year', stacked=True, ax=ax)
 
@@ -53,4 +54,4 @@ def plot_expenses_summary(data):
     ax.set_title('Expenses over Time')
     ax.legend(prop={'size': 6})
 
-    return FigureCanvasQTAgg(fig)
+    canvas.draw()

@@ -13,7 +13,8 @@ from src.plot_monte_carlos import process_average
 from src.plot_monte_carlos import plot_gains_losses
 from src.plot_monte_carlos import plot_single
 from src.plot_monte_carlos import average_tax_data
-from src.draw_table import get_data_table_canvas
+from src.plot_monte_carlos import summarize_tax_data
+from src.draw_table import draw_as_table
 from src.expenses import generate_expense_over_time
 from src.expenses import plot_expenses_summary
 
@@ -25,11 +26,6 @@ class ExploreResults(QWidget):
         self.results = results
         self.path = path
         self.main_window = main_window
-
-        for trial_data in self.results['trials_data']:
-            average_tax_data(trial_data['sorted_data'],
-                             self.results['owners'],
-                             self.results['account_base'])
         self.init_ui()
 
     def init_ui(self):
@@ -77,15 +73,19 @@ class ExploreResults(QWidget):
         self.mc_plot_stacked_widget = QStackedWidget()
         self.gain_loss_chart = QStackedWidget()
         self.mc_summary_stacked_widget = QStackedWidget()
+        self.average_tax = QStackedWidget()
         self.result_graph = QStackedWidget()
+        self.expense = QStackedWidget()
 
         for trial_data in self.results['trials_data']:
             self.add_mc_plot_widget(trial_data)
             self.add_gain_loss_widget(trial_data)
             self.add_mc_summary_widget(trial_data)
+            self.create_tax_summary(trial_data)
 
         self.add_single_plot()
         self.add_single_rates()
+        self.add_single_tax()
 
     def add_mc_plot_widget(self, trial_data):
         monte_carlos_figure = Figure()
@@ -114,6 +114,27 @@ class ExploreResults(QWidget):
         gain_loss_layout.addWidget(canvas)
         gain_loss_widget.setLayout(gain_loss_layout)
         self.gain_loss_chart.addWidget(gain_loss_widget)
+
+    def update_single_tax(self, trial, index):
+        summary = summarize_tax_data(self.results['trials_data'][trial]
+                                     ['sorted_data'][index],
+                                     self.results['owners'],
+                                     self.results['account_base'])
+
+        labels = summary['Year'].values.astype(int)
+        summary.drop('Year', axis=1, inplace=True)
+        summary.update(summary[['Taxable', 'Tax Deferred', 'Tax Sheltered',
+                                'Total']].astype(float))
+        summary.update(summary[['Taxable', 'Tax Deferred', 'Tax Sheltered',
+                                'Total']].applymap('${:,.0f}'.format))
+
+        draw_as_table(summary, "Tax Breakdown Summary", labels,
+                      self.single_tax_canvas)
+
+    def add_single_tax(self):
+        single_tax_figure = Figure()
+        self.single_tax_canvas = FigureCanvas(single_tax_figure)
+        self.update_single_tax(0, 0)
 
     def update_single_plot(self, trial, index):
         plot_single(self.results['trials_data'][trial]['sorted_data'][index],
@@ -150,15 +171,45 @@ class ExploreResults(QWidget):
         self.single_gain_loss_chart.setLayout(single_gain_loss_layout)
 
     def add_mc_summary_widget(self, trial_data):
+        mc_summary = Figure()
+        self.mc_summary_canvas = FigureCanvas(mc_summary)
         summary, labels = summarize_data(trial_data['sorted_data'])
-        canvas = get_data_table_canvas(summary, "Monte Carlos Summary", labels)
-        self.mc_summary_stacked_widget.addWidget(canvas)
+        draw_as_table(summary, "Monte Carlos Summary",
+                      labels, self.mc_summary_canvas)
+        self.mc_summary_stacked_widget.addWidget(self.mc_summary_canvas)
 
     def create_expense_summary(self):
+        expense_summary = Figure()
+        expense_summary_b = Figure()
+        self.expense_summary = FigureCanvas(expense_summary)
+        self.expense_summary_b = FigureCanvas(expense_summary_b)
         data = generate_expense_over_time(self.results['expenses'],
                                           self.results['start_year'],
                                           self.results['years_to_process'])
-        self.expense_summary = plot_expenses_summary(data)
+        plot_expenses_summary(data, self.expense_summary)
+        plot_expenses_summary(data, self.expense_summary_b)
+
+    def create_tax_summary(self, trial_data):
+        mc_tax_summary = Figure()
+        self.mc_tax_summary_canvas = FigureCanvas(mc_tax_summary)
+
+        summary = average_tax_data(trial_data['sorted_data'],
+                                   self.results['owners'],
+                                   self.results['account_base'])
+
+        labels = summary['Year'].values.astype(int)
+        summary.drop('Year', axis=1, inplace=True)
+        summary.update(summary[['Taxable',
+                                'Tax Deferred',
+                                'Tax Sheltered',
+                                'Total']].astype(float))
+        summary.update(summary[['Taxable',
+                                'Tax Deferred',
+                                'Tax Sheltered',
+                                'Total']].applymap('${:,.0f}'.format))
+        draw_as_table(summary, "Tax Breakdown Summary",
+                      labels, self.mc_tax_summary_canvas)
+        self.average_tax.addWidget(self.mc_tax_summary_canvas)
 
     def create_layout(self):
         graph_expense_rates = QVBoxLayout()
@@ -174,9 +225,22 @@ class ExploreResults(QWidget):
         self.result_graph.widget(0).setLayout(graph_expense_rates)
         self.result_graph.widget(1).setLayout(single_graph_run)
 
+        graph_expense_tax = QVBoxLayout()
+        graph_expense_tax.addWidget(self.expense_summary, 4)
+        graph_expense_tax.addWidget(self.average_tax, 2)
+
+        single_expense_tax = QVBoxLayout()
+        single_expense_tax.addWidget(self.expense_summary_b, 4)
+        single_expense_tax.addWidget(self.single_tax_canvas, 2)
+
+        self.expense.addWidget(QWidget())
+        self.expense.addWidget(QWidget())
+        self.expense.widget(0).setLayout(graph_expense_tax)
+        self.expense.widget(1).setLayout(single_expense_tax)
+
         graph_layout = QHBoxLayout()
         graph_layout.addWidget(self.result_graph, 2)
-        graph_layout.addWidget(self.expense_summary, 2)
+        graph_layout.addWidget(self.expense, 2)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.combo_box)
@@ -194,6 +258,7 @@ class ExploreResults(QWidget):
         self.mc_summary_stacked_widget.setCurrentIndex(index)
         self.mc_plot_stacked_widget.setCurrentIndex(index)
         self.gain_loss_chart.setCurrentIndex(index)
+        self.average_tax.setCurrentIndex(index)
         self.index_changed()
 
     def save_pdf(self):
@@ -214,6 +279,8 @@ class ExploreResults(QWidget):
         self.index_select.setEnabled(not self.average_button.isChecked())
         self.result_graph.setCurrentIndex(
             int(not self.average_button.isChecked()))
+        self.expense.setCurrentIndex(
+            int(not self.average_button.isChecked()))
         self.index_changed()
 
     def index_changed(self):
@@ -221,3 +288,5 @@ class ExploreResults(QWidget):
                                 self.index_select.value())
         self.update_rates(self.combo_box.currentIndex(),
                           self.index_select.value())
+        self.update_single_tax(self.combo_box.currentIndex(),
+                               self.index_select.value())

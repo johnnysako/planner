@@ -2,11 +2,12 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 
 
-def _draw_as_table(df, title, pagesize, rowlabels, scale=False):
+def draw_as_table(df, title, rowlabels, canvas):
+    canvas.figure.clear()
     alternating_colors = [
         ['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
     alternating_colors = alternating_colors[:len(df)]
-    fig, ax = plt.subplots(figsize=pagesize)
+    ax = canvas.figure.subplots()
     ax.axis('off')
     ax.set_title(title)
     the_table = ax.table(cellText=df.values,
@@ -19,17 +20,8 @@ def _draw_as_table(df, title, pagesize, rowlabels, scale=False):
                          loc='center')
     the_table.auto_set_font_size(False)
     the_table.set_fontsize(6)
-    if scale:
-        the_table.scale(1.2, 2.5)
 
-    return fig
-
-
-def get_data_table_canvas(data, title, rowlabels):
-    fig = _draw_as_table(data, title, (11, 8.5), rowlabels, True)
-    canvas = FigureCanvasQTAgg(fig)
-    plt.close(fig)
-    return canvas
+    canvas.draw()
 
 
 def plot_data_table(data, pdf, rowlabels, title,
@@ -37,6 +29,8 @@ def plot_data_table(data, pdf, rowlabels, title,
     nh, nv = numpages
     rows_per_page = len(data) // nh
     cols_per_page = len(data.columns) // nv + 1
+    fig, _ = plt.subplots(figsize=pagesize)
+    canvas = FigureCanvasQTAgg(fig)
     for i in range(0, nh):
         for j in range(0, nv):
             pagelabels = rowlabels[(i*rows_per_page):min(
@@ -45,7 +39,7 @@ def plot_data_table(data, pdf, rowlabels, title,
                              len(data)),
                              (j*cols_per_page):min((j+1)*cols_per_page,
                              len(data.columns))]
-            fig = _draw_as_table(page, title, pagesize, pagelabels)
-            current_figure = plt.gcf().number
-            pdf.savefig(fig, bbox_inches='tight')
-            plt.close(current_figure)
+            draw_as_table(page, title, pagelabels, canvas)
+            pdf.savefig(canvas.figure, bbox_inches='tight')
+
+    plt.close(canvas.figure)

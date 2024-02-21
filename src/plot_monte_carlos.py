@@ -78,20 +78,21 @@ def summarize_tax_data(data, owners, accounts):
 
     summary = pd.concat(summary_list, ignore_index=True)
     summary = summary.round(2)
+
     return summary
 
 
 def average_tax_data(data_for_analysis, owners, accounts):
-    data = []
+    summaries = []
 
     for df in data_for_analysis:
-        data.append(summarize_tax_data(df, owners, accounts))
+        summary = summarize_tax_data(df, owners, accounts)
+        summaries.append(summary)
 
-    concatenated_data = pd.concat(data, ignore_index=True)
+    concatenated_summaries = pd.concat(summaries, ignore_index=True)
 
-    averaged_data = concatenated_data.groupby('Year').mean().reset_index()
+    averaged_data = concatenated_summaries.groupby('Year').mean().reset_index()
     averaged_data = averaged_data.round(2)
-    print(averaged_data)
 
     return averaged_data
 
