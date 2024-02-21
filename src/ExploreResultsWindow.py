@@ -29,14 +29,23 @@ class ExploreResults(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        self.create_canvas()
         self.create_buttons()
-        self.draw_initial_canvas()
         self.create_combobox()
-        self.create_expense_summary()
         self.create_layout()
 
         self.setWindowTitle('Explore Data')
         self.showMaximized()
+
+        self.create_expense_summary()
+        self.index_changed()
+
+    def create_canvas(self):
+        self.monte_carlos_canvas = FigureCanvas(Figure())
+        self.gain_loss_canvas = FigureCanvas(Figure())
+        self.expense_summary = FigureCanvas(Figure())
+        self.tax_canvas = FigureCanvas(Figure())
+        self.mc_summary_canvas = FigureCanvas(Figure())
 
     def create_buttons(self):
         self.save_pdf_button = QPushButton('Save Result PDF', self)
@@ -68,19 +77,6 @@ class ExploreResults(QWidget):
                 trial_desc = 'Bad Timing'
             if trial_desc:
                 self.combo_box.addItem(trial_desc)
-
-    def draw_initial_canvas(self):
-        self.monte_carlos_canvas = FigureCanvas(Figure())
-        self.update_mc_plot_canvas(self.results['trials_data'][0])
-
-        self.gain_loss_canvas = FigureCanvas(Figure())
-        self.update_gain_loss_canvas(self.results['trials_data'][0])
-
-        self.mc_summary_canvas = FigureCanvas(Figure())
-        self.update_mc_summary(self.results['trials_data'][0])
-
-        self.tax_canvas = FigureCanvas(Figure())
-        self.update_tax_canvas(self.results['trials_data'][0])
 
     def update_mc_plot_canvas(self, trial_data):
         plot_monte_carlos(trial_data['sorted_data'],
@@ -152,7 +148,6 @@ class ExploreResults(QWidget):
                       labels, self.mc_summary_canvas)
 
     def create_expense_summary(self):
-        self.expense_summary = FigureCanvas(Figure())
         data = generate_expense_over_time(self.results['expenses'],
                                           self.results['start_year'],
                                           self.results['years_to_process'])
@@ -181,9 +176,6 @@ class ExploreResults(QWidget):
         main_layout.addLayout(graph_layout, 3)
         main_layout.addWidget(self.mc_summary_canvas, 1)
         main_layout.addLayout(button_layout)
-
-        self.index_changed()
-        self.index_changed()
 
     def save_pdf(self):
         options = QFileDialog.Options()
