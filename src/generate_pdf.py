@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import pandas as pd
 
 import datetime
@@ -14,11 +15,15 @@ from src.account import Account
 
 
 def plot_expense_table(expenses, start_year, years_to_process, pdf):
+    plt.clf()
+    fig, _ = plt.subplots(figsize=(11, 8.5))
+    canvas = FigureCanvasQTAgg(fig)
+
     data = generate_expense_over_time(expenses, start_year, years_to_process)
-    plot_expenses_summary(data)
-    current_figure = plt.gcf().number
-    pdf.savefig()
-    plt.close(current_figure)
+    plot_expenses_summary(data, canvas)
+
+    pdf.savefig(canvas.figure, orientation='landscape')
+    plt.close(canvas.figure)
 
     labels = data['Year'].values.astype(int)
     data.drop('Year', axis=1, inplace=True)
