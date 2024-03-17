@@ -17,6 +17,9 @@ class Owner:
     def get_life(self):
         return self.config["Life Expectancy"]
 
+    def get_tax_status(self):
+        return self.config["Tax Status"]
+
     def years_to_live(self, current_year):
         return self.config["Life Expectancy"] - self.get_age(current_year) + 1
 

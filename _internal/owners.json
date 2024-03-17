@@ -7,7 +7,8 @@
       "Retirement Age": 70,
       "Pre-retirement Take Home Pay": 60000,
       "Social Security": 20000,
-      "Age Starts Social Security": 70
+      "Age Starts Social Security": 70,
+      "Tax Status": "married joint"
     },
     {
       "Name": "Jack Joe",
@@ -16,7 +17,8 @@
       "Retirement Age": 68,
       "Pre-retirement Take Home Pay": 35000,
       "Social Security": 15000,
-      "Age Starts Social Security": 70
+      "Age Starts Social Security": 70,
+      "Tax Status": "married joint"
     }
   ]
 }

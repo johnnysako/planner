@@ -1,39 +1,116 @@
-{
-    "tax": [
-        {
-            "max_tax_previous": 0,
-            "rate": 10,
-            "cutoff": 23200
-        },
-        {
-            "max_tax_previous": 2320,
-            "rate": 12,
-            "cutoff": 94300
-        },
-        {
-            "max_tax_previous": 10852,
-            "rate": 22,
-            "cutoff": 201050
-        },
-        {
-            "max_tax_previous": 34337,
-            "rate": 24,
-            "cutoff": 383900 
-        },
-        {
-            "max_tax_previous": 78221,
-            "rate": 32,
-            "cutoff": 487450
-        },
-        {
-            "max_tax_previous": 111357,
-            "rate": 35,
-            "cutoff": 731200
-        },
-        {
-            "max_tax_previous": 196669.5,
-            "rate": 37,
-            "cutoff": null
-        }
-    ]
+{   
+    "tax": 
+    {
+        "married joint": [
+            {
+                "max_tax_previous": 0,
+                "rate": 10,
+                "cutoff": 23200
+            },
+            {
+                "max_tax_previous": 2320,
+                "rate": 12,
+                "cutoff": 94300
+            },
+            {
+                "max_tax_previous": 10852,
+                "rate": 22,
+                "cutoff": 201050
+            },
+            {
+                "max_tax_previous": 34337,
+                "rate": 24,
+                "cutoff": 383900 
+            },
+            {
+                "max_tax_previous": 78221,
+                "rate": 32,
+                "cutoff": 487450
+            },
+            {
+                "max_tax_previous": 111357,
+                "rate": 35,
+                "cutoff": 731200
+            },
+            {
+                "max_tax_previous": 196669.5,
+                "rate": 37,
+                "cutoff": null
+            }
+        ],
+        "single": [
+            {
+                "max_tax_previous": 0,
+                "rate": 10,
+                "cutoff": 11600
+            },
+            {
+                "max_tax_previous": 1160,
+                "rate": 12,
+                "cutoff": 45200
+            },
+            {
+                "max_tax_previous": 5376,
+                "rate": 22,
+                "cutoff": 90400
+            },
+            {
+                "max_tax_previous": 19571,
+                "rate": 24,
+                "cutoff": 219950
+            },
+            {
+                "max_tax_previous": 47367,
+                "rate": 32,
+                "cutoff": 523600
+            },
+            {
+                "max_tax_previous": 83769.5,
+                "rate": 35,
+                "cutoff": 617900
+            },
+            {
+                "max_tax_previous": 163171.5,
+                "rate": 37,
+                "cutoff": null
+            }
+        ],
+        "married separate": [
+            {
+                "max_tax_previous": 0,
+                "rate": 10,
+                "cutoff": 11600
+            },
+            {
+                "max_tax_previous": 1160,
+                "rate": 12,
+                "cutoff": 47150
+            },
+            {
+                "max_tax_previous": 5376,
+                "rate": 22,
+                "cutoff": 95250
+            },
+            {
+                "max_tax_previous": 19571,
+                "rate": 24,
+                "cutoff": 164925
+            },
+            {
+                "max_tax_previous": 47367,
+                "rate": 32,
+                "cutoff": 261800
+            },
+            {
+                "max_tax_previous": 83769.5,
+                "rate": 35,
+                "cutoff": 308950
+            },
+            {
+                "max_tax_previous": 163171.5,
+                "rate": 37,
+                "cutoff": null
+            }
+        ]        
+    }
 }

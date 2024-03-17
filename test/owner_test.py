@@ -144,3 +144,13 @@ def test_get_year_dies():
     owner = Owner(config)
 
     assert owner.dies_in() == 2066
+
+
+def test_get_tax_status():
+    config = {
+        "Tax Status": "single"
+    }
+
+    owner = Owner(config)
+
+    assert owner.get_tax_status() == "single"

@@ -55,7 +55,9 @@ class Plan:
             if account.is_taxable() and growth > 0:
                 taxable_growth += round(growth, 2)
         if self._all_owners_retired(year):
-            return round(self.tax.calculate(taxable_growth + rmd), 2)
+            return round(self.tax.calculate(taxable_growth + rmd,
+                                            self.owners[0].get_tax_status()),
+                         2)
         else:
             return 0
 

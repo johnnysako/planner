@@ -153,5 +153,4 @@ include_tables = False
 ```
 
 ## To Do List
-- [ ] Add different filing status and tax tables (married file joint, married, file single, single)
-- [ ] Add a report table that shows assets by category (taxable, tax deferred, tax free) at: Current, Retirement of owners, death of owners 
+- [ ] ...

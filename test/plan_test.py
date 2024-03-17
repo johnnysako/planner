@@ -6,13 +6,13 @@ from src.expenses import Expenses
 from src.rmd import Rmd
 from src.tax import Tax
 
-empty_tax = [
-    {
+empty_tax = {
+    "single": [{
         "max_tax_previous": 0,
         "rate": 0,
-        "cutoff": 22000
-    }
-]
+        "cutoff": None
+    }]
+}
 no_tax = Tax(empty_tax)
 
 rates = {"s": [6, 6, 6], "b": [3, 3, 3]}
@@ -301,7 +301,8 @@ def test_expenses_can_be_empty():
     }))
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
-    plan = Plan(2022, owners, accounts, empty_expenses, rmd, no_tax, default_trial)
+    plan = Plan(2022, owners, accounts, empty_expenses, rmd, no_tax,
+                default_trial)
     assert plan.process_plan(0, rates) == \
         [[2022, 6, 3, 3000, 0, 0, 0.0, 3000.0, 7000.0, 10000, 0.0, 17000.0]]
 
@@ -325,7 +326,8 @@ def test_account_growth_only_interest_when_owner_retired():
         "Pre-retirement Take Home Pay": 1000,
         "Retirement Age": 65,
         "Social Security": 5678,
-        "Age Starts Social Security": 70
+        "Age Starts Social Security": 70,
+        "Tax Status": "single"
     }))
     empty_expense_table = []
     empty_expenses = Expenses(empty_expense_table)
@@ -871,7 +873,8 @@ def test_pulls_rmd_can_cover_expense_and_tax():
         "Pre-retirement Take Home Pay": 0,
         "Retirement Age": 65,
         "Social Security": 5678,
-        "Age Starts Social Security": 70
+        "Age Starts Social Security": 70,
+        "Tax Status": "single"
     }))
 
     rmd_table = [
@@ -882,13 +885,13 @@ def test_pulls_rmd_can_cover_expense_and_tax():
     ]
     rmd = Rmd(rmd_table)
 
-    tax_table = [
-        {
+    tax_table = {
+        "single": [{
             "max_tax_previous": 0,
             "rate": 10,
             "cutoff": 100000
-        }
-    ]
+        }]
+    }
     tax = Tax(tax_table)
 
     expense_table = []
@@ -931,7 +934,8 @@ def test_does_not_include_social_security_when_config():
         "Pre-retirement Take Home Pay": 0,
         "Retirement Age": 65,
         "Social Security": 5678,
-        "Age Starts Social Security": 65
+        "Age Starts Social Security": 65,
+        "Tax Status": "single"
     }))
 
     rmd_table = [
@@ -942,13 +946,13 @@ def test_does_not_include_social_security_when_config():
     ]
     rmd = Rmd(rmd_table)
 
-    tax_table = [
-        {
+    tax_table = {
+        "single": [{
             "max_tax_previous": 0,
             "rate": 10,
             "cutoff": 100000
-        }
-    ]
+        }]
+    }
     tax = Tax(tax_table)
 
     expense_table = []
@@ -985,7 +989,8 @@ def test_roth_has_rmd_when_config():
         "Pre-retirement Take Home Pay": 0,
         "Retirement Age": 65,
         "Social Security": 5678,
-        "Age Starts Social Security": 65
+        "Age Starts Social Security": 65,
+        "Tax Status": "single"
     }))
 
     rmd_table = [
@@ -996,13 +1001,13 @@ def test_roth_has_rmd_when_config():
     ]
     rmd = Rmd(rmd_table)
 
-    tax_table = [
-        {
+    tax_table = {
+        "single": [{
             "max_tax_previous": 0,
             "rate": 10,
             "cutoff": 100000
-        }
-    ]
+        }]
+    }
     tax = Tax(tax_table)
 
     expense_table = []

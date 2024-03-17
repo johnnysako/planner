@@ -1,97 +1,47 @@
 from src.tax import Tax
+import pytest
 
 
-def test_can_initialize_tax():
-    config = [
-        {
-            "max_tax_previous": 0,
-            "rate": 10,
-            "cutoff": 10000
-        }
-    ]
-
-    tax = Tax(config)
-    assert tax.calculate(1000) == 100
-
-
-def test_can_calculate_with_different_rate():
-    config = [
-        {
-            "max_tax_previous": 0,
-            "rate": 5,
-            "cutoff": 10000
-        }
-    ]
-
-    tax = Tax(config)
-    assert tax.calculate(1000) == 50
+@pytest.fixture
+def tax_instance():
+    config = {
+        "married joint": [
+            {"max_tax_previous": 0, "rate": 10, "cutoff": 23200},
+            {"max_tax_previous": 2320, "rate": 12, "cutoff": 94300}
+        ],
+        "single": [
+            {"max_tax_previous": 0, "rate": 10, "cutoff": 11600},
+            {"max_tax_previous": 1160, "rate": 12, "cutoff": 45200}
+        ],
+        "married separate": [
+            {"max_tax_previous": 0, "rate": 10, "cutoff": 11600},
+            {"max_tax_previous": 1160, "rate": 12, "cutoff": 47150},
+            {"max_tax_previous": 5376, "rate": 22, "cutoff": 95250},
+            {"max_tax_previous": 19571, "rate": 24, "cutoff": None}
+        ]
+    }
+    return Tax(config)
 
 
-def test_no_cutoff():
-    config = [
-        {
-            "max_tax_previous": 0,
-            "rate": 12,
-            "cutoff": None
-        }
-    ]
-
-    tax = Tax(config)
-    assert tax.calculate(1000) == 120
+def test_single_filing_status(tax_instance):
+    income = 30000
+    expected_tax = 12/100 * (income - 11600) + 1160
+    assert tax_instance.calculate(income, "single") == expected_tax
 
 
-def test_adds_previous():
-    config = [
-        {
-            "max_tax_previous": 10000,
-            "rate": 7,
-            "cutoff": None
-        }
-    ]
-
-    tax = Tax(config)
-    assert tax.calculate(100000) == 17000
+def test_married_joint_filing_status(tax_instance):
+    income = 80000
+    expected_tax = 12/100 * (income - 23200) + 2320
+    assert tax_instance.calculate(income, "married joint") == expected_tax
 
 
-def test_works_with_two_tiers():
-    config = [
-        {
-            "max_tax_previous": 0,
-            "rate": 10,
-            "cutoff": 10000
-        },
-        {
-            "max_tax_previous": 1000,
-            "rate": 12,
-            "cutoff": None
-        }
-    ]
-
-    tax = Tax(config)
-    assert tax.calculate(7000) == 700
-    assert tax.calculate(11000) == 1120
+def test_married_separate_filing_status(tax_instance):
+    income = 100000
+    expected_tax = 24/100 * (income - 95250) + 19571
+    assert tax_instance.calculate(income, "married separate") == expected_tax
 
 
-def test_works_with_three_tiers():
-    config = [
-        {
-            "max_tax_previous": 0,
-            "rate": 10,
-            "cutoff": 22000
-        },
-        {
-            "max_tax_previous": 2200,
-            "rate": 12,
-            "cutoff": 89450
-        },
-        {
-            "max_tax_previous": 10294,
-            "rate": 22,
-            "cutoff": None
-        }
-    ]
-
-    tax = Tax(config)
-    assert tax.calculate(7000) == 700
-    assert tax.calculate(23000) == 2320
-    assert tax.calculate(90000) == 10415
+def test_invalid_filing_status(tax_instance):
+    income = 50000
+    with pytest.raises(ValueError):
+        tax_instance.calculate(income, "invalid")
