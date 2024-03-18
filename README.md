@@ -111,7 +111,8 @@ This program also has two files included as "adjustable" in the event that the g
             "Retirement Age": 70,
             "Pre-retirement Take Home Pay": 90000,
             "Social Security": 20000,
-            "Age Starts Social Security": 70
+            "Age Starts Social Security": 70,
+            "Tax Status": "married joint"
         },
         {
             "Name": "Jack Joe",
@@ -120,7 +121,8 @@ This program also has two files included as "adjustable" in the event that the g
             "Retirement Age": 68,
             "Pre-retirement Take Home Pay": 50000,
             "Social Security": 15000,
-            "Age Starts Social Security": 70
+            "Age Starts Social Security": 70,
+            "Tax Status": "married joint"
         }
     ]
 }
@@ -132,6 +134,7 @@ This program also has two files included as "adjustable" in the event that the g
 - `"Pre-retirement Take Home Pay"`: What is the income while working?
 - `"Social Security"`: What social security is expected?
 - `"Age Starts Social Security"`: What year will this person start to pull social security?
+- `"Tax Status"`: Can be `married joint`, `single`, or `married separate` - first owner used when multiple owners
 
 ## Usage
 This has been developed with unit tests for some aspects. From the root directory run `pytest` and the unit tests will run:
@@ -153,4 +156,5 @@ include_tables = False
 ```
 
 ## To Do List
-- [ ] ...
+- [ ] Ensure married filing separate is handled correctly.
+- [ ] Look into SS income and how it is taxed. I believe only 85% is taxed but I am taxing all. More rules... https://www.investopedia.com/ask/answers/013015/how-can-i-avoid-paying-taxes-my-social-security-income.asp
