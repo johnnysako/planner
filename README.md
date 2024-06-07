@@ -158,3 +158,4 @@ include_tables = False
 ## To Do List
 - [ ] Ensure married filing separate is handled correctly.
 - [ ] Look into SS income and how it is taxed. I believe only 85% is taxed but I am taxing all. More rules... https://www.investopedia.com/ask/answers/013015/how-can-i-avoid-paying-taxes-my-social-security-income.asp
+- [ ] Trial of Roth conversions. Idea being when "retired" and income is low, convert from IRA to Roth IRA up to a designated tax bracket. Must have 2 accounts (IRA and Roth) in the owner's name. Will convert from first found IRA to first found Roth until account is closed and up to tax bracket.

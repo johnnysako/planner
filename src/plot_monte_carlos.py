@@ -100,40 +100,55 @@ def average_tax_data(data_for_analysis, owners, accounts):
 def summarize_data(data_for_analysis):
     data = []
     iterations = len(data_for_analysis)
-    range = [int(iterations/100), int(iterations/4), int(iterations/2),
-             int(iterations*3/4), int(iterations*99/100)]
+    ranges = [int(iterations/100), int(iterations/4), int(iterations/2),
+              int(iterations*3/4), int(iterations*99/100)]
 
-    for i in range:
+    for i in ranges:
+        years_available = len(data_for_analysis[i]['Sum of Accounts'])
+        if years_available < 25:
+            # Calculate the interval to get 5 evenly spaced columns
+            interval = max(1, years_available // 5)
+            years_to_include = [interval * j for j in range(5)]
+        else:
+            years_to_include = [5, 10, 15, 20, 25]
+
+        # Adjust years to ensure they don't exceed the available years
+        years_to_include = [min(y, years_available - 1)
+                            for y in years_to_include]
+
         fails_in_year = ""
         if data_for_analysis[i].iloc[-1]['Sum of Accounts'] == 0:
             fails_in_year = '{:.0f}'.format(data_for_analysis[i]['Year'].where(
                 data_for_analysis[i]['Sum of Accounts'] == 0).min())
-        data.append([i,
-                     data_for_analysis[i]['Sum of Accounts'][5],
-                     data_for_analysis[i]['Sum of Accounts'][10],
-                     data_for_analysis[i]['Sum of Accounts'][15],
-                     data_for_analysis[i]['Sum of Accounts'][20],
-                     data_for_analysis[i]['Sum of Accounts'][25],
-                     data_for_analysis[i].iloc[-1]['Sum of Accounts'],
-                     data_for_analysis[i]['% Withdrawn'].mean(),
-                     data_for_analysis[i]['Stock Returns'].mean(),
-                     data_for_analysis[i]['Bond Returns'].mean(),
-                     fails_in_year])
+
+        row_data = [i]
+        for y in years_to_include:
+            try:
+                row_data.append(data_for_analysis[i]['Sum of Accounts'][y])
+            except IndexError:
+                row_data.append(np.nan)
+
+        # Append the remaining required data
+        row_data.append(data_for_analysis[i].iloc[-1]['Sum of Accounts'])
+        row_data.append(data_for_analysis[i]['% Withdrawn'].mean())
+        row_data.append(data_for_analysis[i]['Stock Returns'].mean())
+        row_data.append(data_for_analysis[i]['Bond Returns'].mean())
+        row_data.append(fails_in_year)
+
+        data.append(row_data)
 
     summary = pd.DataFrame(np.array(data), columns=[
-                           'Trial', 'Year 5', 'Year 10', 'Year 15',
-                           'Year 20', 'Year 25', 'End of Plan',
-                           'Average Withdrawn', 'Stock Returns',
-                           'Bond Returns', 'Money to $0'])
+        'Trial', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5',
+        'End of Plan', 'Average Withdrawn', 'Stock Returns',
+        'Bond Returns', 'Money to $0'])
 
     labels = summary['Trial'].values.astype(int)
     summary.drop('Trial', axis=1, inplace=True)
-    summary.update(summary[['Year 5', 'Year 10', 'Year 15',
-                   'Year 20', 'Year 25', 'Average Withdrawn',
-                            'Stock Returns', 'Bond Returns',
-                            'End of Plan']].astype(float))
-    summary.update(summary[['Year 5', 'Year 10', 'Year 15', 'Year 20',
-                   'Year 25', 'End of Plan']].applymap('${:,.0f}'.format))
+    summary.update(summary[['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5',
+                            'Average Withdrawn', 'Stock Returns',
+                            'Bond Returns', 'End of Plan']].astype(float))
+    summary.update(summary[['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5',
+                            'End of Plan']].applymap('${:,.0f}'.format))
     summary.update(
         summary[['Average Withdrawn', 'Stock Returns', 'Bond Returns']]
         .applymap('{:.2f}%'.format))
