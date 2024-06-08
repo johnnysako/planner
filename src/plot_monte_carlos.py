@@ -112,7 +112,6 @@ def summarize_data(data_for_analysis):
         else:
             years_to_include = [5, 10, 15, 20, 25]
 
-        # Adjust years to ensure they don't exceed the available years
         years_to_include = [min(y, years_available - 1)
                             for y in years_to_include]
 
@@ -137,18 +136,19 @@ def summarize_data(data_for_analysis):
 
         data.append(row_data)
 
-    summary = pd.DataFrame(np.array(data), columns=[
-        'Trial', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5',
-        'End of Plan', 'Average Withdrawn', 'Stock Returns',
-        'Bond Returns', 'Money to $0'])
+    column_labels = ['Trial'] + [f'Year {y}' for y in years_to_include] + [
+        'End of Plan', 'Average Withdrawn', 'Stock Returns', 'Bond Returns',
+        'Money to $0']
+
+    summary = pd.DataFrame(np.array(data), columns=column_labels)
 
     labels = summary['Trial'].values.astype(int)
     summary.drop('Trial', axis=1, inplace=True)
-    summary.update(summary[['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5',
-                            'Average Withdrawn', 'Stock Returns',
+    summary.update(summary[[f'Year {y}' for y in years_to_include] +
+                           ['Average Withdrawn', 'Stock Returns',
                             'Bond Returns', 'End of Plan']].astype(float))
-    summary.update(summary[['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5',
-                            'End of Plan']].applymap('${:,.0f}'.format))
+    summary.update(summary[[f'Year {y}' for y in years_to_include] +
+                           ['End of Plan']].applymap('${:,.0f}'.format))
     summary.update(
         summary[['Average Withdrawn', 'Stock Returns', 'Bond Returns']]
         .applymap('{:.2f}%'.format))
