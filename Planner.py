@@ -37,7 +37,6 @@ def convert_numeric_strings_to_numbers(data):
     return data
 
 
-
 class MainWindow(QMainWindow):
     def load_json(self, path, file_name, field):
         try:
