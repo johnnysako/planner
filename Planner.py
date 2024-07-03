@@ -13,28 +13,13 @@ from src.expense import Expense
 from src.account import Account
 from src.JsonTableWindow import JsonTableWindow
 from src.ExploreResultsWindow import ExploreResults
+from src.clean_string import convert_numeric_strings_to_numbers
 import PyFinancialPlanner as plan
 
 import matplotlib
 matplotlib.use('Qt5Agg')
 
 basedir = os.path.dirname(__file__)
-
-
-def convert_numeric_strings_to_numbers(data):
-    if isinstance(data, dict):
-        for key, value in data.items():
-            data[key] = convert_numeric_strings_to_numbers(value)
-    elif isinstance(data, list):
-        for i, item in enumerate(data):
-            data[i] = convert_numeric_strings_to_numbers(item)
-    elif isinstance(data, str):
-        cleaned_data = data.strip().replace("$", "").replace(",", "")
-        if cleaned_data.isdigit():
-            return int(cleaned_data)
-        elif cleaned_data.replace(".", "").isdigit():
-            return float(cleaned_data)
-    return data
 
 
 class MainWindow(QMainWindow):
