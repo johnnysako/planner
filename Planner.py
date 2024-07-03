@@ -29,13 +29,13 @@ def convert_numeric_strings_to_numbers(data):
         for i, item in enumerate(data):
             data[i] = convert_numeric_strings_to_numbers(item)
     elif isinstance(data, str):
-        # Remove commas and convert to numbers
-        cleaned_data = data.replace(",", "")
+        cleaned_data = data.strip().replace("$", "").replace(",", "")
         if cleaned_data.isdigit():
             return int(cleaned_data)
         elif cleaned_data.replace(".", "").isdigit():
             return float(cleaned_data)
     return data
+
 
 
 class MainWindow(QMainWindow):
