@@ -37,5 +37,5 @@ jobs:
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: dist/Planner
-        asset_name: Linux Installer
+        asset_name: Planner
         asset_content_type: application/octet-stream

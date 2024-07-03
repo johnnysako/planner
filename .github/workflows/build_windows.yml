@@ -35,6 +35,6 @@ jobs:
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: dist/Planner.exe
-        asset_name: Windows Installer
+        asset_name: Planner.exe
         asset_content_type: application/octet-stream
   
