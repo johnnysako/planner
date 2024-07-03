@@ -23,6 +23,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Build Installer
+      run: |
+        python -m pip install pyinstaller
+        pyinstaller --onefile Planner.py 
+        mkdir dist/_internal
+        cp _internal/* dist/_internal
+          
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
