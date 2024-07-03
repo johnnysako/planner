@@ -1,4 +1,4 @@
-from Planner import convert_numeric_strings_to_numbers
+from src.clean_string import convert_numeric_strings_to_numbers
 
 
 def test_string_integer_conversion():
