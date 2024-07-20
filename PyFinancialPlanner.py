@@ -7,7 +7,6 @@ from src.expenses import Expenses
 from src.expense import Expense
 from src.account import Account
 from src.owner import Owner
-from src.returns import generate_returns
 from src.generate_pdf import plot_pdf
 
 import sys
@@ -15,7 +14,6 @@ import os
 import json
 import numpy as np
 import pandas as pd
-import yfinance as yf
 
 import asyncio
 
@@ -23,7 +21,8 @@ basedir = os.path.dirname(__file__)
 
 start_year = 2024
 iterations = 1000
-iterations_per_thread = int(iterations/10)
+num_groups = 10
+iterations_per_thread = int(iterations/num_groups)
 
 
 def background(f):
@@ -93,6 +92,7 @@ def sort_data(data_for_analysis):
 
 @background
 def process_run(iteration,
+                loop,
                 rmd,
                 tax,
                 owners,
@@ -101,10 +101,19 @@ def process_run(iteration,
                 data_for_analysis,
                 years_to_process,
                 personal_path):
-    stock_rates = generate_returns(trial["dist"]["stocks"],
-                                   26, 9, years_to_process)*100
-    bond_rates = generate_returns(trial["dist"]["bonds"],
-                                  6, 2, years_to_process)*100
+
+    def load_returns(data, iteration, years_to_process):
+        rate_iteration = data[iteration]
+        return rate_iteration[:years_to_process]*100
+
+    full_iteration = loop*iterations_per_thread+iteration
+    stock_rates = load_returns(trial["dist"]["stocks"],
+                               full_iteration,
+                               years_to_process+1)
+
+    bond_rates = load_returns(trial["dist"]["bonds"],
+                              full_iteration,
+                              years_to_process+1)
 
     with open(os.path.join(personal_path, 'accounts.json')) as f:
         account_data = json.load(f).get("accounts", [])
@@ -119,93 +128,36 @@ def process_run(iteration,
     data_for_analysis.append(data)
 
 
-def run_monte_carlos(data_for_analysis,
-                     rmd,
-                     tax,
-                     owners,
-                     expenses,
-                     trial,
-                     years_to_process,
-                     personal_path):
-    loop = asyncio.get_event_loop()
+async def run_monte_carlos(data_for_analysis,
+                           rmd,
+                           tax,
+                           owners,
+                           expenses,
+                           trial,
+                           years_to_process,
+                           personal_path):
+    groups = [
+        asyncio.gather(
+            *[process_run(i, j, rmd, tax, owners, expenses, trial,
+                          data_for_analysis, years_to_process, personal_path)
+              for i in range(iterations_per_thread)]
+        )
+        for j in range(num_groups)
+    ]
 
-    group1 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group2 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group3 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group4 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group5 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group6 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group7 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group8 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group9 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                            expenses, trial, data_for_analysis,
-                            years_to_process, personal_path)
-                            for i in range(iterations_per_thread)])
-    group10 = asyncio.gather(*[process_run(i, rmd, tax, owners,
-                             expenses, trial, data_for_analysis,
-                             years_to_process, personal_path)
-                             for i in range(iterations_per_thread)])
-
-    all_groups = asyncio.gather(
-        group1, group2, group3, group4, group5,
-        group6, group7, group8, group9, group10)
-    loop.run_until_complete(all_groups)
+    await asyncio.gather(*groups)
 
 
-def load_stock_data():
-    # Define the S&P 500 symbol and time period for historical data
-    symbol = "^GSPC"
-    start_date = "1950-01-01"
-    end_date = "2021-12-31"
+def load_returns(stock_file, bond_file):
+    def load_all_returns(file):
+        with open(file, 'r') as f:
+            data = json.load(f)
+            return np.array(data)
 
-    # Download historical S&P 500 data using Yahoo Finance
-    data = yf.download(symbol, start=start_date, end=end_date)
+    stock_rates = load_all_returns(stock_file)
+    bond_rates = load_all_returns(bond_file)
 
-    # Calculate annual returns from historical data
-    stock_annual_returns = data['Adj Close'].resample(
-        'Y').ffill().pct_change().dropna()
-    sorted_stock_annual_returns = sorted(stock_annual_returns)
-
-    # Define the S&P 500 symbol and time period for historical data
-    symbol = "LQD"
-    start_date = "2002-07-29"
-    end_date = "2021-12-31"
-
-    # Download historical S&P 500 data using Yahoo Finance
-    data = yf.download(symbol, start=start_date, end=end_date)
-
-    # Calculate annual returns from historical data
-    bond_annual_returns = data['Adj Close'].resample(
-        'Y').ffill().pct_change().dropna()
-    sorted_bond_annual_returns = sorted(bond_annual_returns)
-
-    returns = {"stocks": sorted_stock_annual_returns,
-               "bonds": sorted_bond_annual_returns}
-
+    returns = {"stocks": stock_rates, "bonds": bond_rates}
     return returns
 
 
@@ -214,7 +166,10 @@ def run_trials(personal_path="", with_social=False,
     rmd, tax, owners, expenses, years_to_process, account_base = \
         load_constants(personal_path)
 
-    returns = load_stock_data()
+    stock_file = os.path.join('_internal', 'stock_returns.json')
+    bond_file = os.path.join('_internal', 'bond_returns.json')
+
+    returns = load_returns(stock_file, bond_file)
 
     trials = [
         {"Social Security": True, "rmd": False, "bad_timing": False,
@@ -237,9 +192,9 @@ def run_trials(personal_path="", with_social=False,
     for trial in trials:
         data_for_analysis = []
 
-        run_monte_carlos(data_for_analysis, rmd, tax, owners,
-                         expenses, trial, years_to_process,
-                         personal_path)
+        asyncio.run(run_monte_carlos(data_for_analysis, rmd, tax, owners,
+                                     expenses, trial, years_to_process,
+                                     personal_path))
 
         sorted_data, failed_plans = sort_data(data_for_analysis)
 
