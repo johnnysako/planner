@@ -17,13 +17,6 @@ class Expenses:
             expenses += expense.get_expense(year)
         return expenses
 
-    def get_needs(self, year):
-        expenses = 0
-        for expense in self.config:
-            if expense.is_need():
-                expenses += expense.get_expense(year)
-        return expenses
-
     def get_year(self, year):
         expenses = []
         for expense in self.config:

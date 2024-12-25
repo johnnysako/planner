@@ -193,6 +193,30 @@ def test_withdrawal_rmd_does_not_change_balance_for_hsa():
     assert account.get_balance() == 5000
 
 
+def test_withdrawal_rmd_for_401K():
+    config = {
+        "Type": "401K",
+        "Balance": 5000,
+        "Test as Tax Deferred": True
+    }
+
+    account = Account(config)
+    assert account.withdraw_rmd(10) == 500
+    assert account.get_balance() == 4500
+
+
+def test_withdrawal_rmd_for_IRA():
+    config = {
+        "Type": "IRA",
+        "Balance": 5000,
+        "Test as Tax Deferred": True
+    }
+
+    account = Account(config)
+    assert account.withdraw_rmd(10) == 500
+    assert account.get_balance() == 4500
+
+
 def test_is_taxable_roth_false():
     config = {
         "Type": "Roth",
@@ -253,6 +277,17 @@ def test_can_include_allocation():
     account = Account(config)
     assert account.get_allocation(2000, "stocks") == 50
     assert account.get_allocation(2000, "bonds") == 50
+
+
+def test_can_not_include_allocation():
+    config = {
+        "Type": "HSA",
+        "Balance": 5000,
+    }
+
+    account = Account(config)
+    assert account.get_allocation(2000, "stocks") == 100
+    assert account.get_allocation(2000, "bonds") == 0
 
 
 def test_allocation_must_total_100():
