@@ -35,7 +35,7 @@ def create_data_table(distribution, mean, std,
         json.dump(all_returns, f)
 
 
-def create_stock_returns():
+def create_stock_returns():  # pragma: no cover
     symbol = "^GSPC"
     start_date = "1950-01-01"
     end_date = "2021-12-31"
@@ -50,7 +50,7 @@ def create_stock_returns():
                       'stock_returns.json')
 
 
-def create_bond_returns():
+def create_bond_returns():  # pragma: no cover
     symbol = "LQD"
     start_date = "2002-07-29"
     end_date = "2021-12-31"
@@ -65,10 +65,10 @@ def create_bond_returns():
                       'bond_returns.json')
 
 
-def main():
+def main():  # pragma: no cover
     create_stock_returns()
     create_bond_returns()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
