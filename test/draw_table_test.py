@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 from src.draw_table import draw_as_table, plot_data_table
 
 
-def setup_mock_table(mock_table, nrows, ncols, row_color, col_color,
+def setup_mock_table(mock_table, num_rows, num_columns, row_color, col_color,
                      cell_colors):
     mock_table.get_celld = MagicMock(return_value={})
-    for row in range(nrows):
-        for col in range(ncols):
+    for row in range(num_rows):
+        for col in range(num_columns):
             cell_mock = MagicMock()
             if row == 0:
                 cell_mock.get_facecolor.return_value = col_color
@@ -41,18 +41,19 @@ def test_draw_as_table():
     assert canvas.draw.called
 
     the_table = ax.tables[0]
-    nrows, ncols = len(df) + 1, len(df.columns)
+    num_rows, num_columns = len(df) + 1, len(df.columns)
 
-    setup_mock_table(the_table, nrows, ncols, 'lightblue', 'lightblue', [
-        ['white', 'white'],
-        ['lightgray', 'lightgray'],
-        ['white', 'white'],
-    ])
+    setup_mock_table(the_table, num_rows, num_columns,
+                     'lightblue', 'lightblue', [
+                         ['white', 'white'],
+                         ['lightgray', 'lightgray'],
+                         ['white', 'white'],
+                     ])
 
-    for row in range(1, nrows):
+    for row in range(1, num_rows):
         assert the_table.get_celld()[(row, -1)].get_facecolor() == 'lightblue'
 
-    for col in range(ncols):
+    for col in range(num_columns):
         assert the_table.get_celld()[(0, col)].get_facecolor() == 'lightblue'
 
     alternating_colors = [
@@ -69,7 +70,6 @@ def test_draw_as_table():
 
 @patch('src.draw_table.FigureCanvasQTAgg', spec=True)
 def test_plot_data_table(mock_figure_canvas):
-    # Create a sample dataframe
     data = pd.DataFrame({
         'Column1': [1, 2, 3, 4, 5, 6],
         'Column2': [7, 8, 9, 10, 11, 12],
@@ -77,49 +77,41 @@ def test_plot_data_table(mock_figure_canvas):
     rowlabels = ['Row1', 'Row2', 'Row3', 'Row4', 'Row5', 'Row6']
     title = "Sample Title"
     pdf = MagicMock()
-    
-    # Create a mock for the canvas
+
     mock_canvas_instance = MagicMock()
     mock_figure_canvas.return_value = mock_canvas_instance
-    
-    # Call the function
+
     plot_data_table(data, pdf, rowlabels, title, numpages=(2, 1),
                     pagesize=(11, 8.5))
-    
-    # Assertions
+
     assert mock_figure_canvas.called
     assert pdf.savefig.called
     assert mock_canvas_instance.draw.called
 
-    # Ensure that the figure was cleared for each new table
     assert mock_canvas_instance.figure.clear.call_count == 2
 
-    # Verify colors in draw_as_table calls
     ax = mock_canvas_instance.figure.gca()
     the_table = ax.tables[0]
-    nrows, ncols = len(data) // 2 + 1, len(data.columns)
+    num_rows, num_columns = len(data) // 2 + 1, len(data.columns)
 
-    # Mock the table
-    setup_mock_table(the_table, nrows, ncols, 'lightblue', 'lightblue', [
-        ['white', 'white'],
-        ['lightgray', 'lightgray'],
-        ['white', 'white'],
-    ])
+    setup_mock_table(the_table, num_rows, num_columns,
+                     'lightblue', 'lightblue', [
+                         ['white', 'white'],
+                         ['lightgray', 'lightgray'],
+                         ['white', 'white'],
+                     ])
 
-    # Verify row colors
-    for row in range(1, nrows):
+    for row in range(1, num_rows):
         assert the_table.get_celld()[(row, -1)].get_facecolor() == 'lightblue'
-    
-    # Verify column colors
-    for col in range(ncols):
+
+    for col in range(num_columns):
         assert the_table.get_celld()[(0, col)].get_facecolor() == 'lightblue'
-    
-    # Verify alternating cell colors
+
     alternating_colors = [
         ['white'] * len(data.columns), ['lightgray'] * len(data.columns)
     ] * len(data)
     alternating_colors = alternating_colors[:len(data)]
-    
+
     for i in range(1, len(data) // 2 + 1):
         for j in range(len(data.columns)):
             expected_color = alternating_colors[i-1][j]
