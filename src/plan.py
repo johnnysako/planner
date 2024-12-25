@@ -96,7 +96,8 @@ class Plan:
 
     def _append_rates(self, i, rates, year):
         if self._bad_timing(year):
-            rates["s"][i] = -37
+            rates["s"][i] = -22.12
+            rates["s"][i+1] = -8.13
             rates["b"][i] = 13.4
 
         self.balances[i].append(rates["s"][i])
